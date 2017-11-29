@@ -56,6 +56,14 @@ public class UnusedFileServiceWrapper implements UnusedFileService,
 		return _unusedFileService.invokeMethod(name, parameterTypes, arguments);
 	}
 
+	@Override
+	public void deleteUnusedFile(long userId, long groupId, long unusedFileId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portal.security.auth.PrincipalException {
+		_unusedFileService.deleteUnusedFile(userId, groupId, unusedFileId);
+	}
+
 	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedService}
 	 */

@@ -175,11 +175,15 @@ public class UnusedFileSoap implements Serializable {
 		_dlFileTitle = dlFileTitle;
 	}
 
-	public Boolean getDeleted() {
+	public boolean getDeleted() {
 		return _deleted;
 	}
 
-	public void setDeleted(Boolean deleted) {
+	public boolean isDeleted() {
+		return _deleted;
+	}
+
+	public void setDeleted(boolean deleted) {
 		_deleted = deleted;
 	}
 
@@ -201,6 +205,6 @@ public class UnusedFileSoap implements Serializable {
 	private long _fileEntryId;
 	private long _dlFileVersionId;
 	private String _dlFileTitle;
-	private Boolean _deleted;
+	private boolean _deleted;
 	private String _comment;
 }

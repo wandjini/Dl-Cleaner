@@ -40,7 +40,6 @@ import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnmodifiableList;
-import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.CacheModel;
 import com.liferay.portal.model.ModelListener;
 import com.liferay.portal.service.persistence.impl.BasePersistenceImpl;
@@ -231,13 +230,6 @@ public class LostFilePersistenceImpl extends BasePersistenceImpl<LostFile>
 						finderArgs, list);
 				}
 				else {
-					if ((list.size() > 1) && _log.isWarnEnabled()) {
-						_log.warn(
-							"LostFilePersistenceImpl.fetchByGroup_FileEntryId_VersionId(long, long, long, boolean) with parameters (" +
-							StringUtil.merge(finderArgs) +
-							") yields a result set with more than 1 result. This violates the logical unique restriction. There is no order guarantee on which result is returned by this finder.");
-					}
-
 					LostFile lostFile = list.get(0);
 
 					result = lostFile;
@@ -392,7 +384,7 @@ public class LostFilePersistenceImpl extends BasePersistenceImpl<LostFile>
 	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public List<LostFile> findByGroup_Deleted(long groupId, Boolean deleted)
+	public List<LostFile> findByGroup_Deleted(long groupId, boolean deleted)
 		throws SystemException {
 		return findByGroup_Deleted(groupId, deleted, QueryUtil.ALL_POS,
 			QueryUtil.ALL_POS, null);
@@ -413,7 +405,7 @@ public class LostFilePersistenceImpl extends BasePersistenceImpl<LostFile>
 	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public List<LostFile> findByGroup_Deleted(long groupId, Boolean deleted,
+	public List<LostFile> findByGroup_Deleted(long groupId, boolean deleted,
 		int start, int end) throws SystemException {
 		return findByGroup_Deleted(groupId, deleted, start, end, null);
 	}
@@ -434,7 +426,7 @@ public class LostFilePersistenceImpl extends BasePersistenceImpl<LostFile>
 	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public List<LostFile> findByGroup_Deleted(long groupId, Boolean deleted,
+	public List<LostFile> findByGroup_Deleted(long groupId, boolean deleted,
 		int start, int end, OrderByComparator orderByComparator)
 		throws SystemException {
 		boolean pagination = true;
@@ -462,7 +454,7 @@ public class LostFilePersistenceImpl extends BasePersistenceImpl<LostFile>
 		if ((list != null) && !list.isEmpty()) {
 			for (LostFile lostFile : list) {
 				if ((groupId != lostFile.getGroupId()) ||
-						!Validator.equals(deleted, lostFile.getDeleted())) {
+						(deleted != lostFile.getDeleted())) {
 					list = null;
 
 					break;
@@ -509,7 +501,7 @@ public class LostFilePersistenceImpl extends BasePersistenceImpl<LostFile>
 
 				qPos.add(groupId);
 
-				qPos.add(deleted.booleanValue());
+				qPos.add(deleted);
 
 				if (!pagination) {
 					list = (List<LostFile>)QueryUtil.list(q, getDialect(),
@@ -552,7 +544,7 @@ public class LostFilePersistenceImpl extends BasePersistenceImpl<LostFile>
 	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public LostFile findByGroup_Deleted_First(long groupId, Boolean deleted,
+	public LostFile findByGroup_Deleted_First(long groupId, boolean deleted,
 		OrderByComparator orderByComparator)
 		throws NoSuchLostFileException, SystemException {
 		LostFile lostFile = fetchByGroup_Deleted_First(groupId, deleted,
@@ -587,7 +579,7 @@ public class LostFilePersistenceImpl extends BasePersistenceImpl<LostFile>
 	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public LostFile fetchByGroup_Deleted_First(long groupId, Boolean deleted,
+	public LostFile fetchByGroup_Deleted_First(long groupId, boolean deleted,
 		OrderByComparator orderByComparator) throws SystemException {
 		List<LostFile> list = findByGroup_Deleted(groupId, deleted, 0, 1,
 				orderByComparator);
@@ -610,7 +602,7 @@ public class LostFilePersistenceImpl extends BasePersistenceImpl<LostFile>
 	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public LostFile findByGroup_Deleted_Last(long groupId, Boolean deleted,
+	public LostFile findByGroup_Deleted_Last(long groupId, boolean deleted,
 		OrderByComparator orderByComparator)
 		throws NoSuchLostFileException, SystemException {
 		LostFile lostFile = fetchByGroup_Deleted_Last(groupId, deleted,
@@ -645,7 +637,7 @@ public class LostFilePersistenceImpl extends BasePersistenceImpl<LostFile>
 	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public LostFile fetchByGroup_Deleted_Last(long groupId, Boolean deleted,
+	public LostFile fetchByGroup_Deleted_Last(long groupId, boolean deleted,
 		OrderByComparator orderByComparator) throws SystemException {
 		int count = countByGroup_Deleted(groupId, deleted);
 
@@ -676,7 +668,7 @@ public class LostFilePersistenceImpl extends BasePersistenceImpl<LostFile>
 	 */
 	@Override
 	public LostFile[] findByGroup_Deleted_PrevAndNext(long lostFileId,
-		long groupId, Boolean deleted, OrderByComparator orderByComparator)
+		long groupId, boolean deleted, OrderByComparator orderByComparator)
 		throws NoSuchLostFileException, SystemException {
 		LostFile lostFile = findByPrimaryKey(lostFileId);
 
@@ -706,7 +698,7 @@ public class LostFilePersistenceImpl extends BasePersistenceImpl<LostFile>
 	}
 
 	protected LostFile getByGroup_Deleted_PrevAndNext(Session session,
-		LostFile lostFile, long groupId, Boolean deleted,
+		LostFile lostFile, long groupId, boolean deleted,
 		OrderByComparator orderByComparator, boolean previous) {
 		StringBundler query = null;
 
@@ -794,7 +786,7 @@ public class LostFilePersistenceImpl extends BasePersistenceImpl<LostFile>
 
 		qPos.add(groupId);
 
-		qPos.add(deleted.booleanValue());
+		qPos.add(deleted);
 
 		if (orderByComparator != null) {
 			Object[] values = orderByComparator.getOrderByConditionValues(lostFile);
@@ -822,7 +814,7 @@ public class LostFilePersistenceImpl extends BasePersistenceImpl<LostFile>
 	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public void removeByGroup_Deleted(long groupId, Boolean deleted)
+	public void removeByGroup_Deleted(long groupId, boolean deleted)
 		throws SystemException {
 		for (LostFile lostFile : findByGroup_Deleted(groupId, deleted,
 				QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
@@ -839,7 +831,7 @@ public class LostFilePersistenceImpl extends BasePersistenceImpl<LostFile>
 	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public int countByGroup_Deleted(long groupId, Boolean deleted)
+	public int countByGroup_Deleted(long groupId, boolean deleted)
 		throws SystemException {
 		FinderPath finderPath = FINDER_PATH_COUNT_BY_GROUP_DELETED;
 
@@ -870,7 +862,7 @@ public class LostFilePersistenceImpl extends BasePersistenceImpl<LostFile>
 
 				qPos.add(groupId);
 
-				qPos.add(deleted.booleanValue());
+				qPos.add(deleted);
 
 				count = (Long)q.uniqueResult();
 
@@ -1236,7 +1228,7 @@ public class LostFilePersistenceImpl extends BasePersistenceImpl<LostFile>
 		lostFileImpl.setFileEntryId(lostFile.getFileEntryId());
 		lostFileImpl.setDlFileVersionId(lostFile.getDlFileVersionId());
 		lostFileImpl.setDlFileTitle(lostFile.getDlFileTitle());
-		lostFileImpl.setDeleted(lostFile.getDeleted());
+		lostFileImpl.setDeleted(lostFile.isDeleted());
 		lostFileImpl.setComment(lostFile.getComment());
 
 		return lostFileImpl;

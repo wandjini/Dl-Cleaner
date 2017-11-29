@@ -40,7 +40,6 @@ import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnmodifiableList;
-import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.CacheModel;
 import com.liferay.portal.model.ModelListener;
 import com.liferay.portal.service.persistence.impl.BasePersistenceImpl;
@@ -231,13 +230,6 @@ public class UnusedFilePersistenceImpl extends BasePersistenceImpl<UnusedFile>
 						finderArgs, list);
 				}
 				else {
-					if ((list.size() > 1) && _log.isWarnEnabled()) {
-						_log.warn(
-							"UnusedFilePersistenceImpl.fetchByGroup_FileEntryId_VersionId(long, long, long, boolean) with parameters (" +
-							StringUtil.merge(finderArgs) +
-							") yields a result set with more than 1 result. This violates the logical unique restriction. There is no order guarantee on which result is returned by this finder.");
-					}
-
 					UnusedFile unusedFile = list.get(0);
 
 					result = unusedFile;
@@ -392,7 +384,7 @@ public class UnusedFilePersistenceImpl extends BasePersistenceImpl<UnusedFile>
 	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public List<UnusedFile> findByGroup_Deleted(long groupId, Boolean deleted)
+	public List<UnusedFile> findByGroup_Deleted(long groupId, boolean deleted)
 		throws SystemException {
 		return findByGroup_Deleted(groupId, deleted, QueryUtil.ALL_POS,
 			QueryUtil.ALL_POS, null);
@@ -413,7 +405,7 @@ public class UnusedFilePersistenceImpl extends BasePersistenceImpl<UnusedFile>
 	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public List<UnusedFile> findByGroup_Deleted(long groupId, Boolean deleted,
+	public List<UnusedFile> findByGroup_Deleted(long groupId, boolean deleted,
 		int start, int end) throws SystemException {
 		return findByGroup_Deleted(groupId, deleted, start, end, null);
 	}
@@ -434,7 +426,7 @@ public class UnusedFilePersistenceImpl extends BasePersistenceImpl<UnusedFile>
 	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public List<UnusedFile> findByGroup_Deleted(long groupId, Boolean deleted,
+	public List<UnusedFile> findByGroup_Deleted(long groupId, boolean deleted,
 		int start, int end, OrderByComparator orderByComparator)
 		throws SystemException {
 		boolean pagination = true;
@@ -462,7 +454,7 @@ public class UnusedFilePersistenceImpl extends BasePersistenceImpl<UnusedFile>
 		if ((list != null) && !list.isEmpty()) {
 			for (UnusedFile unusedFile : list) {
 				if ((groupId != unusedFile.getGroupId()) ||
-						!Validator.equals(deleted, unusedFile.getDeleted())) {
+						(deleted != unusedFile.getDeleted())) {
 					list = null;
 
 					break;
@@ -509,7 +501,7 @@ public class UnusedFilePersistenceImpl extends BasePersistenceImpl<UnusedFile>
 
 				qPos.add(groupId);
 
-				qPos.add(deleted.booleanValue());
+				qPos.add(deleted);
 
 				if (!pagination) {
 					list = (List<UnusedFile>)QueryUtil.list(q, getDialect(),
@@ -552,7 +544,7 @@ public class UnusedFilePersistenceImpl extends BasePersistenceImpl<UnusedFile>
 	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public UnusedFile findByGroup_Deleted_First(long groupId, Boolean deleted,
+	public UnusedFile findByGroup_Deleted_First(long groupId, boolean deleted,
 		OrderByComparator orderByComparator)
 		throws NoSuchUnusedFileException, SystemException {
 		UnusedFile unusedFile = fetchByGroup_Deleted_First(groupId, deleted,
@@ -587,7 +579,7 @@ public class UnusedFilePersistenceImpl extends BasePersistenceImpl<UnusedFile>
 	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public UnusedFile fetchByGroup_Deleted_First(long groupId, Boolean deleted,
+	public UnusedFile fetchByGroup_Deleted_First(long groupId, boolean deleted,
 		OrderByComparator orderByComparator) throws SystemException {
 		List<UnusedFile> list = findByGroup_Deleted(groupId, deleted, 0, 1,
 				orderByComparator);
@@ -610,7 +602,7 @@ public class UnusedFilePersistenceImpl extends BasePersistenceImpl<UnusedFile>
 	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public UnusedFile findByGroup_Deleted_Last(long groupId, Boolean deleted,
+	public UnusedFile findByGroup_Deleted_Last(long groupId, boolean deleted,
 		OrderByComparator orderByComparator)
 		throws NoSuchUnusedFileException, SystemException {
 		UnusedFile unusedFile = fetchByGroup_Deleted_Last(groupId, deleted,
@@ -645,7 +637,7 @@ public class UnusedFilePersistenceImpl extends BasePersistenceImpl<UnusedFile>
 	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public UnusedFile fetchByGroup_Deleted_Last(long groupId, Boolean deleted,
+	public UnusedFile fetchByGroup_Deleted_Last(long groupId, boolean deleted,
 		OrderByComparator orderByComparator) throws SystemException {
 		int count = countByGroup_Deleted(groupId, deleted);
 
@@ -676,7 +668,7 @@ public class UnusedFilePersistenceImpl extends BasePersistenceImpl<UnusedFile>
 	 */
 	@Override
 	public UnusedFile[] findByGroup_Deleted_PrevAndNext(long unusedFileId,
-		long groupId, Boolean deleted, OrderByComparator orderByComparator)
+		long groupId, boolean deleted, OrderByComparator orderByComparator)
 		throws NoSuchUnusedFileException, SystemException {
 		UnusedFile unusedFile = findByPrimaryKey(unusedFileId);
 
@@ -706,7 +698,7 @@ public class UnusedFilePersistenceImpl extends BasePersistenceImpl<UnusedFile>
 	}
 
 	protected UnusedFile getByGroup_Deleted_PrevAndNext(Session session,
-		UnusedFile unusedFile, long groupId, Boolean deleted,
+		UnusedFile unusedFile, long groupId, boolean deleted,
 		OrderByComparator orderByComparator, boolean previous) {
 		StringBundler query = null;
 
@@ -794,7 +786,7 @@ public class UnusedFilePersistenceImpl extends BasePersistenceImpl<UnusedFile>
 
 		qPos.add(groupId);
 
-		qPos.add(deleted.booleanValue());
+		qPos.add(deleted);
 
 		if (orderByComparator != null) {
 			Object[] values = orderByComparator.getOrderByConditionValues(unusedFile);
@@ -822,7 +814,7 @@ public class UnusedFilePersistenceImpl extends BasePersistenceImpl<UnusedFile>
 	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public void removeByGroup_Deleted(long groupId, Boolean deleted)
+	public void removeByGroup_Deleted(long groupId, boolean deleted)
 		throws SystemException {
 		for (UnusedFile unusedFile : findByGroup_Deleted(groupId, deleted,
 				QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
@@ -839,7 +831,7 @@ public class UnusedFilePersistenceImpl extends BasePersistenceImpl<UnusedFile>
 	 * @throws SystemException if a system exception occurred
 	 */
 	@Override
-	public int countByGroup_Deleted(long groupId, Boolean deleted)
+	public int countByGroup_Deleted(long groupId, boolean deleted)
 		throws SystemException {
 		FinderPath finderPath = FINDER_PATH_COUNT_BY_GROUP_DELETED;
 
@@ -870,7 +862,7 @@ public class UnusedFilePersistenceImpl extends BasePersistenceImpl<UnusedFile>
 
 				qPos.add(groupId);
 
-				qPos.add(deleted.booleanValue());
+				qPos.add(deleted);
 
 				count = (Long)q.uniqueResult();
 
@@ -1238,7 +1230,7 @@ public class UnusedFilePersistenceImpl extends BasePersistenceImpl<UnusedFile>
 		unusedFileImpl.setFileEntryId(unusedFile.getFileEntryId());
 		unusedFileImpl.setDlFileVersionId(unusedFile.getDlFileVersionId());
 		unusedFileImpl.setDlFileTitle(unusedFile.getDlFileTitle());
-		unusedFileImpl.setDeleted(unusedFile.getDeleted());
+		unusedFileImpl.setDeleted(unusedFile.isDeleted());
 		unusedFileImpl.setComment(unusedFile.getComment());
 
 		return unusedFileImpl;

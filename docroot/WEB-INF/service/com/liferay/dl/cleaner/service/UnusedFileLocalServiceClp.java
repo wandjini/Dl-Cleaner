@@ -135,9 +135,7 @@ public class UnusedFileLocalServiceClp implements UnusedFileLocalService {
 
 		_methodName23 = "cleanUnusedFile";
 
-		_methodParameterTypes23 = new String[] {
-				"long", "java.lang.String", "long"
-			};
+		_methodParameterTypes23 = new String[] { "long", "long" };
 	}
 
 	@Override
@@ -827,20 +825,12 @@ public class UnusedFileLocalServiceClp implements UnusedFileLocalService {
 	}
 
 	@Override
-	public void cleanUnusedFile(long unusedFileId,
-		java.lang.String fileVersion, long userId)
+	public void cleanUnusedFile(long userId, long unusedFileId)
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException {
 		try {
 			_invokableLocalService.invokeMethod(_methodName23,
-				_methodParameterTypes23,
-				new Object[] {
-					unusedFileId,
-					
-				ClpSerializer.translateInput(fileVersion),
-					
-				userId
-				});
+				_methodParameterTypes23, new Object[] { userId, unusedFileId });
 		}
 		catch (Throwable t) {
 			t = ClpSerializer.translateThrowable(t);

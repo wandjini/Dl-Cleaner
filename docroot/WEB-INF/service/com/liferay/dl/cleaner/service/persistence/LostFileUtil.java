@@ -208,7 +208,7 @@ public class LostFileUtil {
 	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.dl.cleaner.model.LostFile> findByGroup_Deleted(
-		long groupId, java.lang.Boolean deleted)
+		long groupId, boolean deleted)
 		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByGroup_Deleted(groupId, deleted);
 	}
@@ -228,7 +228,7 @@ public class LostFileUtil {
 	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.dl.cleaner.model.LostFile> findByGroup_Deleted(
-		long groupId, java.lang.Boolean deleted, int start, int end)
+		long groupId, boolean deleted, int start, int end)
 		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByGroup_Deleted(groupId, deleted, start, end);
 	}
@@ -249,7 +249,7 @@ public class LostFileUtil {
 	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.dl.cleaner.model.LostFile> findByGroup_Deleted(
-		long groupId, java.lang.Boolean deleted, int start, int end,
+		long groupId, boolean deleted, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
 		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
@@ -268,7 +268,7 @@ public class LostFileUtil {
 	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.dl.cleaner.model.LostFile findByGroup_Deleted_First(
-		long groupId, java.lang.Boolean deleted,
+		long groupId, boolean deleted,
 		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
 		throws com.liferay.dl.cleaner.NoSuchLostFileException,
 			com.liferay.portal.kernel.exception.SystemException {
@@ -287,7 +287,7 @@ public class LostFileUtil {
 	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.dl.cleaner.model.LostFile fetchByGroup_Deleted_First(
-		long groupId, java.lang.Boolean deleted,
+		long groupId, boolean deleted,
 		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
 		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
@@ -306,7 +306,7 @@ public class LostFileUtil {
 	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.dl.cleaner.model.LostFile findByGroup_Deleted_Last(
-		long groupId, java.lang.Boolean deleted,
+		long groupId, boolean deleted,
 		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
 		throws com.liferay.dl.cleaner.NoSuchLostFileException,
 			com.liferay.portal.kernel.exception.SystemException {
@@ -324,7 +324,7 @@ public class LostFileUtil {
 	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.dl.cleaner.model.LostFile fetchByGroup_Deleted_Last(
-		long groupId, java.lang.Boolean deleted,
+		long groupId, boolean deleted,
 		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
 		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
@@ -344,7 +344,7 @@ public class LostFileUtil {
 	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.dl.cleaner.model.LostFile[] findByGroup_Deleted_PrevAndNext(
-		long lostFileId, long groupId, java.lang.Boolean deleted,
+		long lostFileId, long groupId, boolean deleted,
 		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
 		throws com.liferay.dl.cleaner.NoSuchLostFileException,
 			com.liferay.portal.kernel.exception.SystemException {
@@ -360,8 +360,7 @@ public class LostFileUtil {
 	* @param deleted the deleted
 	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByGroup_Deleted(long groupId,
-		java.lang.Boolean deleted)
+	public static void removeByGroup_Deleted(long groupId, boolean deleted)
 		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByGroup_Deleted(groupId, deleted);
 	}
@@ -374,8 +373,7 @@ public class LostFileUtil {
 	* @return the number of matching lost files
 	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByGroup_Deleted(long groupId,
-		java.lang.Boolean deleted)
+	public static int countByGroup_Deleted(long groupId, boolean deleted)
 		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByGroup_Deleted(groupId, deleted);
 	}

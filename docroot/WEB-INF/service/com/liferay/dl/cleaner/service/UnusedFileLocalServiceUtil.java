@@ -350,11 +350,10 @@ public class UnusedFileLocalServiceUtil {
 	* @throws SystemException
 	* @throws PortalException
 	*/
-	public static void cleanUnusedFile(long unusedFileId,
-		java.lang.String fileVersion, long userId)
+	public static void cleanUnusedFile(long userId, long unusedFileId)
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException {
-		getService().cleanUnusedFile(unusedFileId, fileVersion, userId);
+		getService().cleanUnusedFile(userId, unusedFileId);
 	}
 
 	public static void clearService() {

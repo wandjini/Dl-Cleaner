@@ -186,6 +186,6 @@ public class UnusedFileCacheModel implements CacheModel<UnusedFile>,
 	public long fileEntryId;
 	public long dlFileVersionId;
 	public String dlFileTitle;
-	public Boolean deleted;
+	public boolean deleted;
 	public String comment;
 }

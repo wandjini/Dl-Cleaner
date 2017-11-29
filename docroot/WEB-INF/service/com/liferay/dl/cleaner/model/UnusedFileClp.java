@@ -408,19 +408,24 @@ public class UnusedFileClp extends BaseModelImpl<UnusedFile>
 	}
 
 	@Override
-	public Boolean getDeleted() {
+	public boolean getDeleted() {
 		return _deleted;
 	}
 
 	@Override
-	public void setDeleted(Boolean deleted) {
+	public boolean isDeleted() {
+		return _deleted;
+	}
+
+	@Override
+	public void setDeleted(boolean deleted) {
 		_deleted = deleted;
 
 		if (_unusedFileRemoteModel != null) {
 			try {
 				Class<?> clazz = _unusedFileRemoteModel.getClass();
 
-				Method method = clazz.getMethod("setDeleted", Boolean.class);
+				Method method = clazz.getMethod("setDeleted", boolean.class);
 
 				method.invoke(_unusedFileRemoteModel, deleted);
 			}
@@ -690,7 +695,7 @@ public class UnusedFileClp extends BaseModelImpl<UnusedFile>
 	private long _fileEntryId;
 	private long _dlFileVersionId;
 	private String _dlFileTitle;
-	private Boolean _deleted;
+	private boolean _deleted;
 	private String _comment;
 	private BaseModel<?> _unusedFileRemoteModel;
 	private Class<?> _clpSerializerClass = com.liferay.dl.cleaner.service.ClpSerializer.class;

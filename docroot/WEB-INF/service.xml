@@ -20,14 +20,14 @@
 		<column name="fileEntryId" type="long"></column>
 		<column name="dlFileVersionId" type="long"></column>
 		<column name="dlFileTitle" type="String"></column>
-		<column name="deleted" type="Boolean"></column>
+		<column name="deleted" type="boolean"></column>
 		<column name="comment" type="String"></column>
 		
 		<order by="desc">
             <order-column name="createDate"></order-column>
     	</order>
     	
-    	<finder name="Group_FileEntryId_VersionId" return-type="UnusedFile">
+    	<finder name="Group_FileEntryId_VersionId" return-type="UnusedFile" unique="true">
     		<finder-column name="groupId"></finder-column>
             <finder-column name="fileEntryId"></finder-column>
             <finder-column name="dlFileVersionId"></finder-column>
@@ -53,14 +53,14 @@
 		<column name="fileEntryId" type="long"></column>
 		<column name="dlFileVersionId" type="long"></column>
 		<column name="dlFileTitle" type="String"></column>
-		<column name="deleted" type="Boolean"></column>
+		<column name="deleted" type="boolean"></column>
 		<column name="comment" type="String"></column>
 		
 		<order by="desc">
             <order-column name="createDate"></order-column>
     	</order>
     	
-    	<finder name="Group_FileEntryId_VersionId" return-type="LostFile">
+    	<finder name="Group_FileEntryId_VersionId" return-type="LostFile" unique="true">
     		<finder-column name="groupId"></finder-column>
             <finder-column name="fileEntryId"></finder-column>
             <finder-column name="dlFileVersionId"></finder-column>

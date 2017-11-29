@@ -63,6 +63,14 @@ public class UnusedFileServiceUtil {
 		return getService().invokeMethod(name, parameterTypes, arguments);
 	}
 
+	public static void deleteUnusedFile(long userId, long groupId,
+		long unusedFileId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException,
+			com.liferay.portal.security.auth.PrincipalException {
+		getService().deleteUnusedFile(userId, groupId, unusedFileId);
+	}
+
 	public static void clearService() {
 		_service = null;
 	}

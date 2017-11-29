@@ -14,7 +14,13 @@
 
 package com.liferay.dl.cleaner.service.impl;
 
+import com.liferay.dl.cleaner.portlet.util.ActionKeys;
+import com.liferay.dl.cleaner.service.UnusedFileLocalServiceUtil;
 import com.liferay.dl.cleaner.service.base.UnusedFileServiceBaseImpl;
+import com.liferay.dl.cleaner.service.permission.UnusedFilePermission;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.security.auth.PrincipalException;
 
 /**
  * The implementation of the unused file remote service.
@@ -36,4 +42,10 @@ public class UnusedFileServiceImpl extends UnusedFileServiceBaseImpl {
 	 *
 	 * Never reference this interface directly. Always use {@link com.liferay.dl.cleaner.service.UnusedFileServiceUtil} to access the unused file remote service.
 	 */
+	
+	public void deleteUnusedFile(long userId,long groupId, long unusedFileId) throws PrincipalException, PortalException, SystemException{
+		
+		UnusedFilePermission.check(getPermissionChecker(), groupId, ActionKeys.DELETE_UNUSED_FILE);
+		UnusedFileLocalServiceUtil.cleanUnusedFile(userId, unusedFileId);
+	}
 }

@@ -388,17 +388,27 @@ public class LostFileWrapper implements LostFile, ModelWrapper<LostFile> {
 	* @return the deleted of this lost file
 	*/
 	@Override
-	public java.lang.Boolean getDeleted() {
+	public boolean getDeleted() {
 		return _lostFile.getDeleted();
 	}
 
 	/**
-	* Sets the deleted of this lost file.
+	* Returns <code>true</code> if this lost file is deleted.
+	*
+	* @return <code>true</code> if this lost file is deleted; <code>false</code> otherwise
+	*/
+	@Override
+	public boolean isDeleted() {
+		return _lostFile.isDeleted();
+	}
+
+	/**
+	* Sets whether this lost file is deleted.
 	*
 	* @param deleted the deleted of this lost file
 	*/
 	@Override
-	public void setDeleted(java.lang.Boolean deleted) {
+	public void setDeleted(boolean deleted) {
 		_lostFile.setDeleted(deleted);
 	}
 

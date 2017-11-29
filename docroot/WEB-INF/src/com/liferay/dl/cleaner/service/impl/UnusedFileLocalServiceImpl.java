@@ -17,14 +17,16 @@ package com.liferay.dl.cleaner.service.impl;
 import java.util.Date;
 import java.util.List;
 
-import com.liferay.dl.cleaner.NoSuchLostFileException;
 import com.liferay.dl.cleaner.NoSuchUnusedFileException;
-import com.liferay.dl.cleaner.model.LostFile;
 import com.liferay.dl.cleaner.model.UnusedFile;
 import com.liferay.dl.cleaner.service.base.UnusedFileLocalServiceBaseImpl;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.model.User;
+import com.liferay.portlet.documentlibrary.InvalidFileVersionException;
 import com.liferay.portlet.documentlibrary.model.DLFileEntry;
 import com.liferay.portlet.documentlibrary.model.DLFileVersion;
 import com.liferay.portlet.documentlibrary.service.DLFileEntryLocalServiceUtil;
@@ -50,6 +52,9 @@ public class UnusedFileLocalServiceImpl extends UnusedFileLocalServiceBaseImpl {
 	 *
 	 * Never reference this interface directly. Always use {@link com.liferay.dl.cleaner.service.UnusedFileLocalServiceUtil} to access the unused file local service.
 	 */
+	
+	private final static Log _log = LogFactoryUtil.getLog(UnusedFileLocalServiceImpl.class);
+	
 	
 	/**
 	 * <p>This method is used to add a new unused file</p> 
@@ -84,9 +89,12 @@ public class UnusedFileLocalServiceImpl extends UnusedFileLocalServiceBaseImpl {
 			unusedFile.setModifiedDate(now);
 			unusedFile.setDeleted(false);
 			unusedFile.setComment(comment);
+			unusedFile.setDlFileTitle(dlFileEntry.getName());
 			
 			unusedFile = unusedFilePersistence.update(unusedFile);
-			resourceLocalService.addModelResources(unusedFile, null);
+			
+			resourceLocalService.addResources(dlFileEntry.getCompanyId(), dlFileEntry.getGroupId(), userId > 0? userId: userLocalService.getDefaultUser(dlFileEntry.getCompanyId()).getUserId(),
+					UnusedFile.class.getName(), unusedFileId, false, true, true);
 		}
 		
 		return unusedFile;
@@ -142,13 +150,53 @@ public class UnusedFileLocalServiceImpl extends UnusedFileLocalServiceBaseImpl {
 	 * @throws SystemException
 	 * @throws PortalException
 	 */
-	public void cleanUnusedFile(long unusedFileId, String fileVersion, long userId) throws SystemException, PortalException{
+	public void cleanUnusedFile( long userId, long unusedFileId) throws SystemException, PortalException{
 		
 		UnusedFile unusedFile = unusedFilePersistence.findByPrimaryKey(unusedFileId);
 		DLFileVersion dlFileVersion = DLFileVersionLocalServiceUtil.getDLFileVersion(unusedFile.getDlFileVersionId());
 		DLFileEntry dlFileEntry = DLFileEntryLocalServiceUtil.deleteFileVersion(userId, unusedFile.getFileEntryId(), dlFileVersion.getVersion());
+		try {
+			if (dlFileVersion.getStatus() != WorkflowConstants.STATUS_APPROVED) {
+				dlFileVersion.setStatus(WorkflowConstants.STATUS_APPROVED);
+
+				DLFileVersionLocalServiceUtil.updateDLFileVersion(dlFileVersion);
+			}
+
+			dlFileEntry = DLFileEntryLocalServiceUtil.deleteFileVersion(
+				userId, dlFileVersion.getFileEntryId(),
+				dlFileVersion.getVersion());
+
+			
+			_log.error(
+				"DlFileVersion " + dlFileVersion.getVersion() + " deleted and dlFileEntry updated");
+		}
+		catch(InvalidFileVersionException e) {
+			if (dlFileVersion.getVersion().equals("PWC")) {
+				_log.error(dlFileVersion.getVersion() + " is blocked, we proceed to cancel checkout");
+
+				DLFileEntryLocalServiceUtil.cancelCheckOut(dlFileVersion.getUserId(), dlFileVersion.getFileEntryId());
+
+			
+			}
+
+			else{
+				if("Cannot delete the only approved file version".equals(e.getMessage())) {
+					dlFileEntry = DLFileEntryLocalServiceUtil.deleteFileEntry(dlFileVersion.getFileEntryId());
+	
+					_log.error("deleted FileEntry " + dlFileVersion.getFileEntryId());
+				}
+				else {
+					_log.error("DlFileVersion " + dlFileVersion.getVersion() + " could not be deleted.",e);
+				}
+			}
+		}
+
 		if(dlFileEntry != null){
 			unusedFile.setDeleted(true);
+			User user = userLocalService.getUser(userId);
+			unusedFile.setModifiedDate(new Date());
+			unusedFile.setUserId(userId);
+			unusedFile.setUserName(user.getFullName());
 			unusedFilePersistence.update(unusedFile);
 		}
 	}

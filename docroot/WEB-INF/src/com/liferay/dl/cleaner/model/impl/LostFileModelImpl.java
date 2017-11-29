@@ -80,7 +80,7 @@ public class LostFileModelImpl extends BaseModelImpl<LostFile>
 			{ "deleted", Types.BOOLEAN },
 			{ "comment_", Types.VARCHAR }
 		};
-	public static final String TABLE_SQL_CREATE = "create table DlCleaner_LostFile (lostFileId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,fileEntryId LONG,dlFileVersionId LONG,dlFileTitle VARCHAR(75) null,deleted BOOLEAN,comment_ VARCHAR(75) null)";
+	public static final String TABLE_SQL_CREATE = "create table DlCleaner_LostFile (lostFileId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,fileEntryId LONG,dlFileVersionId LONG,dlFileTitle VARCHAR(75) null,deleted BOOLEAN,comment_ STRING null)";
 	public static final String TABLE_SQL_DROP = "drop table DlCleaner_LostFile";
 	public static final String ORDER_BY_JPQL = " ORDER BY lostFile.createDate DESC";
 	public static final String ORDER_BY_SQL = " ORDER BY DlCleaner_LostFile.createDate DESC";
@@ -452,12 +452,17 @@ public class LostFileModelImpl extends BaseModelImpl<LostFile>
 
 	@JSON
 	@Override
-	public Boolean getDeleted() {
+	public boolean getDeleted() {
 		return _deleted;
 	}
 
 	@Override
-	public void setDeleted(Boolean deleted) {
+	public boolean isDeleted() {
+		return _deleted;
+	}
+
+	@Override
+	public void setDeleted(boolean deleted) {
 		_columnBitmask |= DELETED_COLUMN_BITMASK;
 
 		if (!_setOriginalDeleted) {
@@ -469,7 +474,7 @@ public class LostFileModelImpl extends BaseModelImpl<LostFile>
 		_deleted = deleted;
 	}
 
-	public Boolean getOriginalDeleted() {
+	public boolean getOriginalDeleted() {
 		return _originalDeleted;
 	}
 
@@ -782,8 +787,8 @@ public class LostFileModelImpl extends BaseModelImpl<LostFile>
 	private long _originalDlFileVersionId;
 	private boolean _setOriginalDlFileVersionId;
 	private String _dlFileTitle;
-	private Boolean _deleted;
-	private Boolean _originalDeleted;
+	private boolean _deleted;
+	private boolean _originalDeleted;
 	private boolean _setOriginalDeleted;
 	private String _comment;
 	private long _columnBitmask;

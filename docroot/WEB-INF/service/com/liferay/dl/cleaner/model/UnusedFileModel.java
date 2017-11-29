@@ -237,14 +237,21 @@ public interface UnusedFileModel extends BaseModel<UnusedFile>, GroupedModel {
 	 *
 	 * @return the deleted of this unused file
 	 */
-	public Boolean getDeleted();
+	public boolean getDeleted();
 
 	/**
-	 * Sets the deleted of this unused file.
+	 * Returns <code>true</code> if this unused file is deleted.
+	 *
+	 * @return <code>true</code> if this unused file is deleted; <code>false</code> otherwise
+	 */
+	public boolean isDeleted();
+
+	/**
+	 * Sets whether this unused file is deleted.
 	 *
 	 * @param deleted the deleted of this unused file
 	 */
-	public void setDeleted(Boolean deleted);
+	public void setDeleted(boolean deleted);
 
 	/**
 	 * Returns the comment of this unused file.

@@ -4,15 +4,19 @@
 	<portlet>
 		<portlet-name>dl-cleaner</portlet-name>
 		<display-name>Document And Library Cleaner</display-name>
-		<portlet-class>com.liferay.util.bridges.mvc.MVCPortlet</portlet-class>
+		<portlet-class>
+			com.liferay.dl.cleaner.portlet.DlCleanerPortlet
+		</portlet-class>
 		<init-param>
 			<name>view-template</name>
-			<value>/view.jsp</value>
+			<value>/html/view.jsp</value>
 		</init-param>
 		<expiration-cache>0</expiration-cache>
 		<supports>
 			<mime-type>text/html</mime-type>
 		</supports>
+        <supported-locale>es_ES</supported-locale>
+        <resource-bundle>content.Language</resource-bundle>
 		<portlet-info>
 			<title>Document And Library Cleaner</title>
 			<short-title>Document And Library Cleaner</short-title>

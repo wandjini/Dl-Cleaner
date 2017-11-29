@@ -317,8 +317,7 @@ public interface UnusedFileLocalService extends BaseLocalService,
 	* @throws SystemException
 	* @throws PortalException
 	*/
-	public void cleanUnusedFile(long unusedFileId,
-		java.lang.String fileVersion, long userId)
+	public void cleanUnusedFile(long userId, long unusedFileId)
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException;
 }

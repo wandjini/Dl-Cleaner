@@ -134,9 +134,7 @@ public class UnusedFileLocalServiceClpInvoker {
 
 		_methodName50 = "cleanUnusedFile";
 
-		_methodParameterTypes50 = new String[] {
-				"long", "java.lang.String", "long"
-			};
+		_methodParameterTypes50 = new String[] { "long", "long" };
 	}
 
 	public Object invokeMethod(String name, String[] parameterTypes,
@@ -271,7 +269,7 @@ public class UnusedFileLocalServiceClpInvoker {
 		if (_methodName50.equals(name) &&
 				Arrays.deepEquals(_methodParameterTypes50, parameterTypes)) {
 			UnusedFileLocalServiceUtil.cleanUnusedFile(((Long)arguments[0]).longValue(),
-				(java.lang.String)arguments[1], ((Long)arguments[2]).longValue());
+				((Long)arguments[1]).longValue());
 
 			return null;
 		}

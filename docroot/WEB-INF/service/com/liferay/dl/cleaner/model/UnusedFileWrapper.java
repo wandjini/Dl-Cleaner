@@ -388,17 +388,27 @@ public class UnusedFileWrapper implements UnusedFile, ModelWrapper<UnusedFile> {
 	* @return the deleted of this unused file
 	*/
 	@Override
-	public java.lang.Boolean getDeleted() {
+	public boolean getDeleted() {
 		return _unusedFile.getDeleted();
 	}
 
 	/**
-	* Sets the deleted of this unused file.
+	* Returns <code>true</code> if this unused file is deleted.
+	*
+	* @return <code>true</code> if this unused file is deleted; <code>false</code> otherwise
+	*/
+	@Override
+	public boolean isDeleted() {
+		return _unusedFile.isDeleted();
+	}
+
+	/**
+	* Sets whether this unused file is deleted.
 	*
 	* @param deleted the deleted of this unused file
 	*/
 	@Override
-	public void setDeleted(java.lang.Boolean deleted) {
+	public void setDeleted(boolean deleted) {
 		_unusedFile.setDeleted(deleted);
 	}
 

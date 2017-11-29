@@ -23,7 +23,7 @@ create table DlCleaner_LostFile (
 	dlFileVersionId LONG,
 	dlFileTitle VARCHAR(75) null,
 	deleted BOOLEAN,
-	comment_ VARCHAR(75) null
+	comment_ STRING null
 );
 
 create table DlCleaner_UnusedFile (
@@ -38,5 +38,5 @@ create table DlCleaner_UnusedFile (
 	dlFileVersionId LONG,
 	dlFileTitle VARCHAR(75) null,
 	deleted BOOLEAN,
-	comment_ VARCHAR(75) null
+	comment_ STRING null
 );

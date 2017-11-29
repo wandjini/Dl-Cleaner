@@ -237,14 +237,21 @@ public interface LostFileModel extends BaseModel<LostFile>, GroupedModel {
 	 *
 	 * @return the deleted of this lost file
 	 */
-	public Boolean getDeleted();
+	public boolean getDeleted();
 
 	/**
-	 * Sets the deleted of this lost file.
+	 * Returns <code>true</code> if this lost file is deleted.
+	 *
+	 * @return <code>true</code> if this lost file is deleted; <code>false</code> otherwise
+	 */
+	public boolean isDeleted();
+
+	/**
+	 * Sets whether this lost file is deleted.
 	 *
 	 * @param deleted the deleted of this lost file
 	 */
-	public void setDeleted(Boolean deleted);
+	public void setDeleted(boolean deleted);
 
 	/**
 	 * Returns the comment of this lost file.

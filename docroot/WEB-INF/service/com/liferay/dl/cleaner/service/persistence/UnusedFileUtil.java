@@ -209,7 +209,7 @@ public class UnusedFileUtil {
 	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.dl.cleaner.model.UnusedFile> findByGroup_Deleted(
-		long groupId, java.lang.Boolean deleted)
+		long groupId, boolean deleted)
 		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByGroup_Deleted(groupId, deleted);
 	}
@@ -229,7 +229,7 @@ public class UnusedFileUtil {
 	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.dl.cleaner.model.UnusedFile> findByGroup_Deleted(
-		long groupId, java.lang.Boolean deleted, int start, int end)
+		long groupId, boolean deleted, int start, int end)
 		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().findByGroup_Deleted(groupId, deleted, start, end);
 	}
@@ -250,7 +250,7 @@ public class UnusedFileUtil {
 	* @throws SystemException if a system exception occurred
 	*/
 	public static java.util.List<com.liferay.dl.cleaner.model.UnusedFile> findByGroup_Deleted(
-		long groupId, java.lang.Boolean deleted, int start, int end,
+		long groupId, boolean deleted, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
 		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
@@ -269,7 +269,7 @@ public class UnusedFileUtil {
 	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.dl.cleaner.model.UnusedFile findByGroup_Deleted_First(
-		long groupId, java.lang.Boolean deleted,
+		long groupId, boolean deleted,
 		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
 		throws com.liferay.dl.cleaner.NoSuchUnusedFileException,
 			com.liferay.portal.kernel.exception.SystemException {
@@ -288,7 +288,7 @@ public class UnusedFileUtil {
 	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.dl.cleaner.model.UnusedFile fetchByGroup_Deleted_First(
-		long groupId, java.lang.Boolean deleted,
+		long groupId, boolean deleted,
 		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
 		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
@@ -307,7 +307,7 @@ public class UnusedFileUtil {
 	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.dl.cleaner.model.UnusedFile findByGroup_Deleted_Last(
-		long groupId, java.lang.Boolean deleted,
+		long groupId, boolean deleted,
 		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
 		throws com.liferay.dl.cleaner.NoSuchUnusedFileException,
 			com.liferay.portal.kernel.exception.SystemException {
@@ -325,7 +325,7 @@ public class UnusedFileUtil {
 	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.dl.cleaner.model.UnusedFile fetchByGroup_Deleted_Last(
-		long groupId, java.lang.Boolean deleted,
+		long groupId, boolean deleted,
 		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
 		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence()
@@ -345,7 +345,7 @@ public class UnusedFileUtil {
 	* @throws SystemException if a system exception occurred
 	*/
 	public static com.liferay.dl.cleaner.model.UnusedFile[] findByGroup_Deleted_PrevAndNext(
-		long unusedFileId, long groupId, java.lang.Boolean deleted,
+		long unusedFileId, long groupId, boolean deleted,
 		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
 		throws com.liferay.dl.cleaner.NoSuchUnusedFileException,
 			com.liferay.portal.kernel.exception.SystemException {
@@ -361,8 +361,7 @@ public class UnusedFileUtil {
 	* @param deleted the deleted
 	* @throws SystemException if a system exception occurred
 	*/
-	public static void removeByGroup_Deleted(long groupId,
-		java.lang.Boolean deleted)
+	public static void removeByGroup_Deleted(long groupId, boolean deleted)
 		throws com.liferay.portal.kernel.exception.SystemException {
 		getPersistence().removeByGroup_Deleted(groupId, deleted);
 	}
@@ -375,8 +374,7 @@ public class UnusedFileUtil {
 	* @return the number of matching unused files
 	* @throws SystemException if a system exception occurred
 	*/
-	public static int countByGroup_Deleted(long groupId,
-		java.lang.Boolean deleted)
+	public static int countByGroup_Deleted(long groupId, boolean deleted)
 		throws com.liferay.portal.kernel.exception.SystemException {
 		return getPersistence().countByGroup_Deleted(groupId, deleted);
 	}

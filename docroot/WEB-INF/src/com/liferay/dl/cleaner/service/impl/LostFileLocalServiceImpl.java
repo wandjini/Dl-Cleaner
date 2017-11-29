@@ -90,6 +90,7 @@ public class LostFileLocalServiceImpl extends LostFileLocalServiceBaseImpl {
 			lostFile.setDlFileVersionId(dlFileVersionId);
 			lostFile.setDlFileTitle(dlFileEntry.getTitle());
 			lostFile.setComment(comment);
+			lostFile.setDlFileTitle(dlFileEntry.getTitle());
 			lostFile = lostFilePersistence.update(lostFile);
 			resourceLocalService.addModelResources(lostFile, null);
 		}

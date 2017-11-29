@@ -14,6 +14,13 @@
 
 package com.liferay.dl.cleaner.service.http;
 
+import com.liferay.dl.cleaner.service.UnusedFileServiceUtil;
+
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+
+import java.rmi.RemoteException;
+
 /**
  * Provides the SOAP utility for the
  * {@link com.liferay.dl.cleaner.service.UnusedFileServiceUtil} service utility. The
@@ -55,4 +62,17 @@ package com.liferay.dl.cleaner.service.http;
  * @generated
  */
 public class UnusedFileServiceSoap {
+	public static void deleteUnusedFile(long userId, long groupId,
+		long unusedFileId) throws RemoteException {
+		try {
+			UnusedFileServiceUtil.deleteUnusedFile(userId, groupId, unusedFileId);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	private static Log _log = LogFactoryUtil.getLog(UnusedFileServiceSoap.class);
 }

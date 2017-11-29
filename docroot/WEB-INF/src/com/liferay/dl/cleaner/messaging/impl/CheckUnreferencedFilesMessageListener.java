@@ -3,13 +3,13 @@ package com.liferay.dl.cleaner.messaging.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.liferay.dl.cleaner.service.LostFileLocalServiceUtil;
+import com.liferay.dl.cleaner.NoSuchUnusedFileException;
+import com.liferay.dl.cleaner.portlet.util.ActionKeys;
 import com.liferay.dl.cleaner.service.UnusedFileLocalServiceUtil;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
@@ -22,6 +22,8 @@ import com.liferay.portal.kernel.xml.Attribute;
 import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
+import com.liferay.portal.model.Lock;
+import com.liferay.portal.service.LockLocalServiceUtil;
 import com.liferay.portlet.documentlibrary.NoSuchFileEntryException;
 import com.liferay.portlet.documentlibrary.model.DLFileEntry;
 import com.liferay.portlet.documentlibrary.model.DLFileVersion;
@@ -43,6 +45,15 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 	@Override
 	public void receive(Message message) throws MessageListenerException {
 		
+		
+		try {
+			LockLocalServiceUtil.lock(CheckUnreferencedFilesMessageListener.class.getName(),
+					ActionKeys.KEY_JOB, ActionKeys.JOB_OWNER);
+	
+		} catch (Exception e1) {
+			_log.error(e1);
+			return;
+		}
 		Object obj = message.getPayload();
 		long groupId = 0;
 		long userId = 0;
@@ -55,18 +66,21 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 			}
 			getDlFileVersionsWithNoBinaryContent(groupId, userId);
 			getJournalArticlesFilesWithNoBinaryContent(groupId,userId);
-		} catch (JSONException e) {
-			_log.error(e);
-			e.printStackTrace();
-		} catch (SystemException e) {
-			_log.error(e);
-			e.printStackTrace();
-		} catch (PortalException e) {
+		} catch (Exception e) {
 			_log.error(e);
 			e.printStackTrace();
 		} 
+		finally{
+			try {
+				Lock lock = LockLocalServiceUtil.getLock(CheckUnreferencedFilesMessageListener.class.getName(),
+						ActionKeys.KEY_JOB);
+				if(lock != null)
+					LockLocalServiceUtil.deleteLock(lock);
+			} catch (Exception e) {
+				_log.error(e);
+			}
 		
-		
+		}
 	}
 	
 	
@@ -110,12 +124,17 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 							dlFileVersion.getFileEntryId() +
 							" associated with file version " +
 							dlFileVersion.getFileVersionId(); 
-					_log.error(comment
-				);
+					_log.error(comment);
 						
-					
-					UnusedFileLocalServiceUtil.addUnusedFile(userId,dlFileVersion.getFileEntryId(), dlFileVersion.getFileVersionId(), comment );
-					orphanedFileVersionSize++;
+					try {
+						UnusedFileLocalServiceUtil.addUnusedFile(userId,dlFileVersion.getFileEntryId(), dlFileVersion.getFileVersionId(), comment );
+						orphanedFileVersionSize++;
+					}catch (Exception ex) {
+						_log.debug("Unable to insert file entry " +
+								dlFileVersion.getFileEntryId() +
+								" associated with file version " +
+								dlFileVersion.getFileVersionId(),ex);
+					}
 					continue;
 				}
 
@@ -128,11 +147,16 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 								dlFileVersion.getFileEntryId() + " does not have a " +
 								"binary content";
 						_log.error(comment);
-
-						LostFileLocalServiceUtil.addLostFile(userId, dlFileVersion.getFileEntryId(), dlFileVersion.getFileVersionId(), comment);
-						
-						filesWithoutBinarySize++;
-						
+						try {
+							UnusedFileLocalServiceUtil.addUnusedFile(userId, dlFileVersion.getFileEntryId(), dlFileVersion.getFileVersionId(), comment);
+							
+							filesWithoutBinarySize++;
+						}catch (Exception ex) {
+							_log.debug("Unable to insert file entry " +
+									dlFileVersion.getFileEntryId() +
+									" associated with file version " +
+									dlFileVersion.getFileVersionId(),ex);
+						}
 						
 					}
 				}
@@ -224,7 +248,6 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 				String uuid  = StringPool.BLANK;
 				long articleGroupId = 0;
 				for(JSONObject fileToProcess: valuesToProcess){
-					//documents/20181/0/out/b4ed70f6-8997-4981-a083-14a704352ee9
 					filePath = fileToProcess.getString("filePath");
 					String[] parameters = filePath.split(StringPool.SLASH);
 					uuid = parameters[parameters.length -1 ];
@@ -235,8 +258,17 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 							DLFileVersion dlFileVersion = DLFileVersionLocalServiceUtil.getFileVersion(dlFileEntry.getFileEntryId(), dlFileEntry.getVersion());
 							comment = "Unreferenced file "+dlFileEntry.getFileEntryId() +" in journalArticle "+fileToProcess.getLong("journalArticleId");
 							_log.debug(comment);
-							//if(LostFileLocalServiceUtil)
-							LostFileLocalServiceUtil.addLostFile(userId,dlFileEntry.getFileEntryId(), dlFileVersion.getFileVersionId(), comment);
+							try {
+								UnusedFileLocalServiceUtil.getUnusedFilesByGroupFileIdVersionId(articleGroupId, dlFileEntry.getFileEntryId(), 
+										dlFileVersion.getFileVersionId());
+							} catch (NoSuchUnusedFileException e) {
+								_log.debug("The file "+ filePath +" doesn't exit yet in the table");
+								UnusedFileLocalServiceUtil.addUnusedFile(userId,dlFileEntry.getFileEntryId(), dlFileVersion.getFileVersionId(), comment);
+
+							}
+							
+
+							
 							filesWithoutBinarySize++;
 						}
 						
@@ -247,13 +279,14 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 								articleGroupId; 
 						_log.error(comment);
 					}
+					
 				}
 			}
 			start+=1000;
 			end+=1000;
 		}
 
-		_log.error("DlFileVersion objects with invalid file: " + filesWithoutBinarySize);
+		_log.error("DlFileEntry objects with invalid file: " + filesWithoutBinarySize);
 		
 	}
 	

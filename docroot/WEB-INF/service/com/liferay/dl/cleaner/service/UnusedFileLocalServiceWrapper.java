@@ -365,12 +365,10 @@ public class UnusedFileLocalServiceWrapper implements UnusedFileLocalService,
 	* @throws PortalException
 	*/
 	@Override
-	public void cleanUnusedFile(long unusedFileId,
-		java.lang.String fileVersion, long userId)
+	public void cleanUnusedFile(long userId, long unusedFileId)
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException {
-		_unusedFileLocalService.cleanUnusedFile(unusedFileId, fileVersion,
-			userId);
+		_unusedFileLocalService.cleanUnusedFile(userId, unusedFileId);
 	}
 
 	/**
