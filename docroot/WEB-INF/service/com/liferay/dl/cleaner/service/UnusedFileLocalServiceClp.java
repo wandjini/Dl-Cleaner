@@ -121,17 +121,21 @@ public class UnusedFileLocalServiceClp implements UnusedFileLocalService {
 				"long", "long", "long", "java.lang.String"
 			};
 
-		_methodName20 = "getUnusedFilesByGroupAndState";
+		_methodName20 = "getUnusedFilesByGroupFileIdVersionId";
 
-		_methodParameterTypes20 = new String[] { "long", "boolean", "int", "int" };
+		_methodParameterTypes20 = new String[] { "long", "long", "long" };
 
-		_methodName21 = "countUnusedFilesByGroupAndState";
+		_methodName21 = "getUnusedFilesByGroupAndState";
 
-		_methodParameterTypes21 = new String[] { "long", "boolean" };
+		_methodParameterTypes21 = new String[] { "long", "boolean", "int", "int" };
 
-		_methodName22 = "cleanUnusedFile";
+		_methodName22 = "countUnusedFilesByGroupAndState";
 
-		_methodParameterTypes22 = new String[] {
+		_methodParameterTypes22 = new String[] { "long", "boolean" };
+
+		_methodName23 = "cleanUnusedFile";
+
+		_methodParameterTypes23 = new String[] {
 				"long", "java.lang.String", "long"
 			};
 	}
@@ -730,14 +734,49 @@ public class UnusedFileLocalServiceClp implements UnusedFileLocalService {
 	}
 
 	@Override
+	public com.liferay.dl.cleaner.model.UnusedFile getUnusedFilesByGroupFileIdVersionId(
+		long groupId, long fileEntryId, long fileVersionId)
+		throws com.liferay.dl.cleaner.NoSuchUnusedFileException,
+			com.liferay.portal.kernel.exception.SystemException {
+		Object returnObj = null;
+
+		try {
+			returnObj = _invokableLocalService.invokeMethod(_methodName20,
+					_methodParameterTypes20,
+					new Object[] { groupId, fileEntryId, fileVersionId });
+		}
+		catch (Throwable t) {
+			t = ClpSerializer.translateThrowable(t);
+
+			if (t instanceof com.liferay.dl.cleaner.NoSuchUnusedFileException) {
+				throw (com.liferay.dl.cleaner.NoSuchUnusedFileException)t;
+			}
+
+			if (t instanceof com.liferay.portal.kernel.exception.SystemException) {
+				throw (com.liferay.portal.kernel.exception.SystemException)t;
+			}
+
+			if (t instanceof RuntimeException) {
+				throw (RuntimeException)t;
+			}
+			else {
+				throw new RuntimeException(t.getClass().getName() +
+					" is not a valid exception");
+			}
+		}
+
+		return (com.liferay.dl.cleaner.model.UnusedFile)ClpSerializer.translateOutput(returnObj);
+	}
+
+	@Override
 	public java.util.List<com.liferay.dl.cleaner.model.UnusedFile> getUnusedFilesByGroupAndState(
 		long groupId, boolean deleted, int start, int end)
 		throws com.liferay.portal.kernel.exception.SystemException {
 		Object returnObj = null;
 
 		try {
-			returnObj = _invokableLocalService.invokeMethod(_methodName20,
-					_methodParameterTypes20,
+			returnObj = _invokableLocalService.invokeMethod(_methodName21,
+					_methodParameterTypes21,
 					new Object[] { groupId, deleted, start, end });
 		}
 		catch (Throwable t) {
@@ -765,8 +804,8 @@ public class UnusedFileLocalServiceClp implements UnusedFileLocalService {
 		Object returnObj = null;
 
 		try {
-			returnObj = _invokableLocalService.invokeMethod(_methodName21,
-					_methodParameterTypes21, new Object[] { groupId, deleted });
+			returnObj = _invokableLocalService.invokeMethod(_methodName22,
+					_methodParameterTypes22, new Object[] { groupId, deleted });
 		}
 		catch (Throwable t) {
 			t = ClpSerializer.translateThrowable(t);
@@ -793,8 +832,8 @@ public class UnusedFileLocalServiceClp implements UnusedFileLocalService {
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException {
 		try {
-			_invokableLocalService.invokeMethod(_methodName22,
-				_methodParameterTypes22,
+			_invokableLocalService.invokeMethod(_methodName23,
+				_methodParameterTypes23,
 				new Object[] {
 					unusedFileId,
 					
@@ -869,4 +908,6 @@ public class UnusedFileLocalServiceClp implements UnusedFileLocalService {
 	private String[] _methodParameterTypes21;
 	private String _methodName22;
 	private String[] _methodParameterTypes22;
+	private String _methodName23;
+	private String[] _methodParameterTypes23;
 }

@@ -319,6 +319,25 @@ public class LostFileLocalServiceWrapper implements LostFileLocalService,
 	}
 
 	/**
+	* Method to get Lostfile by group id, file entry id and file version id
+	*
+	* @param groupId
+	* @param fileEntryId
+	* @param fileVersionId
+	* @return
+	* @throws NoSuchLostFileException
+	* @throws SystemException
+	*/
+	@Override
+	public com.liferay.dl.cleaner.model.LostFile getLostFilesByGroupFileIdVersionId(
+		long groupId, long fileEntryId, long fileVersionId)
+		throws com.liferay.dl.cleaner.NoSuchLostFileException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _lostFileLocalService.getLostFilesByGroupFileIdVersionId(groupId,
+			fileEntryId, fileVersionId);
+	}
+
+	/**
 	* This method is used to get the total amount of files
 	*
 	* @param groupId

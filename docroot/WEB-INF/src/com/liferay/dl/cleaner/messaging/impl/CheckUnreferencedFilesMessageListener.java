@@ -120,12 +120,8 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 				}
 
 				try {
-					long repositoryId = DLFolderConstants.getDataRepositoryId(
-						dlFileEntry.getRepositoryId(), dlFileEntry.getFolderId());
-
-					if(!DLStoreUtil.hasFile(dlFileEntry.getCompanyId(),
-							repositoryId, dlFileEntry.getName(),
-							dlFileVersion.getVersion())) {
+					
+					if(!checkFileBinaryContent(dlFileEntry, dlFileVersion.getVersion())) {
 						comment = "DlFileVersion with ID " +
 								dlFileVersion.getFileVersionId() + " and version " +
 								dlFileVersion.getVersion() + " and DLFileEntry " +
@@ -167,7 +163,6 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 		int end = 1000;
 		DynamicQuery dynamicQuery = null;; 
 		long count = JournalArticleLocalServiceUtil.dynamicQueryCount(getJournalArticleDynanicQuery(groupId));
-		int orphanedFileVersionSize = 0;
 		int filesWithoutBinarySize = 0;
 		_log.debug("Total number of JournalArticles: " + count);
 		String comment = StringPool.BLANK;
@@ -202,7 +197,9 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 										contentElements = dynamicElement.elements("dynamic-content");
 										if(!contentElements.isEmpty()){
 											for(Element contentElement: contentElements){
-												valuesToProcess.add(JSONFactoryUtil.createJSONObject().put("groupId", journalArticle.getGroupId()).put("filePath", contentElement.getText()));
+												valuesToProcess.add(JSONFactoryUtil.createJSONObject().put("groupId", journalArticle.getGroupId())
+														.put("filePath", contentElement.getText())
+														.put("journalArticleId", journalArticle.getArticleId()));
 											}
 										}
 										break;
@@ -217,14 +214,11 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 					 
 					_log.error(e);
 						
-					
-					//UnusedFileLocalServiceUtil.addUnusedFile(userId,dlFileVersion.getFileEntryId(), dlFileVersion.getFileVersionId(), comment );
-					orphanedFileVersionSize++;
-					continue;
 				}
 
 
 			}
+			
 			if(!valuesToProcess.isEmpty()){
 				String filePath = StringPool.BLANK;
 				String uuid  = StringPool.BLANK;
@@ -232,12 +226,20 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 				for(JSONObject fileToProcess: valuesToProcess){
 					//documents/20181/0/out/b4ed70f6-8997-4981-a083-14a704352ee9
 					filePath = fileToProcess.getString("filePath");
-					
 					String[] parameters = filePath.split(StringPool.SLASH);
 					uuid = parameters[parameters.length -1 ];
 					articleGroupId = fileToProcess.getLong("groupId");
 					try{
 						DLFileEntry dlFileEntry = DLFileEntryLocalServiceUtil.getFileEntryByUuidAndGroupId(uuid, articleGroupId);
+						if(!checkFileBinaryContent(dlFileEntry, dlFileEntry.getVersion())){
+							DLFileVersion dlFileVersion = DLFileVersionLocalServiceUtil.getFileVersion(dlFileEntry.getFileEntryId(), dlFileEntry.getVersion());
+							comment = "Unreferenced file "+dlFileEntry.getFileEntryId() +" in journalArticle "+fileToProcess.getLong("journalArticleId");
+							_log.debug(comment);
+							//if(LostFileLocalServiceUtil)
+							LostFileLocalServiceUtil.addLostFile(userId,dlFileEntry.getFileEntryId(), dlFileVersion.getFileVersionId(), comment);
+							filesWithoutBinarySize++;
+						}
+						
 					}catch (NoSuchFileEntryException e) {
 						comment = "Unable to find file entry uuid_ " +
 								uuid +
@@ -252,9 +254,9 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 		}
 
 		_log.error("DlFileVersion objects with invalid file: " + filesWithoutBinarySize);
-		_log.error(orphanedFileVersionSize + " orphaned DLFileVersions found");
 		
 	}
+	
 	/**
 	 * This method provide dynamicQuery for DlFileVersions
 	 * 
@@ -281,6 +283,25 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 			dynamicQuery.add(RestrictionsFactoryUtil.eq("groupid", groupId));
 		}
 		return dynamicQuery;
+	}
+	
+	/**
+	 * This method checks the existence of dlFile binary content
+	 * 
+	 * @param dlFileEntry
+	 * @param version
+	 * @return
+	 * @throws PortalException
+	 * @throws SystemException
+	 */
+	private boolean checkFileBinaryContent(DLFileEntry dlFileEntry, String version) throws PortalException, SystemException{
+		boolean result = false;
+		long repositoryId = DLFolderConstants.getDataRepositoryId(
+				dlFileEntry.getRepositoryId(), dlFileEntry.getFolderId());
+		result = DLStoreUtil.hasFile(dlFileEntry.getCompanyId(),
+				repositoryId, dlFileEntry.getName(),
+				version);
+		return result;
 	}
 	
 	

@@ -26,6 +26,12 @@
 		<order by="desc">
             <order-column name="createDate"></order-column>
     	</order>
+    	
+    	<finder name="Group_FileEntryId_VersionId" return-type="UnusedFile">
+    		<finder-column name="groupId"></finder-column>
+            <finder-column name="fileEntryId"></finder-column>
+            <finder-column name="dlFileVersionId"></finder-column>
+    	</finder>
 		<finder name="Group_Deleted" return-type="Collection">
     		<finder-column name="groupId"></finder-column>
             <finder-column name="deleted"></finder-column>
@@ -53,6 +59,13 @@
 		<order by="desc">
             <order-column name="createDate"></order-column>
     	</order>
+    	
+    	<finder name="Group_FileEntryId_VersionId" return-type="LostFile">
+    		<finder-column name="groupId"></finder-column>
+            <finder-column name="fileEntryId"></finder-column>
+            <finder-column name="dlFileVersionId"></finder-column>
+    	</finder>
+    	
 		<finder name="Group_Deleted" return-type="Collection">
     		<finder-column name="groupId"></finder-column>
             <finder-column name="deleted"></finder-column>

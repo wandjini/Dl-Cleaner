@@ -124,13 +124,17 @@ public class LostFileLocalServiceClp implements LostFileLocalService {
 
 		_methodParameterTypes20 = new String[] { "long", "boolean", "int", "int" };
 
-		_methodName21 = "countLostFilesByGroupAndState";
+		_methodName21 = "getLostFilesByGroupFileIdVersionId";
 
-		_methodParameterTypes21 = new String[] { "long", "boolean" };
+		_methodParameterTypes21 = new String[] { "long", "long", "long" };
 
-		_methodName22 = "cleanLostFile";
+		_methodName22 = "countLostFilesByGroupAndState";
 
-		_methodParameterTypes22 = new String[] { "long", "long" };
+		_methodParameterTypes22 = new String[] { "long", "boolean" };
+
+		_methodName23 = "cleanLostFile";
+
+		_methodParameterTypes23 = new String[] { "long", "long" };
 	}
 
 	@Override
@@ -753,13 +757,48 @@ public class LostFileLocalServiceClp implements LostFileLocalService {
 	}
 
 	@Override
+	public com.liferay.dl.cleaner.model.LostFile getLostFilesByGroupFileIdVersionId(
+		long groupId, long fileEntryId, long fileVersionId)
+		throws com.liferay.dl.cleaner.NoSuchLostFileException,
+			com.liferay.portal.kernel.exception.SystemException {
+		Object returnObj = null;
+
+		try {
+			returnObj = _invokableLocalService.invokeMethod(_methodName21,
+					_methodParameterTypes21,
+					new Object[] { groupId, fileEntryId, fileVersionId });
+		}
+		catch (Throwable t) {
+			t = ClpSerializer.translateThrowable(t);
+
+			if (t instanceof com.liferay.dl.cleaner.NoSuchLostFileException) {
+				throw (com.liferay.dl.cleaner.NoSuchLostFileException)t;
+			}
+
+			if (t instanceof com.liferay.portal.kernel.exception.SystemException) {
+				throw (com.liferay.portal.kernel.exception.SystemException)t;
+			}
+
+			if (t instanceof RuntimeException) {
+				throw (RuntimeException)t;
+			}
+			else {
+				throw new RuntimeException(t.getClass().getName() +
+					" is not a valid exception");
+			}
+		}
+
+		return (com.liferay.dl.cleaner.model.LostFile)ClpSerializer.translateOutput(returnObj);
+	}
+
+	@Override
 	public int countLostFilesByGroupAndState(long groupId, boolean deleted)
 		throws com.liferay.portal.kernel.exception.SystemException {
 		Object returnObj = null;
 
 		try {
-			returnObj = _invokableLocalService.invokeMethod(_methodName21,
-					_methodParameterTypes21, new Object[] { groupId, deleted });
+			returnObj = _invokableLocalService.invokeMethod(_methodName22,
+					_methodParameterTypes22, new Object[] { groupId, deleted });
 		}
 		catch (Throwable t) {
 			t = ClpSerializer.translateThrowable(t);
@@ -785,8 +824,8 @@ public class LostFileLocalServiceClp implements LostFileLocalService {
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException {
 		try {
-			_invokableLocalService.invokeMethod(_methodName22,
-				_methodParameterTypes22, new Object[] { userId, lostFileId });
+			_invokableLocalService.invokeMethod(_methodName23,
+				_methodParameterTypes23, new Object[] { userId, lostFileId });
 		}
 		catch (Throwable t) {
 			t = ClpSerializer.translateThrowable(t);
@@ -854,4 +893,6 @@ public class LostFileLocalServiceClp implements LostFileLocalService {
 	private String[] _methodParameterTypes21;
 	private String _methodName22;
 	private String[] _methodParameterTypes22;
+	private String _methodName23;
+	private String[] _methodParameterTypes23;
 }

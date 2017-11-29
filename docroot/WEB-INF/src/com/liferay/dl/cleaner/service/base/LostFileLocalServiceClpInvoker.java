@@ -124,13 +124,17 @@ public class LostFileLocalServiceClpInvoker {
 
 		_methodParameterTypes47 = new String[] { "long", "boolean", "int", "int" };
 
-		_methodName48 = "countLostFilesByGroupAndState";
+		_methodName48 = "getLostFilesByGroupFileIdVersionId";
 
-		_methodParameterTypes48 = new String[] { "long", "boolean" };
+		_methodParameterTypes48 = new String[] { "long", "long", "long" };
 
-		_methodName49 = "cleanLostFile";
+		_methodName49 = "countLostFilesByGroupAndState";
 
-		_methodParameterTypes49 = new String[] { "long", "long" };
+		_methodParameterTypes49 = new String[] { "long", "boolean" };
+
+		_methodName50 = "cleanLostFile";
+
+		_methodParameterTypes50 = new String[] { "long", "long" };
 	}
 
 	public Object invokeMethod(String name, String[] parameterTypes,
@@ -251,12 +255,19 @@ public class LostFileLocalServiceClpInvoker {
 
 		if (_methodName48.equals(name) &&
 				Arrays.deepEquals(_methodParameterTypes48, parameterTypes)) {
-			return LostFileLocalServiceUtil.countLostFilesByGroupAndState(((Long)arguments[0]).longValue(),
-				((Boolean)arguments[1]).booleanValue());
+			return LostFileLocalServiceUtil.getLostFilesByGroupFileIdVersionId(((Long)arguments[0]).longValue(),
+				((Long)arguments[1]).longValue(),
+				((Long)arguments[2]).longValue());
 		}
 
 		if (_methodName49.equals(name) &&
 				Arrays.deepEquals(_methodParameterTypes49, parameterTypes)) {
+			return LostFileLocalServiceUtil.countLostFilesByGroupAndState(((Long)arguments[0]).longValue(),
+				((Boolean)arguments[1]).booleanValue());
+		}
+
+		if (_methodName50.equals(name) &&
+				Arrays.deepEquals(_methodParameterTypes50, parameterTypes)) {
 			LostFileLocalServiceUtil.cleanLostFile(((Long)arguments[0]).longValue(),
 				((Long)arguments[1]).longValue());
 
@@ -310,4 +321,6 @@ public class LostFileLocalServiceClpInvoker {
 	private String[] _methodParameterTypes48;
 	private String _methodName49;
 	private String[] _methodParameterTypes49;
+	private String _methodName50;
+	private String[] _methodParameterTypes50;
 }

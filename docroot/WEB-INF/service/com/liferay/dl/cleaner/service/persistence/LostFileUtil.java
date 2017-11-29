@@ -110,6 +110,96 @@ public class LostFileUtil {
 	}
 
 	/**
+	* Returns the lost file where groupId = &#63; and fileEntryId = &#63; and dlFileVersionId = &#63; or throws a {@link com.liferay.dl.cleaner.NoSuchLostFileException} if it could not be found.
+	*
+	* @param groupId the group ID
+	* @param fileEntryId the file entry ID
+	* @param dlFileVersionId the dl file version ID
+	* @return the matching lost file
+	* @throws com.liferay.dl.cleaner.NoSuchLostFileException if a matching lost file could not be found
+	* @throws SystemException if a system exception occurred
+	*/
+	public static com.liferay.dl.cleaner.model.LostFile findByGroup_FileEntryId_VersionId(
+		long groupId, long fileEntryId, long dlFileVersionId)
+		throws com.liferay.dl.cleaner.NoSuchLostFileException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence()
+				   .findByGroup_FileEntryId_VersionId(groupId, fileEntryId,
+			dlFileVersionId);
+	}
+
+	/**
+	* Returns the lost file where groupId = &#63; and fileEntryId = &#63; and dlFileVersionId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	*
+	* @param groupId the group ID
+	* @param fileEntryId the file entry ID
+	* @param dlFileVersionId the dl file version ID
+	* @return the matching lost file, or <code>null</code> if a matching lost file could not be found
+	* @throws SystemException if a system exception occurred
+	*/
+	public static com.liferay.dl.cleaner.model.LostFile fetchByGroup_FileEntryId_VersionId(
+		long groupId, long fileEntryId, long dlFileVersionId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence()
+				   .fetchByGroup_FileEntryId_VersionId(groupId, fileEntryId,
+			dlFileVersionId);
+	}
+
+	/**
+	* Returns the lost file where groupId = &#63; and fileEntryId = &#63; and dlFileVersionId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	*
+	* @param groupId the group ID
+	* @param fileEntryId the file entry ID
+	* @param dlFileVersionId the dl file version ID
+	* @param retrieveFromCache whether to use the finder cache
+	* @return the matching lost file, or <code>null</code> if a matching lost file could not be found
+	* @throws SystemException if a system exception occurred
+	*/
+	public static com.liferay.dl.cleaner.model.LostFile fetchByGroup_FileEntryId_VersionId(
+		long groupId, long fileEntryId, long dlFileVersionId,
+		boolean retrieveFromCache)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence()
+				   .fetchByGroup_FileEntryId_VersionId(groupId, fileEntryId,
+			dlFileVersionId, retrieveFromCache);
+	}
+
+	/**
+	* Removes the lost file where groupId = &#63; and fileEntryId = &#63; and dlFileVersionId = &#63; from the database.
+	*
+	* @param groupId the group ID
+	* @param fileEntryId the file entry ID
+	* @param dlFileVersionId the dl file version ID
+	* @return the lost file that was removed
+	* @throws SystemException if a system exception occurred
+	*/
+	public static com.liferay.dl.cleaner.model.LostFile removeByGroup_FileEntryId_VersionId(
+		long groupId, long fileEntryId, long dlFileVersionId)
+		throws com.liferay.dl.cleaner.NoSuchLostFileException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence()
+				   .removeByGroup_FileEntryId_VersionId(groupId, fileEntryId,
+			dlFileVersionId);
+	}
+
+	/**
+	* Returns the number of lost files where groupId = &#63; and fileEntryId = &#63; and dlFileVersionId = &#63;.
+	*
+	* @param groupId the group ID
+	* @param fileEntryId the file entry ID
+	* @param dlFileVersionId the dl file version ID
+	* @return the number of matching lost files
+	* @throws SystemException if a system exception occurred
+	*/
+	public static int countByGroup_FileEntryId_VersionId(long groupId,
+		long fileEntryId, long dlFileVersionId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence()
+				   .countByGroup_FileEntryId_VersionId(groupId, fileEntryId,
+			dlFileVersionId);
+	}
+
+	/**
 	* Returns all the lost files where groupId = &#63; and deleted = &#63;.
 	*
 	* @param groupId the group ID

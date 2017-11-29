@@ -111,6 +111,96 @@ public class UnusedFileUtil {
 	}
 
 	/**
+	* Returns the unused file where groupId = &#63; and fileEntryId = &#63; and dlFileVersionId = &#63; or throws a {@link com.liferay.dl.cleaner.NoSuchUnusedFileException} if it could not be found.
+	*
+	* @param groupId the group ID
+	* @param fileEntryId the file entry ID
+	* @param dlFileVersionId the dl file version ID
+	* @return the matching unused file
+	* @throws com.liferay.dl.cleaner.NoSuchUnusedFileException if a matching unused file could not be found
+	* @throws SystemException if a system exception occurred
+	*/
+	public static com.liferay.dl.cleaner.model.UnusedFile findByGroup_FileEntryId_VersionId(
+		long groupId, long fileEntryId, long dlFileVersionId)
+		throws com.liferay.dl.cleaner.NoSuchUnusedFileException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence()
+				   .findByGroup_FileEntryId_VersionId(groupId, fileEntryId,
+			dlFileVersionId);
+	}
+
+	/**
+	* Returns the unused file where groupId = &#63; and fileEntryId = &#63; and dlFileVersionId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	*
+	* @param groupId the group ID
+	* @param fileEntryId the file entry ID
+	* @param dlFileVersionId the dl file version ID
+	* @return the matching unused file, or <code>null</code> if a matching unused file could not be found
+	* @throws SystemException if a system exception occurred
+	*/
+	public static com.liferay.dl.cleaner.model.UnusedFile fetchByGroup_FileEntryId_VersionId(
+		long groupId, long fileEntryId, long dlFileVersionId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence()
+				   .fetchByGroup_FileEntryId_VersionId(groupId, fileEntryId,
+			dlFileVersionId);
+	}
+
+	/**
+	* Returns the unused file where groupId = &#63; and fileEntryId = &#63; and dlFileVersionId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	*
+	* @param groupId the group ID
+	* @param fileEntryId the file entry ID
+	* @param dlFileVersionId the dl file version ID
+	* @param retrieveFromCache whether to use the finder cache
+	* @return the matching unused file, or <code>null</code> if a matching unused file could not be found
+	* @throws SystemException if a system exception occurred
+	*/
+	public static com.liferay.dl.cleaner.model.UnusedFile fetchByGroup_FileEntryId_VersionId(
+		long groupId, long fileEntryId, long dlFileVersionId,
+		boolean retrieveFromCache)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence()
+				   .fetchByGroup_FileEntryId_VersionId(groupId, fileEntryId,
+			dlFileVersionId, retrieveFromCache);
+	}
+
+	/**
+	* Removes the unused file where groupId = &#63; and fileEntryId = &#63; and dlFileVersionId = &#63; from the database.
+	*
+	* @param groupId the group ID
+	* @param fileEntryId the file entry ID
+	* @param dlFileVersionId the dl file version ID
+	* @return the unused file that was removed
+	* @throws SystemException if a system exception occurred
+	*/
+	public static com.liferay.dl.cleaner.model.UnusedFile removeByGroup_FileEntryId_VersionId(
+		long groupId, long fileEntryId, long dlFileVersionId)
+		throws com.liferay.dl.cleaner.NoSuchUnusedFileException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence()
+				   .removeByGroup_FileEntryId_VersionId(groupId, fileEntryId,
+			dlFileVersionId);
+	}
+
+	/**
+	* Returns the number of unused files where groupId = &#63; and fileEntryId = &#63; and dlFileVersionId = &#63;.
+	*
+	* @param groupId the group ID
+	* @param fileEntryId the file entry ID
+	* @param dlFileVersionId the dl file version ID
+	* @return the number of matching unused files
+	* @throws SystemException if a system exception occurred
+	*/
+	public static int countByGroup_FileEntryId_VersionId(long groupId,
+		long fileEntryId, long dlFileVersionId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence()
+				   .countByGroup_FileEntryId_VersionId(groupId, fileEntryId,
+			dlFileVersionId);
+	}
+
+	/**
 	* Returns all the unused files where groupId = &#63; and deleted = &#63;.
 	*
 	* @param groupId the group ID

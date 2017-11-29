@@ -306,6 +306,25 @@ public class UnusedFileLocalServiceWrapper implements UnusedFileLocalService,
 	}
 
 	/**
+	* Method to get UnusedFile by group id, file entry id and file version id
+	*
+	* @param groupId
+	* @param fileEntryId
+	* @param fileVersionId
+	* @return
+	* @throws SystemException
+	* @throws NoSuchUnusedFileException
+	*/
+	@Override
+	public com.liferay.dl.cleaner.model.UnusedFile getUnusedFilesByGroupFileIdVersionId(
+		long groupId, long fileEntryId, long fileVersionId)
+		throws com.liferay.dl.cleaner.NoSuchUnusedFileException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _unusedFileLocalService.getUnusedFilesByGroupFileIdVersionId(groupId,
+			fileEntryId, fileVersionId);
+	}
+
+	/**
 	* <p>This method is used to retrieve File by groupId and state</p>
 	*
 	* @param groupId

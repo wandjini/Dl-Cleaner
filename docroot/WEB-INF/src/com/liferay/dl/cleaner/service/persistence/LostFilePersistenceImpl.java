@@ -85,6 +85,281 @@ public class LostFilePersistenceImpl extends BasePersistenceImpl<LostFile>
 	public static final FinderPath FINDER_PATH_COUNT_ALL = new FinderPath(LostFileModelImpl.ENTITY_CACHE_ENABLED,
 			LostFileModelImpl.FINDER_CACHE_ENABLED, Long.class,
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll", new String[0]);
+	public static final FinderPath FINDER_PATH_FETCH_BY_GROUP_FILEENTRYID_VERSIONID =
+		new FinderPath(LostFileModelImpl.ENTITY_CACHE_ENABLED,
+			LostFileModelImpl.FINDER_CACHE_ENABLED, LostFileImpl.class,
+			FINDER_CLASS_NAME_ENTITY, "fetchByGroup_FileEntryId_VersionId",
+			new String[] {
+				Long.class.getName(), Long.class.getName(), Long.class.getName()
+			},
+			LostFileModelImpl.GROUPID_COLUMN_BITMASK |
+			LostFileModelImpl.FILEENTRYID_COLUMN_BITMASK |
+			LostFileModelImpl.DLFILEVERSIONID_COLUMN_BITMASK);
+	public static final FinderPath FINDER_PATH_COUNT_BY_GROUP_FILEENTRYID_VERSIONID =
+		new FinderPath(LostFileModelImpl.ENTITY_CACHE_ENABLED,
+			LostFileModelImpl.FINDER_CACHE_ENABLED, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+			"countByGroup_FileEntryId_VersionId",
+			new String[] {
+				Long.class.getName(), Long.class.getName(), Long.class.getName()
+			});
+
+	/**
+	 * Returns the lost file where groupId = &#63; and fileEntryId = &#63; and dlFileVersionId = &#63; or throws a {@link com.liferay.dl.cleaner.NoSuchLostFileException} if it could not be found.
+	 *
+	 * @param groupId the group ID
+	 * @param fileEntryId the file entry ID
+	 * @param dlFileVersionId the dl file version ID
+	 * @return the matching lost file
+	 * @throws com.liferay.dl.cleaner.NoSuchLostFileException if a matching lost file could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public LostFile findByGroup_FileEntryId_VersionId(long groupId,
+		long fileEntryId, long dlFileVersionId)
+		throws NoSuchLostFileException, SystemException {
+		LostFile lostFile = fetchByGroup_FileEntryId_VersionId(groupId,
+				fileEntryId, dlFileVersionId);
+
+		if (lostFile == null) {
+			StringBundler msg = new StringBundler(8);
+
+			msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+			msg.append("groupId=");
+			msg.append(groupId);
+
+			msg.append(", fileEntryId=");
+			msg.append(fileEntryId);
+
+			msg.append(", dlFileVersionId=");
+			msg.append(dlFileVersionId);
+
+			msg.append(StringPool.CLOSE_CURLY_BRACE);
+
+			if (_log.isWarnEnabled()) {
+				_log.warn(msg.toString());
+			}
+
+			throw new NoSuchLostFileException(msg.toString());
+		}
+
+		return lostFile;
+	}
+
+	/**
+	 * Returns the lost file where groupId = &#63; and fileEntryId = &#63; and dlFileVersionId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param groupId the group ID
+	 * @param fileEntryId the file entry ID
+	 * @param dlFileVersionId the dl file version ID
+	 * @return the matching lost file, or <code>null</code> if a matching lost file could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public LostFile fetchByGroup_FileEntryId_VersionId(long groupId,
+		long fileEntryId, long dlFileVersionId) throws SystemException {
+		return fetchByGroup_FileEntryId_VersionId(groupId, fileEntryId,
+			dlFileVersionId, true);
+	}
+
+	/**
+	 * Returns the lost file where groupId = &#63; and fileEntryId = &#63; and dlFileVersionId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	 *
+	 * @param groupId the group ID
+	 * @param fileEntryId the file entry ID
+	 * @param dlFileVersionId the dl file version ID
+	 * @param retrieveFromCache whether to use the finder cache
+	 * @return the matching lost file, or <code>null</code> if a matching lost file could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public LostFile fetchByGroup_FileEntryId_VersionId(long groupId,
+		long fileEntryId, long dlFileVersionId, boolean retrieveFromCache)
+		throws SystemException {
+		Object[] finderArgs = new Object[] { groupId, fileEntryId, dlFileVersionId };
+
+		Object result = null;
+
+		if (retrieveFromCache) {
+			result = FinderCacheUtil.getResult(FINDER_PATH_FETCH_BY_GROUP_FILEENTRYID_VERSIONID,
+					finderArgs, this);
+		}
+
+		if (result instanceof LostFile) {
+			LostFile lostFile = (LostFile)result;
+
+			if ((groupId != lostFile.getGroupId()) ||
+					(fileEntryId != lostFile.getFileEntryId()) ||
+					(dlFileVersionId != lostFile.getDlFileVersionId())) {
+				result = null;
+			}
+		}
+
+		if (result == null) {
+			StringBundler query = new StringBundler(5);
+
+			query.append(_SQL_SELECT_LOSTFILE_WHERE);
+
+			query.append(_FINDER_COLUMN_GROUP_FILEENTRYID_VERSIONID_GROUPID_2);
+
+			query.append(_FINDER_COLUMN_GROUP_FILEENTRYID_VERSIONID_FILEENTRYID_2);
+
+			query.append(_FINDER_COLUMN_GROUP_FILEENTRYID_VERSIONID_DLFILEVERSIONID_2);
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(groupId);
+
+				qPos.add(fileEntryId);
+
+				qPos.add(dlFileVersionId);
+
+				List<LostFile> list = q.list();
+
+				if (list.isEmpty()) {
+					FinderCacheUtil.putResult(FINDER_PATH_FETCH_BY_GROUP_FILEENTRYID_VERSIONID,
+						finderArgs, list);
+				}
+				else {
+					if ((list.size() > 1) && _log.isWarnEnabled()) {
+						_log.warn(
+							"LostFilePersistenceImpl.fetchByGroup_FileEntryId_VersionId(long, long, long, boolean) with parameters (" +
+							StringUtil.merge(finderArgs) +
+							") yields a result set with more than 1 result. This violates the logical unique restriction. There is no order guarantee on which result is returned by this finder.");
+					}
+
+					LostFile lostFile = list.get(0);
+
+					result = lostFile;
+
+					cacheResult(lostFile);
+
+					if ((lostFile.getGroupId() != groupId) ||
+							(lostFile.getFileEntryId() != fileEntryId) ||
+							(lostFile.getDlFileVersionId() != dlFileVersionId)) {
+						FinderCacheUtil.putResult(FINDER_PATH_FETCH_BY_GROUP_FILEENTRYID_VERSIONID,
+							finderArgs, lostFile);
+					}
+				}
+			}
+			catch (Exception e) {
+				FinderCacheUtil.removeResult(FINDER_PATH_FETCH_BY_GROUP_FILEENTRYID_VERSIONID,
+					finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		if (result instanceof List<?>) {
+			return null;
+		}
+		else {
+			return (LostFile)result;
+		}
+	}
+
+	/**
+	 * Removes the lost file where groupId = &#63; and fileEntryId = &#63; and dlFileVersionId = &#63; from the database.
+	 *
+	 * @param groupId the group ID
+	 * @param fileEntryId the file entry ID
+	 * @param dlFileVersionId the dl file version ID
+	 * @return the lost file that was removed
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public LostFile removeByGroup_FileEntryId_VersionId(long groupId,
+		long fileEntryId, long dlFileVersionId)
+		throws NoSuchLostFileException, SystemException {
+		LostFile lostFile = findByGroup_FileEntryId_VersionId(groupId,
+				fileEntryId, dlFileVersionId);
+
+		return remove(lostFile);
+	}
+
+	/**
+	 * Returns the number of lost files where groupId = &#63; and fileEntryId = &#63; and dlFileVersionId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param fileEntryId the file entry ID
+	 * @param dlFileVersionId the dl file version ID
+	 * @return the number of matching lost files
+	 * @throws SystemException if a system exception occurred
+	 */
+	@Override
+	public int countByGroup_FileEntryId_VersionId(long groupId,
+		long fileEntryId, long dlFileVersionId) throws SystemException {
+		FinderPath finderPath = FINDER_PATH_COUNT_BY_GROUP_FILEENTRYID_VERSIONID;
+
+		Object[] finderArgs = new Object[] { groupId, fileEntryId, dlFileVersionId };
+
+		Long count = (Long)FinderCacheUtil.getResult(finderPath, finderArgs,
+				this);
+
+		if (count == null) {
+			StringBundler query = new StringBundler(4);
+
+			query.append(_SQL_COUNT_LOSTFILE_WHERE);
+
+			query.append(_FINDER_COLUMN_GROUP_FILEENTRYID_VERSIONID_GROUPID_2);
+
+			query.append(_FINDER_COLUMN_GROUP_FILEENTRYID_VERSIONID_FILEENTRYID_2);
+
+			query.append(_FINDER_COLUMN_GROUP_FILEENTRYID_VERSIONID_DLFILEVERSIONID_2);
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(groupId);
+
+				qPos.add(fileEntryId);
+
+				qPos.add(dlFileVersionId);
+
+				count = (Long)q.uniqueResult();
+
+				FinderCacheUtil.putResult(finderPath, finderArgs, count);
+			}
+			catch (Exception e) {
+				FinderCacheUtil.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	private static final String _FINDER_COLUMN_GROUP_FILEENTRYID_VERSIONID_GROUPID_2 =
+		"lostFile.groupId = ? AND ";
+	private static final String _FINDER_COLUMN_GROUP_FILEENTRYID_VERSIONID_FILEENTRYID_2 =
+		"lostFile.fileEntryId = ? AND ";
+	private static final String _FINDER_COLUMN_GROUP_FILEENTRYID_VERSIONID_DLFILEVERSIONID_2 =
+		"lostFile.dlFileVersionId = ?";
 	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_GROUP_DELETED =
 		new FinderPath(LostFileModelImpl.ENTITY_CACHE_ENABLED,
 			LostFileModelImpl.FINDER_CACHE_ENABLED, LostFileImpl.class,
@@ -631,6 +906,12 @@ public class LostFilePersistenceImpl extends BasePersistenceImpl<LostFile>
 		EntityCacheUtil.putResult(LostFileModelImpl.ENTITY_CACHE_ENABLED,
 			LostFileImpl.class, lostFile.getPrimaryKey(), lostFile);
 
+		FinderCacheUtil.putResult(FINDER_PATH_FETCH_BY_GROUP_FILEENTRYID_VERSIONID,
+			new Object[] {
+				lostFile.getGroupId(), lostFile.getFileEntryId(),
+				lostFile.getDlFileVersionId()
+			}, lostFile);
+
 		lostFile.resetOriginalValues();
 	}
 
@@ -687,6 +968,8 @@ public class LostFilePersistenceImpl extends BasePersistenceImpl<LostFile>
 
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
+
+		clearUniqueFindersCache(lostFile);
 	}
 
 	@Override
@@ -697,6 +980,66 @@ public class LostFilePersistenceImpl extends BasePersistenceImpl<LostFile>
 		for (LostFile lostFile : lostFiles) {
 			EntityCacheUtil.removeResult(LostFileModelImpl.ENTITY_CACHE_ENABLED,
 				LostFileImpl.class, lostFile.getPrimaryKey());
+
+			clearUniqueFindersCache(lostFile);
+		}
+	}
+
+	protected void cacheUniqueFindersCache(LostFile lostFile) {
+		if (lostFile.isNew()) {
+			Object[] args = new Object[] {
+					lostFile.getGroupId(), lostFile.getFileEntryId(),
+					lostFile.getDlFileVersionId()
+				};
+
+			FinderCacheUtil.putResult(FINDER_PATH_COUNT_BY_GROUP_FILEENTRYID_VERSIONID,
+				args, Long.valueOf(1));
+			FinderCacheUtil.putResult(FINDER_PATH_FETCH_BY_GROUP_FILEENTRYID_VERSIONID,
+				args, lostFile);
+		}
+		else {
+			LostFileModelImpl lostFileModelImpl = (LostFileModelImpl)lostFile;
+
+			if ((lostFileModelImpl.getColumnBitmask() &
+					FINDER_PATH_FETCH_BY_GROUP_FILEENTRYID_VERSIONID.getColumnBitmask()) != 0) {
+				Object[] args = new Object[] {
+						lostFile.getGroupId(), lostFile.getFileEntryId(),
+						lostFile.getDlFileVersionId()
+					};
+
+				FinderCacheUtil.putResult(FINDER_PATH_COUNT_BY_GROUP_FILEENTRYID_VERSIONID,
+					args, Long.valueOf(1));
+				FinderCacheUtil.putResult(FINDER_PATH_FETCH_BY_GROUP_FILEENTRYID_VERSIONID,
+					args, lostFile);
+			}
+		}
+	}
+
+	protected void clearUniqueFindersCache(LostFile lostFile) {
+		LostFileModelImpl lostFileModelImpl = (LostFileModelImpl)lostFile;
+
+		Object[] args = new Object[] {
+				lostFile.getGroupId(), lostFile.getFileEntryId(),
+				lostFile.getDlFileVersionId()
+			};
+
+		FinderCacheUtil.removeResult(FINDER_PATH_COUNT_BY_GROUP_FILEENTRYID_VERSIONID,
+			args);
+		FinderCacheUtil.removeResult(FINDER_PATH_FETCH_BY_GROUP_FILEENTRYID_VERSIONID,
+			args);
+
+		if ((lostFileModelImpl.getColumnBitmask() &
+				FINDER_PATH_FETCH_BY_GROUP_FILEENTRYID_VERSIONID.getColumnBitmask()) != 0) {
+			args = new Object[] {
+					lostFileModelImpl.getOriginalGroupId(),
+					lostFileModelImpl.getOriginalFileEntryId(),
+					lostFileModelImpl.getOriginalDlFileVersionId()
+				};
+
+			FinderCacheUtil.removeResult(FINDER_PATH_COUNT_BY_GROUP_FILEENTRYID_VERSIONID,
+				args);
+			FinderCacheUtil.removeResult(FINDER_PATH_FETCH_BY_GROUP_FILEENTRYID_VERSIONID,
+				args);
 		}
 	}
 
@@ -866,6 +1209,9 @@ public class LostFilePersistenceImpl extends BasePersistenceImpl<LostFile>
 
 		EntityCacheUtil.putResult(LostFileModelImpl.ENTITY_CACHE_ENABLED,
 			LostFileImpl.class, lostFile.getPrimaryKey(), lostFile);
+
+		clearUniqueFindersCache(lostFile);
+		cacheUniqueFindersCache(lostFile);
 
 		return lostFile;
 	}

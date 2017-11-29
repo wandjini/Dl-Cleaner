@@ -97,8 +97,10 @@ public class LostFileModelImpl extends BaseModelImpl<LostFile>
 				"value.object.column.bitmask.enabled.com.liferay.dl.cleaner.model.LostFile"),
 			true);
 	public static long DELETED_COLUMN_BITMASK = 1L;
-	public static long GROUPID_COLUMN_BITMASK = 2L;
-	public static long CREATEDATE_COLUMN_BITMASK = 4L;
+	public static long DLFILEVERSIONID_COLUMN_BITMASK = 2L;
+	public static long FILEENTRYID_COLUMN_BITMASK = 4L;
+	public static long GROUPID_COLUMN_BITMASK = 8L;
+	public static long CREATEDATE_COLUMN_BITMASK = 16L;
 
 	/**
 	 * Converts the soap model instance into a normal model instance.
@@ -394,7 +396,19 @@ public class LostFileModelImpl extends BaseModelImpl<LostFile>
 
 	@Override
 	public void setFileEntryId(long fileEntryId) {
+		_columnBitmask |= FILEENTRYID_COLUMN_BITMASK;
+
+		if (!_setOriginalFileEntryId) {
+			_setOriginalFileEntryId = true;
+
+			_originalFileEntryId = _fileEntryId;
+		}
+
 		_fileEntryId = fileEntryId;
+	}
+
+	public long getOriginalFileEntryId() {
+		return _originalFileEntryId;
 	}
 
 	@JSON
@@ -405,7 +419,19 @@ public class LostFileModelImpl extends BaseModelImpl<LostFile>
 
 	@Override
 	public void setDlFileVersionId(long dlFileVersionId) {
+		_columnBitmask |= DLFILEVERSIONID_COLUMN_BITMASK;
+
+		if (!_setOriginalDlFileVersionId) {
+			_setOriginalDlFileVersionId = true;
+
+			_originalDlFileVersionId = _dlFileVersionId;
+		}
+
 		_dlFileVersionId = dlFileVersionId;
+	}
+
+	public long getOriginalDlFileVersionId() {
+		return _originalDlFileVersionId;
 	}
 
 	@JSON
@@ -561,6 +587,14 @@ public class LostFileModelImpl extends BaseModelImpl<LostFile>
 		lostFileModelImpl._originalGroupId = lostFileModelImpl._groupId;
 
 		lostFileModelImpl._setOriginalGroupId = false;
+
+		lostFileModelImpl._originalFileEntryId = lostFileModelImpl._fileEntryId;
+
+		lostFileModelImpl._setOriginalFileEntryId = false;
+
+		lostFileModelImpl._originalDlFileVersionId = lostFileModelImpl._dlFileVersionId;
+
+		lostFileModelImpl._setOriginalDlFileVersionId = false;
 
 		lostFileModelImpl._originalDeleted = lostFileModelImpl._deleted;
 
@@ -742,7 +776,11 @@ public class LostFileModelImpl extends BaseModelImpl<LostFile>
 	private Date _createDate;
 	private Date _modifiedDate;
 	private long _fileEntryId;
+	private long _originalFileEntryId;
+	private boolean _setOriginalFileEntryId;
 	private long _dlFileVersionId;
+	private long _originalDlFileVersionId;
+	private boolean _setOriginalDlFileVersionId;
 	private String _dlFileTitle;
 	private Boolean _deleted;
 	private Boolean _originalDeleted;

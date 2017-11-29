@@ -269,6 +269,22 @@ public interface UnusedFileLocalService extends BaseLocalService,
 			com.liferay.portal.kernel.exception.SystemException;
 
 	/**
+	* Method to get UnusedFile by group id, file entry id and file version id
+	*
+	* @param groupId
+	* @param fileEntryId
+	* @param fileVersionId
+	* @return
+	* @throws SystemException
+	* @throws NoSuchUnusedFileException
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public com.liferay.dl.cleaner.model.UnusedFile getUnusedFilesByGroupFileIdVersionId(
+		long groupId, long fileEntryId, long fileVersionId)
+		throws com.liferay.dl.cleaner.NoSuchUnusedFileException,
+			com.liferay.portal.kernel.exception.SystemException;
+
+	/**
 	* <p>This method is used to retrieve File by groupId and state</p>
 	*
 	* @param groupId

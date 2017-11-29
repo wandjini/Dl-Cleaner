@@ -17,6 +17,9 @@ package com.liferay.dl.cleaner.service.impl;
 import java.util.Date;
 import java.util.List;
 
+import com.liferay.dl.cleaner.NoSuchLostFileException;
+import com.liferay.dl.cleaner.NoSuchUnusedFileException;
+import com.liferay.dl.cleaner.model.LostFile;
 import com.liferay.dl.cleaner.model.UnusedFile;
 import com.liferay.dl.cleaner.service.base.UnusedFileLocalServiceBaseImpl;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -87,6 +90,21 @@ public class UnusedFileLocalServiceImpl extends UnusedFileLocalServiceBaseImpl {
 		}
 		
 		return unusedFile;
+	}
+	
+	/**
+	 * Method to get UnusedFile by group id, file entry id and file version id
+	 * 
+	 * @param groupId
+	 * @param fileEntryId
+	 * @param fileVersionId
+	 * @return
+	 * @throws SystemException
+	 * @throws NoSuchUnusedFileException 
+	 */
+	public UnusedFile getUnusedFilesByGroupFileIdVersionId(long groupId, long fileEntryId, long fileVersionId) throws  NoSuchUnusedFileException, SystemException {
+		
+		return unusedFilePersistence.findByGroup_FileEntryId_VersionId(groupId, fileEntryId, fileVersionId);
 	}
 	
 	/**

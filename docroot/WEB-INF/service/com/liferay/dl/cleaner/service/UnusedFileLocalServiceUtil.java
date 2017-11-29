@@ -294,6 +294,25 @@ public class UnusedFileLocalServiceUtil {
 	}
 
 	/**
+	* Method to get UnusedFile by group id, file entry id and file version id
+	*
+	* @param groupId
+	* @param fileEntryId
+	* @param fileVersionId
+	* @return
+	* @throws SystemException
+	* @throws NoSuchUnusedFileException
+	*/
+	public static com.liferay.dl.cleaner.model.UnusedFile getUnusedFilesByGroupFileIdVersionId(
+		long groupId, long fileEntryId, long fileVersionId)
+		throws com.liferay.dl.cleaner.NoSuchUnusedFileException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getService()
+				   .getUnusedFilesByGroupFileIdVersionId(groupId, fileEntryId,
+			fileVersionId);
+	}
+
+	/**
 	* <p>This method is used to retrieve File by groupId and state</p>
 	*
 	* @param groupId

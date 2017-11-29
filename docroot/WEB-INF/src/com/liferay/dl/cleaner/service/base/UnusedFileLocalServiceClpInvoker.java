@@ -120,17 +120,21 @@ public class UnusedFileLocalServiceClpInvoker {
 				"long", "long", "long", "java.lang.String"
 			};
 
-		_methodName47 = "getUnusedFilesByGroupAndState";
+		_methodName47 = "getUnusedFilesByGroupFileIdVersionId";
 
-		_methodParameterTypes47 = new String[] { "long", "boolean", "int", "int" };
+		_methodParameterTypes47 = new String[] { "long", "long", "long" };
 
-		_methodName48 = "countUnusedFilesByGroupAndState";
+		_methodName48 = "getUnusedFilesByGroupAndState";
 
-		_methodParameterTypes48 = new String[] { "long", "boolean" };
+		_methodParameterTypes48 = new String[] { "long", "boolean", "int", "int" };
 
-		_methodName49 = "cleanUnusedFile";
+		_methodName49 = "countUnusedFilesByGroupAndState";
 
-		_methodParameterTypes49 = new String[] {
+		_methodParameterTypes49 = new String[] { "long", "boolean" };
+
+		_methodName50 = "cleanUnusedFile";
+
+		_methodParameterTypes50 = new String[] {
 				"long", "java.lang.String", "long"
 			};
 	}
@@ -245,20 +249,27 @@ public class UnusedFileLocalServiceClpInvoker {
 
 		if (_methodName47.equals(name) &&
 				Arrays.deepEquals(_methodParameterTypes47, parameterTypes)) {
+			return UnusedFileLocalServiceUtil.getUnusedFilesByGroupFileIdVersionId(((Long)arguments[0]).longValue(),
+				((Long)arguments[1]).longValue(),
+				((Long)arguments[2]).longValue());
+		}
+
+		if (_methodName48.equals(name) &&
+				Arrays.deepEquals(_methodParameterTypes48, parameterTypes)) {
 			return UnusedFileLocalServiceUtil.getUnusedFilesByGroupAndState(((Long)arguments[0]).longValue(),
 				((Boolean)arguments[1]).booleanValue(),
 				((Integer)arguments[2]).intValue(),
 				((Integer)arguments[3]).intValue());
 		}
 
-		if (_methodName48.equals(name) &&
-				Arrays.deepEquals(_methodParameterTypes48, parameterTypes)) {
+		if (_methodName49.equals(name) &&
+				Arrays.deepEquals(_methodParameterTypes49, parameterTypes)) {
 			return UnusedFileLocalServiceUtil.countUnusedFilesByGroupAndState(((Long)arguments[0]).longValue(),
 				((Boolean)arguments[1]).booleanValue());
 		}
 
-		if (_methodName49.equals(name) &&
-				Arrays.deepEquals(_methodParameterTypes49, parameterTypes)) {
+		if (_methodName50.equals(name) &&
+				Arrays.deepEquals(_methodParameterTypes50, parameterTypes)) {
 			UnusedFileLocalServiceUtil.cleanUnusedFile(((Long)arguments[0]).longValue(),
 				(java.lang.String)arguments[1], ((Long)arguments[2]).longValue());
 
@@ -312,4 +323,6 @@ public class UnusedFileLocalServiceClpInvoker {
 	private String[] _methodParameterTypes48;
 	private String _methodName49;
 	private String[] _methodParameterTypes49;
+	private String _methodName50;
+	private String[] _methodParameterTypes50;
 }

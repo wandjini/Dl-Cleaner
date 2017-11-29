@@ -17,6 +17,7 @@ package com.liferay.dl.cleaner.service.impl;
 import java.util.Date;
 import java.util.List;
 
+import com.liferay.dl.cleaner.NoSuchLostFileException;
 import com.liferay.dl.cleaner.model.LostFile;
 import com.liferay.dl.cleaner.service.base.LostFileLocalServiceBaseImpl;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -110,6 +111,21 @@ public class LostFileLocalServiceImpl extends LostFileLocalServiceBaseImpl {
 	public List<LostFile> getLostFilesByGroupAndState(long groupId, boolean deleted, int start, int end) throws SystemException{
 		
 		return lostFilePersistence.findByGroup_Deleted(groupId, deleted, start, end);
+	}
+	
+	/**
+	 * Method to get Lostfile by group id, file entry id and file version id
+	 * 
+	 * @param groupId
+	 * @param fileEntryId
+	 * @param fileVersionId
+	 * @return
+	 * @throws NoSuchLostFileException
+	 * @throws SystemException
+	 */
+	public LostFile getLostFilesByGroupFileIdVersionId(long groupId, long fileEntryId, long fileVersionId) throws NoSuchLostFileException, SystemException {
+		
+		return lostFilePersistence.findByGroup_FileEntryId_VersionId(groupId, fileEntryId, fileVersionId);
 	}
 	
 	/**
