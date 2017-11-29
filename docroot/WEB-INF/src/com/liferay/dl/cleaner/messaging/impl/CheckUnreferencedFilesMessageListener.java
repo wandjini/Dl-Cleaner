@@ -175,7 +175,7 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 			_log.debug("Processing (start, end): (" + start + ", " + end + ")" );
 			dynamicQuery = getJournalArticleDynanicQuery(groupId);
 			dynamicQuery.setLimit(start, end);
-			List<String> valuesToProcess = new ArrayList<>();
+			List<JSONObject> valuesToProcess = new ArrayList<>();
 			
 			@SuppressWarnings("unchecked")
 			List<JournalArticle> journalArticles = 
@@ -202,7 +202,7 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 										contentElements = dynamicElement.elements("dynamic-content");
 										if(!contentElements.isEmpty()){
 											for(Element contentElement: contentElements){
-												valuesToProcess.add(contentElement.getText());
+												valuesToProcess.add(JSONFactoryUtil.createJSONObject().put("groupId", journalArticle.getGroupId()).put("filePath", contentElement.getText()));
 											}
 										}
 										break;
@@ -211,6 +211,7 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 							}
 						}
 					}
+				
 				}
 				catch (Exception e) {
 					 
@@ -224,7 +225,28 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 
 
 			}
-
+			if(!valuesToProcess.isEmpty()){
+				String filePath = StringPool.BLANK;
+				String uuid  = StringPool.BLANK;
+				long articleGroupId = 0;
+				for(JSONObject fileToProcess: valuesToProcess){
+					//documents/20181/0/out/b4ed70f6-8997-4981-a083-14a704352ee9
+					filePath = fileToProcess.getString("filePath");
+					
+					String[] parameters = filePath.split(StringPool.SLASH);
+					uuid = parameters[parameters.length -1 ];
+					articleGroupId = fileToProcess.getLong("groupId");
+					try{
+						DLFileEntry dlFileEntry = DLFileEntryLocalServiceUtil.getFileEntryByUuidAndGroupId(uuid, articleGroupId);
+					}catch (NoSuchFileEntryException e) {
+						comment = "Unable to find file entry uuid_ " +
+								uuid +
+								" groupId " +
+								articleGroupId; 
+						_log.error(comment);
+					}
+				}
+			}
 			start+=1000;
 			end+=1000;
 		}
