@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE service-builder PUBLIC "-//Liferay//DTD Service Builder 6.2.0//EN" "http://www.liferay.com/dtd/liferay-service-builder_6_2_0.dtd">
+<service-builder package-path="com.liferay.dl.cleaner">
+	<author>guywandji</author>
+	<namespace>DlCleaner</namespace>
+
+	<entity name="UnusedFile" remote-service="true" local-service="true">
+		
+		<!-- PK fields -->
+		<column name="unusedFileId" type="long" primary="true"></column>
+		
+		<!-- Audit fields -->
+    	<column name="groupId" type="long"></column>
+    	<column name="companyId" type="long"></column>
+    	<column name="userId" type="long"></column>
+    	<column name="userName" type="String"></column>
+    	<column name="createDate" type="Date"></column>
+    	<column name="modifiedDate" type="Date"></column>
+		<!-- Others -->
+		<column name="fileEntryId" type="long"></column>
+		<column name="dlFileVersionId" type="long"></column>
+		<column name="dlFileTitle" type="String"></column>
+		<column name="deleted" type="Boolean"></column>
+		<column name="comment" type="String"></column>
+		
+		<order by="desc">
+            <order-column name="createDate"></order-column>
+    	</order>
+		<finder name="Group_Deleted" return-type="Collection">
+    		<finder-column name="groupId"></finder-column>
+            <finder-column name="deleted"></finder-column>
+    	</finder>
+	</entity>
+	<entity name="LostFile" remote-service="true" local-service="true">
+		
+		<!-- PK fields -->
+		<column name="lostFileId" type="long" primary="true"></column>
+		
+		<!-- Audit fields -->
+    	<column name="groupId" type="long"></column>
+    	<column name="companyId" type="long"></column>
+    	<column name="userId" type="long"></column>
+    	<column name="userName" type="String"></column>
+    	<column name="createDate" type="Date"></column>
+    	<column name="modifiedDate" type="Date"></column>
+		<!-- Others -->
+		<column name="fileEntryId" type="long"></column>
+		<column name="dlFileVersionId" type="long"></column>
+		<column name="dlFileTitle" type="String"></column>
+		<column name="deleted" type="Boolean"></column>
+		<column name="comment" type="String"></column>
+		
+		<order by="desc">
+            <order-column name="createDate"></order-column>
+    	</order>
+		<finder name="Group_Deleted" return-type="Collection">
+    		<finder-column name="groupId"></finder-column>
+            <finder-column name="deleted"></finder-column>
+    	</finder>
+	</entity>
+</service-builder>

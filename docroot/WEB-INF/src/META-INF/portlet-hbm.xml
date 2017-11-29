@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping default-lazy="false" auto-import="false">
+	<import class="com.liferay.dl.cleaner.model.LostFile" />
+	<import class="com.liferay.dl.cleaner.model.UnusedFile" />
+	<class name="com.liferay.dl.cleaner.model.impl.LostFileImpl" table="DlCleaner_LostFile">
+		<cache usage="read-write" />
+		<id name="lostFileId" type="long">
+			<generator class="assigned" />
+		</id>
+		<property name="groupId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="companyId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="userId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="userName" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="createDate" type="org.hibernate.type.TimestampType" />
+		<property name="modifiedDate" type="org.hibernate.type.TimestampType" />
+		<property name="fileEntryId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="dlFileVersionId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="dlFileTitle" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="deleted" type="com.liferay.portal.dao.orm.hibernate.BooleanType" />
+		<property name="comment" type="com.liferay.portal.dao.orm.hibernate.StringType" column="comment_" />
+	</class>
+	<class name="com.liferay.dl.cleaner.model.impl.UnusedFileImpl" table="DlCleaner_UnusedFile">
+		<cache usage="read-write" />
+		<id name="unusedFileId" type="long">
+			<generator class="assigned" />
+		</id>
+		<property name="groupId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="companyId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="userId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="userName" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="createDate" type="org.hibernate.type.TimestampType" />
+		<property name="modifiedDate" type="org.hibernate.type.TimestampType" />
+		<property name="fileEntryId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="dlFileVersionId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="dlFileTitle" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="deleted" type="com.liferay.portal.dao.orm.hibernate.BooleanType" />
+		<property name="comment" type="com.liferay.portal.dao.orm.hibernate.StringType" column="comment_" />
+	</class>
+</hibernate-mapping>
