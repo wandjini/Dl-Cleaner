@@ -58,18 +58,18 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 			return;
 		}
 		Object obj = message.getPayload();
-		long groupId = 0;
+		long companyId = 0;
 		long userId = 0;
 		
 		try {
 			if(obj != null){
 				JSONObject payload = JSONFactoryUtil.createJSONObject(obj.toString());
 				userId = payload.getLong("userId");
-				groupId = payload.getLong("groupId");
+				companyId = payload.getLong("companyId");
 			}
 			
-			getJournalArticleReferencedFiles(groupId,userId);
-			getDlFilesWithNoReferenceInWebContent(groupId, userId);
+			getJournalArticleReferencedFiles(companyId,userId);
+			getDlFilesWithNoReferenceInWebContent(companyId, userId);
 		} catch (Exception e) {
 			_log.error(e);
 			e.printStackTrace();
@@ -104,7 +104,7 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 		int end = 1000;
 		DynamicQuery dynamicQuery = null;; 
 		long count = DLFileEntryLocalServiceUtil.dynamicQueryCount(getDlFileDynanicQuery(companyId));
-		int orphanedFileVersionSize = 0;
+		int unusedFilesFoundSize = 0;
 
 		_log.debug("Total number of DLFileVersions: " + count);
 		String comment = StringPool.BLANK;
@@ -128,10 +128,11 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 						UnusedFileLocalServiceUtil.getUnusedFilesByGroupFileIdVersionId(dlFileEntry.getGroupId(), 
 								dlFileEntry.getFileEntryId(), dlFileEntry.getFileVersion().getFileVersionId());
 						
-						orphanedFileVersionSize++;
+						
 					} catch (NoSuchUnusedFileException e2) {
 						_log.error(e2);
 						UnusedFileLocalServiceUtil.addUnusedFile(userId,dlFileEntry.getFileEntryId(), dlFileEntry.getFileVersion().getFileVersionId(), comment );
+						unusedFilesFoundSize++;
 					}
 					
 				}
@@ -141,7 +142,7 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 			start+=1000;
 			end+=1000;
 		}
-		_log.error(orphanedFileVersionSize + " orphaned DLFileVersions found");
+		_log.error(unusedFilesFoundSize + " unused files found");
 		
 	}
 
