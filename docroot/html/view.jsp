@@ -4,16 +4,14 @@
 
 <liferay-ui:error exception="<%=PrincipalException.class %>" message="delete-file-principal-exception"></liferay-ui:error>
 <liferay-ui:error key="generic-error" message="generic-error-msg"></liferay-ui:error>
-<portlet:renderURL var="orPhanFilesUrl">
-	<portlet:param name="mvcPath" value="/html/orphanfile/view.jsp"/>
-</portlet:renderURL>
+
 <aui:button href="<%=orPhanFilesUrl %>" value="orphanFiles"/>
 <liferay-ui:search-container 
 	emptyResultsMessage="no-entries-were-found"
 	iteratorURL="<%= iteratorURL %>"
 	deltaConfigurable="true"
 	>
-	 <liferay-ui:searchdeprecatedTotIntegerlts
+	 <liferay-ui:search-container-results
                 results="<%= UnusedFileLocalServiceUtil.getUnusedFilesByCompanyAndState(themeDisplay.getCompanyId(), false,  searchContainer.getStart(), searchContainer.getEnd()) %>"
                 total="<%=UnusedFileLocalServiceUtil.countUnusedFilesByCompanyAndState(themeDisplay.getCompanyId(), false)%>"
         />

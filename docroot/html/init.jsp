@@ -21,7 +21,8 @@
 <%@page import="com.liferay.portal.kernel.util.WebKeys"%>
 <%@page import="com.liferay.portal.kernel.dao.search.ResultRow"%>
 <%@page import="com.liferay.portal.kernel.dao.search.SearchContainer"%>
-
+<%@page import="com.liferay.portal.kernel.dao.search.DisplayTerms"%>
+<%@page import="com.liferay.portal.kernel.util.ParamUtil"%>
 <%@page import="com.liferay.dl.cleaner.portlet.util.ActionKeys"%>
 
 <%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %>
@@ -34,3 +35,9 @@
 <%@ taglib uri="http://liferay.com/tld/util" prefix="liferay-util" %>
 <portlet:defineObjects />
 <liferay-theme:defineObjects />
+<portlet:renderURL var="orPhanFilesUrl">
+	<portlet:param name="mvcPath" value="/html/orphanfile/view.jsp"/>
+</portlet:renderURL>
+<%
+	Boolean orphan = ParamUtil.getBoolean(renderRequest, "orphan", true);
+%>
