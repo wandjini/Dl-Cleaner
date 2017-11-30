@@ -1,19 +1,21 @@
-<%@page import="com.liferay.portal.security.auth.PrincipalException"%>
-<%@page import="com.liferay.dl.cleaner.service.UnusedFileLocalServiceUtil"%>
+
 <%@include file="/html/init.jsp" %>
 <liferay-portlet:renderURL varImpl="iteratorURL"></liferay-portlet:renderURL>
 
 <liferay-ui:error exception="<%=PrincipalException.class %>" message="delete-file-principal-exception"></liferay-ui:error>
 <liferay-ui:error key="generic-error" message="generic-error-msg"></liferay-ui:error>
-
+<portlet:renderURL var="orPhanFilesUrl">
+	<portlet:param name="mvcPath" value="/html/orphanfile/view.jsp"/>
+</portlet:renderURL>
+<aui:button href="<%=orPhanFilesUrl %>" value="orphanFiles"/>
 <liferay-ui:search-container 
 	emptyResultsMessage="no-entries-were-found"
 	iteratorURL="<%= iteratorURL %>"
 	deltaConfigurable="true"
 	>
-	 <liferay-ui:search-container-results
-                results="<%= UnusedFileLocalServiceUtil.getUnusedFilesByGroupAndState(themeDisplay.getScopeGroupId(), false,  searchContainer.getStart(), searchContainer.getEnd()) %>"
-                total="<%=UnusedFileLocalServiceUtil.countUnusedFilesByGroupAndState(themeDisplay.getScopeGroupId(), false)%>"
+	 <liferay-ui:searchdeprecatedTotIntegerlts
+                results="<%= UnusedFileLocalServiceUtil.getUnusedFilesByCompanyAndState(themeDisplay.getCompanyId(), false,  searchContainer.getStart(), searchContainer.getEnd()) %>"
+                total="<%=UnusedFileLocalServiceUtil.countUnusedFilesByCompanyAndState(themeDisplay.getCompanyId(), false)%>"
         />
         <liferay-ui:search-container-row
                 className="com.liferay.dl.cleaner.model.UnusedFile"

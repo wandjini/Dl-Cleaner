@@ -13,7 +13,9 @@
  *
  */
 %>
-
+<%@page import="com.liferay.portal.security.auth.PrincipalException"%>
+<%@page import="com.liferay.dl.cleaner.service.UnusedFileLocalServiceUtil"%>
+<%@page import="com.liferay.dl.cleaner.service.WcReferencedFileLocalServiceUtil"%>
 <%@page import="com.liferay.dl.cleaner.model.UnusedFile"%>
 <%@page import="com.liferay.dl.cleaner.service.permission.UnusedFilePermission"%>
 <%@page import="com.liferay.portal.kernel.util.WebKeys"%>
