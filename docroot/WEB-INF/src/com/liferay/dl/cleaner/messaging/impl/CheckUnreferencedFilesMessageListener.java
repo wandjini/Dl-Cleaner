@@ -3,6 +3,9 @@ package com.liferay.dl.cleaner.messaging.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jsoup.Jsoup;
+import org.jsoup.select.Elements;
+
 import com.liferay.dl.cleaner.NoSuchUnusedFileException;
 import com.liferay.dl.cleaner.NoSuchWcReferencedFileException;
 import com.liferay.dl.cleaner.portlet.util.ActionKeys;
@@ -20,11 +23,14 @@ import com.liferay.portal.kernel.messaging.Message;
 import com.liferay.portal.kernel.messaging.MessageListener;
 import com.liferay.portal.kernel.messaging.MessageListenerException;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.xml.Attribute;
 import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
+import com.liferay.portal.model.Image;
 import com.liferay.portal.model.Lock;
+import com.liferay.portal.service.ImageLocalServiceUtil;
 import com.liferay.portal.service.LockLocalServiceUtil;
 import com.liferay.portlet.documentlibrary.model.DLFileEntry;
 import com.liferay.portlet.documentlibrary.service.DLFileEntryLocalServiceUtil;
@@ -32,7 +38,7 @@ import com.liferay.portlet.journal.model.JournalArticle;
 import com.liferay.portlet.journal.service.JournalArticleLocalServiceUtil;
 
 /**
- * This class is use to retrieve potentcial unrefenced and lost files
+ * This class is use to retrieve potential unreferenced and lost files
  * 
  * @author guywandji
  *
@@ -88,33 +94,33 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 	/**
 	 * This method retrieves Orphaned file versions and files without binary content
 	 * 
-	 * @param groupId
+	 * @param companyId
 	 * @param userId
 	 * @throws SystemException
 	 * @throws PortalException
 	 */
-	private void getDlFilesWithNoReferenceInWebContent(long groupId, long userId) throws SystemException, PortalException{
+	private void getDlFilesWithNoReferenceInWebContent(long companyId, long userId) throws SystemException, PortalException{
 		int start = 0;
 		int end = 1000;
 		DynamicQuery dynamicQuery = null;; 
-		long count = DLFileEntryLocalServiceUtil.dynamicQueryCount(getDlFileDynanicQuery(groupId));
+		long count = DLFileEntryLocalServiceUtil.dynamicQueryCount(getDlFileDynanicQuery(companyId));
 		int orphanedFileVersionSize = 0;
 
 		_log.debug("Total number of DLFileVersions: " + count);
 		String comment = StringPool.BLANK;
 		while (start < count) {
 			_log.debug("Processing (start, end): (" + start + ", " + end + ")" );
-			dynamicQuery = getDlFileDynanicQuery(groupId);
+			dynamicQuery = getDlFileDynanicQuery(companyId);
 			dynamicQuery.setLimit(start, end);
 			@SuppressWarnings("unchecked")
 			List<DLFileEntry> dlFileEntries = 
 					DLFileEntryLocalServiceUtil.dynamicQuery(dynamicQuery);
-
+			
 			for (DLFileEntry dlFileEntry : dlFileEntries) {
 										
 				try {
 					
-					WcReferencedFileLocalServiceUtil.getWcReferencedFilesByGroupAndFileUUID(dlFileEntry.getGroupId(), dlFileEntry.getUuid());
+					WcReferencedFileLocalServiceUtil.getWcReferencedFilesByCompanyAndFileUUID(dlFileEntry.getCompanyId(), dlFileEntry.getUuid());
 					
 				}catch (NoSuchWcReferencedFileException ex) {
 					_log.error("The file "+ dlFileEntry.getFileEntryId() +" doesn't exit yet in the table");
@@ -175,18 +181,28 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 					List<Element> dynamicElements = rootElement.elements("dynamic-element");
 					List<Attribute> elementAttributes = null;
 					List<Element> contentElements = null;
+					String type = StringPool.BLANK;
+					String filePath = StringPool.BLANK;
 					if(!dynamicElements.isEmpty()){
 						for(Element dynamicElement:dynamicElements){
 							elementAttributes = dynamicElement.attributes();
 							if(!elementAttributes.isEmpty()){
 								for(Attribute elementAttribute:elementAttributes){
-									if(elementAttribute.getName().equals("type") && elementAttribute.getValue().equals("document_library")){
-										contentElements = dynamicElement.elements("dynamic-content");
-										if(!contentElements.isEmpty()){
-											for(Element contentElement: contentElements){
-												valuesToProcess.add(JSONFactoryUtil.createJSONObject().put("groupId", journalArticle.getGroupId())
-														.put("filePath", contentElement.getText())
-														.put("articleId", journalArticle.getArticleId()));
+									if(elementAttribute.getName().equals("type") ){
+										type = elementAttribute.getValue();
+										if(type.equals(_DOCUMENT_LIBRARY) || type.equals(_IMAGE) || type.equals(_TEXT_AREA)){
+											contentElements = dynamicElement.elements("dynamic-content");
+											if(!contentElements.isEmpty()){
+												for(Element contentElement: contentElements){
+													filePath = getFilePathFromElement(contentElement, type);
+													if(Validator.isNotNull(filePath)){
+														valuesToProcess.add(JSONFactoryUtil.createJSONObject().put("groupId", journalArticle.getGroupId())
+															.put("filePath", filePath)
+															.put("articleId", journalArticle.getArticleId())
+															.put("companyId", journalArticle.getCompanyId())
+															.put("type", type));
+													}
+												}
 											}
 										}
 										break;
@@ -207,20 +223,48 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 			}
 			
 			if(!valuesToProcess.isEmpty()){
-				String filePath = StringPool.BLANK;
+				
+				String[] files = null;
 				String dlFileUuId  = StringPool.BLANK;
 				String articleId = StringPool.BLANK;
+				long companyId = 0;
 				long articleGroupId = 0;
+				boolean orfan = false;
+				String type = StringPool.BLANK;
 				for(JSONObject fileToProcess: valuesToProcess){
-					filePath = fileToProcess.getString("filePath");
-					String[] parameters = filePath.split(StringPool.SLASH);
-					dlFileUuId = parameters[parameters.length -1 ];
-					articleGroupId = fileToProcess.getLong("groupId");
-					articleId = fileToProcess.getString("articleId");
-					try{
-						WcReferencedFileLocalServiceUtil.getWcReferencedFilesByGroupAndFileUUID(articleGroupId, dlFileUuId);
-					}catch (NoSuchWcReferencedFileException e) {
-						WcReferencedFileLocalServiceUtil.addWcReferencedFile(userId, articleGroupId, dlFileUuId, articleId, StringPool.BLANK);
+					files = fileToProcess.getString("filePath").split(";");
+					
+					for(int i = 0; i < files.length; i++){
+						type = fileToProcess.getString("type").equals(_IMAGE) ? _IMAGE : _DOCUMENT_LIBRARY;
+						String[] parameters = files[i].split(StringPool.SLASH);
+						if(type.equals(_IMAGE)){
+							String[] splitSrc =  parameters[parameters.length -1 ].split("=");
+							dlFileUuId = splitSrc[1].split("&")[0];
+						}
+						else{
+							dlFileUuId = parameters[parameters.length -1 ];
+						}
+						articleGroupId = fileToProcess.getLong("groupId");
+						articleId = fileToProcess.getString("articleId");
+						companyId = fileToProcess.getLong("companyId");
+						
+						try{
+							if(type.equals(_IMAGE)){
+								Image image = ImageLocalServiceUtil.getImage(Long.valueOf(dlFileUuId));
+								orfan = image == null;
+								
+							}
+							else{
+								DLFileEntry dlFileEntry =  DLFileEntryLocalServiceUtil.fetchDLFileEntryByUuidAndCompanyId(dlFileUuId, companyId);
+								orfan = dlFileEntry == null;
+							}
+							
+							WcReferencedFileLocalServiceUtil.getWcReferencedFilesByCompanyAndFileUUID(companyId, dlFileUuId);
+							
+						}catch (NoSuchWcReferencedFileException e) {
+							WcReferencedFileLocalServiceUtil.addWcReferencedFile(userId, articleGroupId, dlFileUuId, articleId, type, orfan );
+						}
+						
 					}
 					
 				}
@@ -234,13 +278,13 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 	/**
 	 * This method provide dynamicQuery for DlFileVersions
 	 * 
-	 * @param groupId
+	 * @param companyId
 	 * @return
 	 */
-	private DynamicQuery getDlFileDynanicQuery(long groupId){
+	private DynamicQuery getDlFileDynanicQuery(long companyId){
 		DynamicQuery dynamicQuery = DLFileEntryLocalServiceUtil.dynamicQuery();
-		if(groupId > 0){
-			dynamicQuery.add(RestrictionsFactoryUtil.eq("groupid", groupId));
+		if(companyId > 0){
+			dynamicQuery.add(RestrictionsFactoryUtil.eq("companyid", companyId));
 		}
 		return dynamicQuery;
 	}
@@ -248,15 +292,61 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 	/**
 	 * This method provide dynamicQuery for JournalArticle
 	 * 
-	 * @param groupId
+	 * @param companyId
 	 * @return
 	 */
-	private DynamicQuery getJournalArticleDynanicQuery(long groupId){
+	private DynamicQuery getJournalArticleDynanicQuery(long companyId){
 		DynamicQuery dynamicQuery = JournalArticleLocalServiceUtil.dynamicQuery();
-		if(groupId > 0){
-			dynamicQuery.add(RestrictionsFactoryUtil.eq("groupid", groupId));
+		if(companyId > 0){
+			dynamicQuery.add(RestrictionsFactoryUtil.eq("companyid", companyId));
 		}
 		return dynamicQuery;
 	}	
 	
+	
+	/**
+	 * 
+	 * This Method retrieve the filePath based on element type
+	 * 
+	 * @param element
+	 * @param type
+	 * @return
+	 */
+	private String getFilePathFromElement(Element element, String type){
+		
+		String result = "";
+		if(type.equals(_DOCUMENT_LIBRARY) || type.equals(_IMAGE)){
+			result = element.getText();
+		}
+		else if(type.equals(_TEXT_AREA)){
+			String html = element.getText();
+			
+			if(Validator.isNotNull(html)){
+				org.jsoup.nodes.Document document = Jsoup.parse(html);
+				Elements anchors = document.select("a[href]"); 
+				anchors.addAll(document.select("img"));
+				if(!anchors.isEmpty()){
+					StringBuilder sb = new StringBuilder();
+					String data = StringPool.BLANK;
+					int size = anchors.size();
+					for(int i = 0; i < anchors.size(); i++){
+						data = anchors.get(i).attr("href");
+						if(Validator.isNull(data)){
+							data = anchors.get(i).attr("src");
+						}
+						if(data.startsWith("/documents")){
+							sb.append(anchors.get(i).data() +( (i < size - 1) ? ";" : "") );
+						}
+					}
+					result = sb.toString();
+				}
+			}
+		}
+		
+		return result;
+	}
+	
+	private final String _DOCUMENT_LIBRARY = "document_library";
+	private final String _TEXT_AREA = "text_area";
+	private final String _IMAGE = "image";
 }
