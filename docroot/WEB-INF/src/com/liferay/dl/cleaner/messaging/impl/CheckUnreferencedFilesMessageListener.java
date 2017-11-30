@@ -26,13 +26,8 @@ import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
 import com.liferay.portal.model.Lock;
 import com.liferay.portal.service.LockLocalServiceUtil;
-import com.liferay.portlet.documentlibrary.NoSuchFileEntryException;
 import com.liferay.portlet.documentlibrary.model.DLFileEntry;
-import com.liferay.portlet.documentlibrary.model.DLFileEntry;
-import com.liferay.portlet.documentlibrary.model.DLFolderConstants;
 import com.liferay.portlet.documentlibrary.service.DLFileEntryLocalServiceUtil;
-import com.liferay.portlet.documentlibrary.service.DLFileVersionLocalServiceUtil;
-import com.liferay.portlet.documentlibrary.store.DLStoreUtil;
 import com.liferay.portlet.journal.model.JournalArticle;
 import com.liferay.portlet.journal.service.JournalArticleLocalServiceUtil;
 
@@ -124,10 +119,13 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 				}catch (NoSuchWcReferencedFileException ex) {
 					_log.error("The file "+ dlFileEntry.getFileEntryId() +" doesn't exit yet in the table");
 					try {
-						UnusedFileLocalServiceUtil.addUnusedFile(userId,dlFileEntry.getFileEntryId(), dlFileEntry.getFileVersion().getFileVersionId(), comment );
+						UnusedFileLocalServiceUtil.getUnusedFilesByGroupFileIdVersionId(dlFileEntry.getGroupId(), 
+								dlFileEntry.getFileEntryId(), dlFileEntry.getFileVersion().getFileVersionId());
+						
 						orphanedFileVersionSize++;
-					} catch (Exception e2) {
+					} catch (NoSuchUnusedFileException e2) {
 						_log.error(e2);
+						UnusedFileLocalServiceUtil.addUnusedFile(userId,dlFileEntry.getFileEntryId(), dlFileEntry.getFileVersion().getFileVersionId(), comment );
 					}
 					
 				}
