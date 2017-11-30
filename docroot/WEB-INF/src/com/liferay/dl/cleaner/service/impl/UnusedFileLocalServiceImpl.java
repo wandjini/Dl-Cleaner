@@ -89,7 +89,7 @@ public class UnusedFileLocalServiceImpl extends UnusedFileLocalServiceBaseImpl {
 			unusedFile.setModifiedDate(now);
 			unusedFile.setDeleted(false);
 			unusedFile.setComment(comment);
-			unusedFile.setDlFileTitle(dlFileEntry.getName());
+			unusedFile.setDlFileTitle(dlFileEntry.getTitle());
 			
 			unusedFile = unusedFilePersistence.update(unusedFile);
 			
@@ -144,6 +144,35 @@ public class UnusedFileLocalServiceImpl extends UnusedFileLocalServiceBaseImpl {
 	}
 	
 	/**
+	 * 
+	 * <p>This method is used to retrieve File by companyId and state</p>
+	 * 
+	 * @param companyId
+	 * @param deleted
+	 * @param start
+	 * @param end
+	 * @return
+	 * @throws SystemException 
+	 */
+	public List<UnusedFile> getUnusedFilesByCompanyAndState(long companyId, boolean deleted, int start, int end) throws SystemException{
+		
+		return unusedFilePersistence.findByCompany_Deleted(companyId, deleted, start, end);
+	}
+	
+	/**
+	 * This method is used to get the total amount of files
+	 * 
+	 * @param companyId
+	 * @param deleted
+	 * @return
+	 * @throws SystemException
+	 */
+	public int countUnusedFilesByCompanyAndState(long companyId, boolean deleted) throws SystemException{
+		return unusedFilePersistence.countByCompany_Deleted(companyId, deleted);
+	}
+	
+	
+	/**
 	 * Method used to clean the document and library
 	 * 
 	 * @param unusedFileId
@@ -153,9 +182,10 @@ public class UnusedFileLocalServiceImpl extends UnusedFileLocalServiceBaseImpl {
 	public void cleanUnusedFile( long userId, long unusedFileId) throws SystemException, PortalException{
 		
 		UnusedFile unusedFile = unusedFilePersistence.findByPrimaryKey(unusedFileId);
-		DLFileVersion dlFileVersion = DLFileVersionLocalServiceUtil.getDLFileVersion(unusedFile.getDlFileVersionId());
-		DLFileEntry dlFileEntry = DLFileEntryLocalServiceUtil.deleteFileVersion(userId, unusedFile.getFileEntryId(), dlFileVersion.getVersion());
+		DLFileVersion dlFileVersion = null;
+		DLFileEntry dlFileEntry = null;
 		try {
+			dlFileVersion = DLFileVersionLocalServiceUtil.getDLFileVersion(unusedFile.getDlFileVersionId());
 			if (dlFileVersion.getStatus() != WorkflowConstants.STATUS_APPROVED) {
 				dlFileVersion.setStatus(WorkflowConstants.STATUS_APPROVED);
 
@@ -170,8 +200,8 @@ public class UnusedFileLocalServiceImpl extends UnusedFileLocalServiceBaseImpl {
 			_log.error(
 				"DlFileVersion " + dlFileVersion.getVersion() + " deleted and dlFileEntry updated");
 		}
-		catch(InvalidFileVersionException e) {
-			if (dlFileVersion.getVersion().equals("PWC")) {
+		catch(Exception e) {
+			if (e instanceof InvalidFileVersionException && dlFileVersion != null && dlFileVersion.getVersion().equals("PWC")) {
 				_log.error(dlFileVersion.getVersion() + " is blocked, we proceed to cancel checkout");
 
 				DLFileEntryLocalServiceUtil.cancelCheckOut(dlFileVersion.getUserId(), dlFileVersion.getFileEntryId());
