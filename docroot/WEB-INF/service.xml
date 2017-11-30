@@ -36,11 +36,15 @@
     		<finder-column name="groupId"></finder-column>
             <finder-column name="deleted"></finder-column>
     	</finder>
+    	<finder name="Company_Deleted" return-type="Collection">
+    		<finder-column name="companyId"></finder-column>
+            <finder-column name="deleted"></finder-column>
+    	</finder>
 	</entity>
-	<entity name="LostFile" remote-service="true" local-service="true">
+	<entity name="WcReferencedFile" remote-service="true" local-service="true">
 		
 		<!-- PK fields -->
-		<column name="lostFileId" type="long" primary="true"></column>
+		<column name="wcRefencedFileId" type="long" primary="true"></column>
 		
 		<!-- Audit fields -->
     	<column name="groupId" type="long"></column>
@@ -50,25 +54,29 @@
     	<column name="createDate" type="Date"></column>
     	<column name="modifiedDate" type="Date"></column>
 		<!-- Others -->
-		<column name="fileEntryId" type="long"></column>
-		<column name="dlFileVersionId" type="long"></column>
-		<column name="dlFileTitle" type="String"></column>
-		<column name="deleted" type="boolean"></column>
-		<column name="comment" type="String"></column>
+		<column name="articleId" type="String"></column>
+		<column name="dlFileUuId" type="String"></column>
+		<column name="orphan" type="boolean"></column>
+		<column name="type" type="String"></column>
 		
 		<order by="desc">
             <order-column name="createDate"></order-column>
     	</order>
     	
-    	<finder name="Group_FileEntryId_VersionId" return-type="LostFile" unique="true">
+    	<finder name="Group_dlFileUuId" return-type="WcReferencedFile" unique="true">
     		<finder-column name="groupId"></finder-column>
-            <finder-column name="fileEntryId"></finder-column>
-            <finder-column name="dlFileVersionId"></finder-column>
+            <finder-column name="dlFileUuId"></finder-column>
     	</finder>
-    	
-		<finder name="Group_Deleted" return-type="Collection">
+    	<finder name="Group" return-type="Collection">
     		<finder-column name="groupId"></finder-column>
-            <finder-column name="deleted"></finder-column>
+    	</finder>
+    	<finder name="Company_DlFileUuId" return-type="WcReferencedFile" unique="true">
+    		<finder-column name="companyId"></finder-column>
+    		<finder-column name="dlFileUuId"></finder-column>
+    	</finder>
+    	<finder name="Company_Orphan" return-type="Collection">
+    		<finder-column name="companyId"></finder-column>
+    		<finder-column name="orphan"></finder-column>
     	</finder>
 	</entity>
 </service-builder>
