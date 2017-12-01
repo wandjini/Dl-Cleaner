@@ -1,11 +1,12 @@
 
 <%@include file="/html/init.jsp" %>
 <liferay-portlet:renderURL varImpl="iteratorURL"></liferay-portlet:renderURL>
+<portlet:actionURL name="runJob" var="runJobUrl" ></portlet:actionURL>
 
 <liferay-ui:error exception="<%=PrincipalException.class %>" message="delete-file-principal-exception"></liferay-ui:error>
 <liferay-ui:error key="generic-error" message="generic-error-msg"></liferay-ui:error>
 
-<aui:button href="<%=orPhanFilesUrl %>" value="orphanFiles"/>
+<aui:button href="<%=runJobUrl %>" value="run-job"/>
 <liferay-ui:search-container 
 	emptyResultsMessage="no-entries-were-found"
 	iteratorURL="<%= iteratorURL %>"

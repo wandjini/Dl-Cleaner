@@ -38,6 +38,10 @@
 					<liferay-ui:search-container-column-text name="orphan" >
 	                	<%= wcReferencedFile.isOrphan() ? "YES" :"NO"%>
 	                </liferay-ui:search-container-column-text>
+	                <liferay-ui:search-container-column-jsp
+						align="right"
+						path="/html/orphanfile/row_action.jsp"
+					/>
 	        </liferay-ui:search-container-row>
 	        <liferay-ui:search-iterator />
 	</liferay-ui:search-container>
