@@ -3,14 +3,18 @@ package com.liferay.dl.cleaner.messaging.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.mail.internet.InternetAddress;
+
 import org.jsoup.Jsoup;
 import org.jsoup.select.Elements;
 
 import com.liferay.dl.cleaner.NoSuchUnusedFileException;
 import com.liferay.dl.cleaner.NoSuchWcReferencedFileException;
+import com.liferay.dl.cleaner.model.WcReferencedFile;
 import com.liferay.dl.cleaner.portlet.util.ActionKeys;
 import com.liferay.dl.cleaner.service.UnusedFileLocalServiceUtil;
 import com.liferay.dl.cleaner.service.WcReferencedFileLocalServiceUtil;
+import com.liferay.mail.service.MailServiceUtil;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -19,9 +23,11 @@ import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.mail.MailMessage;
 import com.liferay.portal.kernel.messaging.Message;
 import com.liferay.portal.kernel.messaging.MessageListener;
 import com.liferay.portal.kernel.messaging.MessageListenerException;
+import com.liferay.portal.kernel.test.NewJVMJUnitTestRunner;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.xml.Attribute;
@@ -30,8 +36,11 @@ import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
 import com.liferay.portal.model.Image;
 import com.liferay.portal.model.Lock;
+import com.liferay.portal.model.User;
 import com.liferay.portal.service.ImageLocalServiceUtil;
 import com.liferay.portal.service.LockLocalServiceUtil;
+import com.liferay.portal.service.UserLocalServiceUtil;
+import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.documentlibrary.model.DLFileEntry;
 import com.liferay.portlet.documentlibrary.service.DLFileEntryLocalServiceUtil;
 import com.liferay.portlet.journal.model.JournalArticle;
@@ -123,7 +132,7 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 					WcReferencedFileLocalServiceUtil.getWcReferencedFilesByCompanyAndFileUUID(dlFileEntry.getCompanyId(), dlFileEntry.getUuid());
 					
 				}catch (NoSuchWcReferencedFileException ex) {
-					_log.error("The file "+ dlFileEntry.getFileEntryId() +" doesn't exit yet in the table");
+					
 					try {
 						UnusedFileLocalServiceUtil.getUnusedFilesByGroupFileIdVersionId(dlFileEntry.getGroupId(), 
 								dlFileEntry.getFileEntryId(), dlFileEntry.getFileVersion().getFileVersionId());
@@ -131,6 +140,7 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 						
 					} catch (NoSuchUnusedFileException e2) {
 						_log.error(e2);
+						_log.error("The file "+ dlFileEntry.getFileEntryId() +" doesn't exit yet in the table");
 						UnusedFileLocalServiceUtil.addUnusedFile(userId,dlFileEntry.getFileEntryId(), dlFileEntry.getFileVersion().getFileVersionId(), comment );
 						unusedFilesFoundSize++;
 					}
@@ -141,6 +151,21 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 
 			start+=1000;
 			end+=1000;
+		}
+		if(userId > 0 ){
+			try {
+				
+				User user = UserLocalServiceUtil.getUser(userId);
+				InternetAddress to = new InternetAddress(user.getEmailAddress());
+				InternetAddress from = new InternetAddress("noreply@liferay.com");
+				MailMessage mailMessage = new MailMessage();
+				mailMessage.setTo(to);
+				mailMessage.setFrom(from); 
+				mailMessage.setBody("Job WebContent Orphan files Finder is ended");
+				MailServiceUtil.sendEmail(mailMessage);
+			} catch (Exception e) {
+				_log.error("Error sending notification", e);
+			}
 		}
 		_log.error(unusedFilesFoundSize + " unused files found");
 		
@@ -230,7 +255,7 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 				String articleId = StringPool.BLANK;
 				long companyId = 0;
 				long articleGroupId = 0;
-				boolean orfan = false;
+				boolean orphan = false;
 				String type = StringPool.BLANK;
 				for(JSONObject fileToProcess: valuesToProcess){
 					files = fileToProcess.getString("filePath").split(";");
@@ -252,18 +277,22 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 						try{
 							if(type.equals(_IMAGE)){
 								Image image = ImageLocalServiceUtil.getImage(Long.valueOf(dlFileUuId));
-								orfan = image == null;
+								orphan = image == null;
 								
 							}
 							else{
 								DLFileEntry dlFileEntry =  DLFileEntryLocalServiceUtil.fetchDLFileEntryByUuidAndCompanyId(dlFileUuId, companyId);
-								orfan = dlFileEntry == null;
+								orphan = dlFileEntry == null;
 							}
 							
-							WcReferencedFileLocalServiceUtil.getWcReferencedFilesByCompanyAndFileUUID(companyId, dlFileUuId);
+							WcReferencedFile wcReferencedFile =  WcReferencedFileLocalServiceUtil.getWcReferencedFilesByCompanyAndFileUUID(companyId, dlFileUuId);
+							if(!wcReferencedFile.isOrphan()  &&  orphan){
+								wcReferencedFile.setOrphan(orphan);
+								WcReferencedFileLocalServiceUtil.updateWcReferencedFile(wcReferencedFile);
+							}
 							
 						}catch (NoSuchWcReferencedFileException e) {
-							WcReferencedFileLocalServiceUtil.addWcReferencedFile(userId, articleGroupId, dlFileUuId, articleId, type, orfan );
+							WcReferencedFileLocalServiceUtil.addWcReferencedFile(userId, articleGroupId, dlFileUuId, articleId, type, orphan );
 						}
 						
 					}
@@ -285,7 +314,7 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 	private DynamicQuery getDlFileDynanicQuery(long companyId){
 		DynamicQuery dynamicQuery = DLFileEntryLocalServiceUtil.dynamicQuery();
 		if(companyId > 0){
-			dynamicQuery.add(RestrictionsFactoryUtil.eq("companyid", companyId));
+			dynamicQuery.add(RestrictionsFactoryUtil.eq("companyId", companyId));
 		}
 		return dynamicQuery;
 	}
@@ -299,7 +328,7 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 	private DynamicQuery getJournalArticleDynanicQuery(long companyId){
 		DynamicQuery dynamicQuery = JournalArticleLocalServiceUtil.dynamicQuery();
 		if(companyId > 0){
-			dynamicQuery.add(RestrictionsFactoryUtil.eq("companyid", companyId));
+			dynamicQuery.add(RestrictionsFactoryUtil.eq("companyId", companyId));
 		}
 		return dynamicQuery;
 	}	
@@ -336,7 +365,11 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 							data = anchors.get(i).attr("src");
 						}
 						if(data.startsWith("/documents")){
-							sb.append(anchors.get(i).data() +( (i < size - 1) ? ";" : "") );
+							int index = data.indexOf("?");
+							if(index != -1){
+								data = data.substring(0,index);
+							}
+							sb.append(data +( (i < size - 1) ? ";" : "") );
 						}
 					}
 					result = sb.toString();
