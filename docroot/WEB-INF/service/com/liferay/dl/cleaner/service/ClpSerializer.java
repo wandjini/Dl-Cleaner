@@ -14,8 +14,8 @@
 
 package com.liferay.dl.cleaner.service;
 
-import com.liferay.dl.cleaner.model.LostFileClp;
 import com.liferay.dl.cleaner.model.UnusedFileClp;
+import com.liferay.dl.cleaner.model.WcReferencedFileClp;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
@@ -103,12 +103,12 @@ public class ClpSerializer {
 
 		String oldModelClassName = oldModelClass.getName();
 
-		if (oldModelClassName.equals(LostFileClp.class.getName())) {
-			return translateInputLostFile(oldModel);
-		}
-
 		if (oldModelClassName.equals(UnusedFileClp.class.getName())) {
 			return translateInputUnusedFile(oldModel);
+		}
+
+		if (oldModelClassName.equals(WcReferencedFileClp.class.getName())) {
+			return translateInputWcReferencedFile(oldModel);
 		}
 
 		return oldModel;
@@ -126,20 +126,20 @@ public class ClpSerializer {
 		return newList;
 	}
 
-	public static Object translateInputLostFile(BaseModel<?> oldModel) {
-		LostFileClp oldClpModel = (LostFileClp)oldModel;
+	public static Object translateInputUnusedFile(BaseModel<?> oldModel) {
+		UnusedFileClp oldClpModel = (UnusedFileClp)oldModel;
 
-		BaseModel<?> newModel = oldClpModel.getLostFileRemoteModel();
+		BaseModel<?> newModel = oldClpModel.getUnusedFileRemoteModel();
 
 		newModel.setModelAttributes(oldClpModel.getModelAttributes());
 
 		return newModel;
 	}
 
-	public static Object translateInputUnusedFile(BaseModel<?> oldModel) {
-		UnusedFileClp oldClpModel = (UnusedFileClp)oldModel;
+	public static Object translateInputWcReferencedFile(BaseModel<?> oldModel) {
+		WcReferencedFileClp oldClpModel = (WcReferencedFileClp)oldModel;
 
-		BaseModel<?> newModel = oldClpModel.getUnusedFileRemoteModel();
+		BaseModel<?> newModel = oldClpModel.getWcReferencedFileRemoteModel();
 
 		newModel.setModelAttributes(oldClpModel.getModelAttributes());
 
@@ -164,8 +164,8 @@ public class ClpSerializer {
 		String oldModelClassName = oldModelClass.getName();
 
 		if (oldModelClassName.equals(
-					"com.liferay.dl.cleaner.model.impl.LostFileImpl")) {
-			return translateOutputLostFile(oldModel);
+					"com.liferay.dl.cleaner.model.impl.UnusedFileImpl")) {
+			return translateOutputUnusedFile(oldModel);
 		}
 		else if (oldModelClassName.endsWith("Clp")) {
 			try {
@@ -201,8 +201,8 @@ public class ClpSerializer {
 		}
 
 		if (oldModelClassName.equals(
-					"com.liferay.dl.cleaner.model.impl.UnusedFileImpl")) {
-			return translateOutputUnusedFile(oldModel);
+					"com.liferay.dl.cleaner.model.impl.WcReferencedFileImpl")) {
+			return translateOutputWcReferencedFile(oldModel);
 		}
 		else if (oldModelClassName.endsWith("Clp")) {
 			try {
@@ -317,25 +317,16 @@ public class ClpSerializer {
 			return new SystemException();
 		}
 
-		if (className.equals("com.liferay.dl.cleaner.NoSuchLostFileException")) {
-			return new com.liferay.dl.cleaner.NoSuchLostFileException();
-		}
-
 		if (className.equals("com.liferay.dl.cleaner.NoSuchUnusedFileException")) {
 			return new com.liferay.dl.cleaner.NoSuchUnusedFileException();
 		}
 
+		if (className.equals(
+					"com.liferay.dl.cleaner.NoSuchWcReferencedFileException")) {
+			return new com.liferay.dl.cleaner.NoSuchWcReferencedFileException();
+		}
+
 		return throwable;
-	}
-
-	public static Object translateOutputLostFile(BaseModel<?> oldModel) {
-		LostFileClp newModel = new LostFileClp();
-
-		newModel.setModelAttributes(oldModel.getModelAttributes());
-
-		newModel.setLostFileRemoteModel(oldModel);
-
-		return newModel;
 	}
 
 	public static Object translateOutputUnusedFile(BaseModel<?> oldModel) {
@@ -344,6 +335,16 @@ public class ClpSerializer {
 		newModel.setModelAttributes(oldModel.getModelAttributes());
 
 		newModel.setUnusedFileRemoteModel(oldModel);
+
+		return newModel;
+	}
+
+	public static Object translateOutputWcReferencedFile(BaseModel<?> oldModel) {
+		WcReferencedFileClp newModel = new WcReferencedFileClp();
+
+		newModel.setModelAttributes(oldModel.getModelAttributes());
+
+		newModel.setWcReferencedFileRemoteModel(oldModel);
 
 		return newModel;
 	}

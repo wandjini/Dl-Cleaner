@@ -20,29 +20,30 @@ import com.liferay.portal.service.InvokableLocalService;
  * @author guywandji
  * @generated
  */
-public class UnusedFileLocalServiceClp implements UnusedFileLocalService {
-	public UnusedFileLocalServiceClp(
+public class WcReferencedFileLocalServiceClp
+	implements WcReferencedFileLocalService {
+	public WcReferencedFileLocalServiceClp(
 		InvokableLocalService invokableLocalService) {
 		_invokableLocalService = invokableLocalService;
 
-		_methodName0 = "addUnusedFile";
+		_methodName0 = "addWcReferencedFile";
 
 		_methodParameterTypes0 = new String[] {
-				"com.liferay.dl.cleaner.model.UnusedFile"
+				"com.liferay.dl.cleaner.model.WcReferencedFile"
 			};
 
-		_methodName1 = "createUnusedFile";
+		_methodName1 = "createWcReferencedFile";
 
 		_methodParameterTypes1 = new String[] { "long" };
 
-		_methodName2 = "deleteUnusedFile";
+		_methodName2 = "deleteWcReferencedFile";
 
 		_methodParameterTypes2 = new String[] { "long" };
 
-		_methodName3 = "deleteUnusedFile";
+		_methodName3 = "deleteWcReferencedFile";
 
 		_methodParameterTypes3 = new String[] {
-				"com.liferay.dl.cleaner.model.UnusedFile"
+				"com.liferay.dl.cleaner.model.WcReferencedFile"
 			};
 
 		_methodName4 = "dynamicQuery";
@@ -81,11 +82,11 @@ public class UnusedFileLocalServiceClp implements UnusedFileLocalService {
 				"com.liferay.portal.kernel.dao.orm.Projection"
 			};
 
-		_methodName10 = "fetchUnusedFile";
+		_methodName10 = "fetchWcReferencedFile";
 
 		_methodParameterTypes10 = new String[] { "long" };
 
-		_methodName11 = "getUnusedFile";
+		_methodName11 = "getWcReferencedFile";
 
 		_methodParameterTypes11 = new String[] { "long" };
 
@@ -93,18 +94,18 @@ public class UnusedFileLocalServiceClp implements UnusedFileLocalService {
 
 		_methodParameterTypes12 = new String[] { "java.io.Serializable" };
 
-		_methodName13 = "getUnusedFiles";
+		_methodName13 = "getWcReferencedFiles";
 
 		_methodParameterTypes13 = new String[] { "int", "int" };
 
-		_methodName14 = "getUnusedFilesCount";
+		_methodName14 = "getWcReferencedFilesCount";
 
 		_methodParameterTypes14 = new String[] {  };
 
-		_methodName15 = "updateUnusedFile";
+		_methodName15 = "updateWcReferencedFile";
 
 		_methodParameterTypes15 = new String[] {
-				"com.liferay.dl.cleaner.model.UnusedFile"
+				"com.liferay.dl.cleaner.model.WcReferencedFile"
 			};
 
 		_methodName16 = "getBeanIdentifier";
@@ -115,47 +116,53 @@ public class UnusedFileLocalServiceClp implements UnusedFileLocalService {
 
 		_methodParameterTypes17 = new String[] { "java.lang.String" };
 
-		_methodName19 = "addUnusedFile";
+		_methodName19 = "addWcReferencedFile";
 
 		_methodParameterTypes19 = new String[] {
-				"long", "long", "long", "java.lang.String"
+				"long", "long", "java.lang.String", "java.lang.String",
+				"java.lang.String", "boolean"
 			};
 
-		_methodName20 = "getUnusedFilesByGroupFileIdVersionId";
+		_methodName20 = "getWcReferencedFilesByGroupId";
 
-		_methodParameterTypes20 = new String[] { "long", "long", "long" };
+		_methodParameterTypes20 = new String[] { "long", "int", "int" };
 
-		_methodName21 = "getUnusedFilesByGroupAndState";
+		_methodName21 = "getWcReferencedFilesByGroupAndFileUUID";
 
-		_methodParameterTypes21 = new String[] { "long", "boolean", "int", "int" };
+		_methodParameterTypes21 = new String[] { "long", "java.lang.String" };
 
-		_methodName22 = "countUnusedFilesByGroupAndState";
+		_methodName22 = "countWcReferencedFilesByGroupId";
 
-		_methodParameterTypes22 = new String[] { "long", "boolean" };
+		_methodParameterTypes22 = new String[] { "long" };
 
-		_methodName23 = "getUnusedFilesByCompanyAndState";
+		_methodName23 = "getWcReferencedFilesByCompanyAndFileUUID";
 
-		_methodParameterTypes23 = new String[] { "long", "boolean", "int", "int" };
+		_methodParameterTypes23 = new String[] { "long", "java.lang.String" };
 
-		_methodName24 = "countUnusedFilesByCompanyAndState";
+		_methodName24 = "removeWcReferencedFile";
 
-		_methodParameterTypes24 = new String[] { "long", "boolean" };
+		_methodParameterTypes24 = new String[] { "long" };
 
-		_methodName25 = "cleanUnusedFile";
+		_methodName25 = "getWcReferencedFilesByCompanyIdAndOrphan";
 
-		_methodParameterTypes25 = new String[] { "long", "long" };
+		_methodParameterTypes25 = new String[] { "long", "boolean", "int", "int" };
+
+		_methodName26 = "countWcReferencedFilesByCompanyIdAndOrphan";
+
+		_methodParameterTypes26 = new String[] { "long", "boolean" };
 	}
 
 	@Override
-	public com.liferay.dl.cleaner.model.UnusedFile addUnusedFile(
-		com.liferay.dl.cleaner.model.UnusedFile unusedFile)
+	public com.liferay.dl.cleaner.model.WcReferencedFile addWcReferencedFile(
+		com.liferay.dl.cleaner.model.WcReferencedFile wcReferencedFile)
 		throws com.liferay.portal.kernel.exception.SystemException {
 		Object returnObj = null;
 
 		try {
 			returnObj = _invokableLocalService.invokeMethod(_methodName0,
 					_methodParameterTypes0,
-					new Object[] { ClpSerializer.translateInput(unusedFile) });
+					new Object[] { ClpSerializer.translateInput(
+							wcReferencedFile) });
 		}
 		catch (Throwable t) {
 			t = ClpSerializer.translateThrowable(t);
@@ -173,17 +180,17 @@ public class UnusedFileLocalServiceClp implements UnusedFileLocalService {
 			}
 		}
 
-		return (com.liferay.dl.cleaner.model.UnusedFile)ClpSerializer.translateOutput(returnObj);
+		return (com.liferay.dl.cleaner.model.WcReferencedFile)ClpSerializer.translateOutput(returnObj);
 	}
 
 	@Override
-	public com.liferay.dl.cleaner.model.UnusedFile createUnusedFile(
-		long unusedFileId) {
+	public com.liferay.dl.cleaner.model.WcReferencedFile createWcReferencedFile(
+		long wcRefencedFileId) {
 		Object returnObj = null;
 
 		try {
 			returnObj = _invokableLocalService.invokeMethod(_methodName1,
-					_methodParameterTypes1, new Object[] { unusedFileId });
+					_methodParameterTypes1, new Object[] { wcRefencedFileId });
 		}
 		catch (Throwable t) {
 			t = ClpSerializer.translateThrowable(t);
@@ -197,19 +204,19 @@ public class UnusedFileLocalServiceClp implements UnusedFileLocalService {
 			}
 		}
 
-		return (com.liferay.dl.cleaner.model.UnusedFile)ClpSerializer.translateOutput(returnObj);
+		return (com.liferay.dl.cleaner.model.WcReferencedFile)ClpSerializer.translateOutput(returnObj);
 	}
 
 	@Override
-	public com.liferay.dl.cleaner.model.UnusedFile deleteUnusedFile(
-		long unusedFileId)
+	public com.liferay.dl.cleaner.model.WcReferencedFile deleteWcReferencedFile(
+		long wcRefencedFileId)
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException {
 		Object returnObj = null;
 
 		try {
 			returnObj = _invokableLocalService.invokeMethod(_methodName2,
-					_methodParameterTypes2, new Object[] { unusedFileId });
+					_methodParameterTypes2, new Object[] { wcRefencedFileId });
 		}
 		catch (Throwable t) {
 			t = ClpSerializer.translateThrowable(t);
@@ -231,19 +238,20 @@ public class UnusedFileLocalServiceClp implements UnusedFileLocalService {
 			}
 		}
 
-		return (com.liferay.dl.cleaner.model.UnusedFile)ClpSerializer.translateOutput(returnObj);
+		return (com.liferay.dl.cleaner.model.WcReferencedFile)ClpSerializer.translateOutput(returnObj);
 	}
 
 	@Override
-	public com.liferay.dl.cleaner.model.UnusedFile deleteUnusedFile(
-		com.liferay.dl.cleaner.model.UnusedFile unusedFile)
+	public com.liferay.dl.cleaner.model.WcReferencedFile deleteWcReferencedFile(
+		com.liferay.dl.cleaner.model.WcReferencedFile wcReferencedFile)
 		throws com.liferay.portal.kernel.exception.SystemException {
 		Object returnObj = null;
 
 		try {
 			returnObj = _invokableLocalService.invokeMethod(_methodName3,
 					_methodParameterTypes3,
-					new Object[] { ClpSerializer.translateInput(unusedFile) });
+					new Object[] { ClpSerializer.translateInput(
+							wcReferencedFile) });
 		}
 		catch (Throwable t) {
 			t = ClpSerializer.translateThrowable(t);
@@ -261,7 +269,7 @@ public class UnusedFileLocalServiceClp implements UnusedFileLocalService {
 			}
 		}
 
-		return (com.liferay.dl.cleaner.model.UnusedFile)ClpSerializer.translateOutput(returnObj);
+		return (com.liferay.dl.cleaner.model.WcReferencedFile)ClpSerializer.translateOutput(returnObj);
 	}
 
 	@Override
@@ -462,14 +470,14 @@ public class UnusedFileLocalServiceClp implements UnusedFileLocalService {
 	}
 
 	@Override
-	public com.liferay.dl.cleaner.model.UnusedFile fetchUnusedFile(
-		long unusedFileId)
+	public com.liferay.dl.cleaner.model.WcReferencedFile fetchWcReferencedFile(
+		long wcRefencedFileId)
 		throws com.liferay.portal.kernel.exception.SystemException {
 		Object returnObj = null;
 
 		try {
 			returnObj = _invokableLocalService.invokeMethod(_methodName10,
-					_methodParameterTypes10, new Object[] { unusedFileId });
+					_methodParameterTypes10, new Object[] { wcRefencedFileId });
 		}
 		catch (Throwable t) {
 			t = ClpSerializer.translateThrowable(t);
@@ -487,19 +495,19 @@ public class UnusedFileLocalServiceClp implements UnusedFileLocalService {
 			}
 		}
 
-		return (com.liferay.dl.cleaner.model.UnusedFile)ClpSerializer.translateOutput(returnObj);
+		return (com.liferay.dl.cleaner.model.WcReferencedFile)ClpSerializer.translateOutput(returnObj);
 	}
 
 	@Override
-	public com.liferay.dl.cleaner.model.UnusedFile getUnusedFile(
-		long unusedFileId)
+	public com.liferay.dl.cleaner.model.WcReferencedFile getWcReferencedFile(
+		long wcRefencedFileId)
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException {
 		Object returnObj = null;
 
 		try {
 			returnObj = _invokableLocalService.invokeMethod(_methodName11,
-					_methodParameterTypes11, new Object[] { unusedFileId });
+					_methodParameterTypes11, new Object[] { wcRefencedFileId });
 		}
 		catch (Throwable t) {
 			t = ClpSerializer.translateThrowable(t);
@@ -521,7 +529,7 @@ public class UnusedFileLocalServiceClp implements UnusedFileLocalService {
 			}
 		}
 
-		return (com.liferay.dl.cleaner.model.UnusedFile)ClpSerializer.translateOutput(returnObj);
+		return (com.liferay.dl.cleaner.model.WcReferencedFile)ClpSerializer.translateOutput(returnObj);
 	}
 
 	@Override
@@ -560,7 +568,7 @@ public class UnusedFileLocalServiceClp implements UnusedFileLocalService {
 	}
 
 	@Override
-	public java.util.List<com.liferay.dl.cleaner.model.UnusedFile> getUnusedFiles(
+	public java.util.List<com.liferay.dl.cleaner.model.WcReferencedFile> getWcReferencedFiles(
 		int start, int end)
 		throws com.liferay.portal.kernel.exception.SystemException {
 		Object returnObj = null;
@@ -585,11 +593,11 @@ public class UnusedFileLocalServiceClp implements UnusedFileLocalService {
 			}
 		}
 
-		return (java.util.List<com.liferay.dl.cleaner.model.UnusedFile>)ClpSerializer.translateOutput(returnObj);
+		return (java.util.List<com.liferay.dl.cleaner.model.WcReferencedFile>)ClpSerializer.translateOutput(returnObj);
 	}
 
 	@Override
-	public int getUnusedFilesCount()
+	public int getWcReferencedFilesCount()
 		throws com.liferay.portal.kernel.exception.SystemException {
 		Object returnObj = null;
 
@@ -617,15 +625,16 @@ public class UnusedFileLocalServiceClp implements UnusedFileLocalService {
 	}
 
 	@Override
-	public com.liferay.dl.cleaner.model.UnusedFile updateUnusedFile(
-		com.liferay.dl.cleaner.model.UnusedFile unusedFile)
+	public com.liferay.dl.cleaner.model.WcReferencedFile updateWcReferencedFile(
+		com.liferay.dl.cleaner.model.WcReferencedFile wcReferencedFile)
 		throws com.liferay.portal.kernel.exception.SystemException {
 		Object returnObj = null;
 
 		try {
 			returnObj = _invokableLocalService.invokeMethod(_methodName15,
 					_methodParameterTypes15,
-					new Object[] { ClpSerializer.translateInput(unusedFile) });
+					new Object[] { ClpSerializer.translateInput(
+							wcReferencedFile) });
 		}
 		catch (Throwable t) {
 			t = ClpSerializer.translateThrowable(t);
@@ -643,7 +652,7 @@ public class UnusedFileLocalServiceClp implements UnusedFileLocalService {
 			}
 		}
 
-		return (com.liferay.dl.cleaner.model.UnusedFile)ClpSerializer.translateOutput(returnObj);
+		return (com.liferay.dl.cleaner.model.WcReferencedFile)ClpSerializer.translateOutput(returnObj);
 	}
 
 	@Override
@@ -697,8 +706,9 @@ public class UnusedFileLocalServiceClp implements UnusedFileLocalService {
 	}
 
 	@Override
-	public com.liferay.dl.cleaner.model.UnusedFile addUnusedFile(long userId,
-		long fileEntryId, long fileVersionId, java.lang.String comment)
+	public com.liferay.dl.cleaner.model.WcReferencedFile addWcReferencedFile(
+		long userId, long groupId, java.lang.String dlFileUuId,
+		java.lang.String articleId, java.lang.String type, boolean orphan)
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException {
 		Object returnObj = null;
@@ -709,11 +719,15 @@ public class UnusedFileLocalServiceClp implements UnusedFileLocalService {
 					new Object[] {
 						userId,
 						
-					fileEntryId,
+					groupId,
 						
-					fileVersionId,
+					ClpSerializer.translateInput(dlFileUuId),
 						
-					ClpSerializer.translateInput(comment)
+					ClpSerializer.translateInput(articleId),
+						
+					ClpSerializer.translateInput(type),
+						
+					orphan
 					});
 		}
 		catch (Throwable t) {
@@ -736,27 +750,22 @@ public class UnusedFileLocalServiceClp implements UnusedFileLocalService {
 			}
 		}
 
-		return (com.liferay.dl.cleaner.model.UnusedFile)ClpSerializer.translateOutput(returnObj);
+		return (com.liferay.dl.cleaner.model.WcReferencedFile)ClpSerializer.translateOutput(returnObj);
 	}
 
 	@Override
-	public com.liferay.dl.cleaner.model.UnusedFile getUnusedFilesByGroupFileIdVersionId(
-		long groupId, long fileEntryId, long fileVersionId)
-		throws com.liferay.dl.cleaner.NoSuchUnusedFileException,
-			com.liferay.portal.kernel.exception.SystemException {
+	public java.util.List<com.liferay.dl.cleaner.model.WcReferencedFile> getWcReferencedFilesByGroupId(
+		long groupId, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
 		Object returnObj = null;
 
 		try {
 			returnObj = _invokableLocalService.invokeMethod(_methodName20,
 					_methodParameterTypes20,
-					new Object[] { groupId, fileEntryId, fileVersionId });
+					new Object[] { groupId, start, end });
 		}
 		catch (Throwable t) {
 			t = ClpSerializer.translateThrowable(t);
-
-			if (t instanceof com.liferay.dl.cleaner.NoSuchUnusedFileException) {
-				throw (com.liferay.dl.cleaner.NoSuchUnusedFileException)t;
-			}
 
 			if (t instanceof com.liferay.portal.kernel.exception.SystemException) {
 				throw (com.liferay.portal.kernel.exception.SystemException)t;
@@ -771,22 +780,31 @@ public class UnusedFileLocalServiceClp implements UnusedFileLocalService {
 			}
 		}
 
-		return (com.liferay.dl.cleaner.model.UnusedFile)ClpSerializer.translateOutput(returnObj);
+		return (java.util.List<com.liferay.dl.cleaner.model.WcReferencedFile>)ClpSerializer.translateOutput(returnObj);
 	}
 
 	@Override
-	public java.util.List<com.liferay.dl.cleaner.model.UnusedFile> getUnusedFilesByGroupAndState(
-		long groupId, boolean deleted, int start, int end)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public com.liferay.dl.cleaner.model.WcReferencedFile getWcReferencedFilesByGroupAndFileUUID(
+		long groupId, java.lang.String dlFileUuId)
+		throws com.liferay.dl.cleaner.NoSuchWcReferencedFileException,
+			com.liferay.portal.kernel.exception.SystemException {
 		Object returnObj = null;
 
 		try {
 			returnObj = _invokableLocalService.invokeMethod(_methodName21,
 					_methodParameterTypes21,
-					new Object[] { groupId, deleted, start, end });
+					new Object[] {
+						groupId,
+						
+					ClpSerializer.translateInput(dlFileUuId)
+					});
 		}
 		catch (Throwable t) {
 			t = ClpSerializer.translateThrowable(t);
+
+			if (t instanceof com.liferay.dl.cleaner.NoSuchWcReferencedFileException) {
+				throw (com.liferay.dl.cleaner.NoSuchWcReferencedFileException)t;
+			}
 
 			if (t instanceof com.liferay.portal.kernel.exception.SystemException) {
 				throw (com.liferay.portal.kernel.exception.SystemException)t;
@@ -801,17 +819,17 @@ public class UnusedFileLocalServiceClp implements UnusedFileLocalService {
 			}
 		}
 
-		return (java.util.List<com.liferay.dl.cleaner.model.UnusedFile>)ClpSerializer.translateOutput(returnObj);
+		return (com.liferay.dl.cleaner.model.WcReferencedFile)ClpSerializer.translateOutput(returnObj);
 	}
 
 	@Override
-	public int countUnusedFilesByGroupAndState(long groupId, boolean deleted)
+	public int countWcReferencedFilesByGroupId(long groupId)
 		throws com.liferay.portal.kernel.exception.SystemException {
 		Object returnObj = null;
 
 		try {
 			returnObj = _invokableLocalService.invokeMethod(_methodName22,
-					_methodParameterTypes22, new Object[] { groupId, deleted });
+					_methodParameterTypes22, new Object[] { groupId });
 		}
 		catch (Throwable t) {
 			t = ClpSerializer.translateThrowable(t);
@@ -833,15 +851,83 @@ public class UnusedFileLocalServiceClp implements UnusedFileLocalService {
 	}
 
 	@Override
-	public java.util.List<com.liferay.dl.cleaner.model.UnusedFile> getUnusedFilesByCompanyAndState(
-		long companyId, boolean deleted, int start, int end)
-		throws com.liferay.portal.kernel.exception.SystemException {
+	public com.liferay.dl.cleaner.model.WcReferencedFile getWcReferencedFilesByCompanyAndFileUUID(
+		long companyId, java.lang.String dlFileUuId)
+		throws com.liferay.dl.cleaner.NoSuchWcReferencedFileException,
+			com.liferay.portal.kernel.exception.SystemException {
 		Object returnObj = null;
 
 		try {
 			returnObj = _invokableLocalService.invokeMethod(_methodName23,
 					_methodParameterTypes23,
-					new Object[] { companyId, deleted, start, end });
+					new Object[] {
+						companyId,
+						
+					ClpSerializer.translateInput(dlFileUuId)
+					});
+		}
+		catch (Throwable t) {
+			t = ClpSerializer.translateThrowable(t);
+
+			if (t instanceof com.liferay.dl.cleaner.NoSuchWcReferencedFileException) {
+				throw (com.liferay.dl.cleaner.NoSuchWcReferencedFileException)t;
+			}
+
+			if (t instanceof com.liferay.portal.kernel.exception.SystemException) {
+				throw (com.liferay.portal.kernel.exception.SystemException)t;
+			}
+
+			if (t instanceof RuntimeException) {
+				throw (RuntimeException)t;
+			}
+			else {
+				throw new RuntimeException(t.getClass().getName() +
+					" is not a valid exception");
+			}
+		}
+
+		return (com.liferay.dl.cleaner.model.WcReferencedFile)ClpSerializer.translateOutput(returnObj);
+	}
+
+	@Override
+	public void removeWcReferencedFile(long wcRefencedFileId)
+		throws com.liferay.dl.cleaner.NoSuchWcReferencedFileException,
+			com.liferay.portal.kernel.exception.SystemException {
+		try {
+			_invokableLocalService.invokeMethod(_methodName24,
+				_methodParameterTypes24, new Object[] { wcRefencedFileId });
+		}
+		catch (Throwable t) {
+			t = ClpSerializer.translateThrowable(t);
+
+			if (t instanceof com.liferay.dl.cleaner.NoSuchWcReferencedFileException) {
+				throw (com.liferay.dl.cleaner.NoSuchWcReferencedFileException)t;
+			}
+
+			if (t instanceof com.liferay.portal.kernel.exception.SystemException) {
+				throw (com.liferay.portal.kernel.exception.SystemException)t;
+			}
+
+			if (t instanceof RuntimeException) {
+				throw (RuntimeException)t;
+			}
+			else {
+				throw new RuntimeException(t.getClass().getName() +
+					" is not a valid exception");
+			}
+		}
+	}
+
+	@Override
+	public java.util.List<com.liferay.dl.cleaner.model.WcReferencedFile> getWcReferencedFilesByCompanyIdAndOrphan(
+		long companyId, boolean orphan, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		Object returnObj = null;
+
+		try {
+			returnObj = _invokableLocalService.invokeMethod(_methodName25,
+					_methodParameterTypes25,
+					new Object[] { companyId, orphan, start, end });
 		}
 		catch (Throwable t) {
 			t = ClpSerializer.translateThrowable(t);
@@ -859,17 +945,18 @@ public class UnusedFileLocalServiceClp implements UnusedFileLocalService {
 			}
 		}
 
-		return (java.util.List<com.liferay.dl.cleaner.model.UnusedFile>)ClpSerializer.translateOutput(returnObj);
+		return (java.util.List<com.liferay.dl.cleaner.model.WcReferencedFile>)ClpSerializer.translateOutput(returnObj);
 	}
 
 	@Override
-	public int countUnusedFilesByCompanyAndState(long companyId, boolean deleted)
+	public int countWcReferencedFilesByCompanyIdAndOrphan(long companyId,
+		boolean orphan)
 		throws com.liferay.portal.kernel.exception.SystemException {
 		Object returnObj = null;
 
 		try {
-			returnObj = _invokableLocalService.invokeMethod(_methodName24,
-					_methodParameterTypes24, new Object[] { companyId, deleted });
+			returnObj = _invokableLocalService.invokeMethod(_methodName26,
+					_methodParameterTypes26, new Object[] { companyId, orphan });
 		}
 		catch (Throwable t) {
 			t = ClpSerializer.translateThrowable(t);
@@ -888,35 +975,6 @@ public class UnusedFileLocalServiceClp implements UnusedFileLocalService {
 		}
 
 		return ((Integer)returnObj).intValue();
-	}
-
-	@Override
-	public void cleanUnusedFile(long userId, long unusedFileId)
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException {
-		try {
-			_invokableLocalService.invokeMethod(_methodName25,
-				_methodParameterTypes25, new Object[] { userId, unusedFileId });
-		}
-		catch (Throwable t) {
-			t = ClpSerializer.translateThrowable(t);
-
-			if (t instanceof com.liferay.portal.kernel.exception.PortalException) {
-				throw (com.liferay.portal.kernel.exception.PortalException)t;
-			}
-
-			if (t instanceof com.liferay.portal.kernel.exception.SystemException) {
-				throw (com.liferay.portal.kernel.exception.SystemException)t;
-			}
-
-			if (t instanceof RuntimeException) {
-				throw (RuntimeException)t;
-			}
-			else {
-				throw new RuntimeException(t.getClass().getName() +
-					" is not a valid exception");
-			}
-		}
 	}
 
 	private InvokableLocalService _invokableLocalService;
@@ -970,4 +1028,6 @@ public class UnusedFileLocalServiceClp implements UnusedFileLocalService {
 	private String[] _methodParameterTypes24;
 	private String _methodName25;
 	private String[] _methodParameterTypes25;
+	private String _methodName26;
+	private String[] _methodParameterTypes26;
 }

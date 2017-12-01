@@ -380,6 +380,187 @@ public class UnusedFileUtil {
 	}
 
 	/**
+	* Returns all the unused files where companyId = &#63; and deleted = &#63;.
+	*
+	* @param companyId the company ID
+	* @param deleted the deleted
+	* @return the matching unused files
+	* @throws SystemException if a system exception occurred
+	*/
+	public static java.util.List<com.liferay.dl.cleaner.model.UnusedFile> findByCompany_Deleted(
+		long companyId, boolean deleted)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence().findByCompany_Deleted(companyId, deleted);
+	}
+
+	/**
+	* Returns a range of all the unused files where companyId = &#63; and deleted = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.dl.cleaner.model.impl.UnusedFileModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param companyId the company ID
+	* @param deleted the deleted
+	* @param start the lower bound of the range of unused files
+	* @param end the upper bound of the range of unused files (not inclusive)
+	* @return the range of matching unused files
+	* @throws SystemException if a system exception occurred
+	*/
+	public static java.util.List<com.liferay.dl.cleaner.model.UnusedFile> findByCompany_Deleted(
+		long companyId, boolean deleted, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence()
+				   .findByCompany_Deleted(companyId, deleted, start, end);
+	}
+
+	/**
+	* Returns an ordered range of all the unused files where companyId = &#63; and deleted = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.liferay.dl.cleaner.model.impl.UnusedFileModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param companyId the company ID
+	* @param deleted the deleted
+	* @param start the lower bound of the range of unused files
+	* @param end the upper bound of the range of unused files (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching unused files
+	* @throws SystemException if a system exception occurred
+	*/
+	public static java.util.List<com.liferay.dl.cleaner.model.UnusedFile> findByCompany_Deleted(
+		long companyId, boolean deleted, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence()
+				   .findByCompany_Deleted(companyId, deleted, start, end,
+			orderByComparator);
+	}
+
+	/**
+	* Returns the first unused file in the ordered set where companyId = &#63; and deleted = &#63;.
+	*
+	* @param companyId the company ID
+	* @param deleted the deleted
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching unused file
+	* @throws com.liferay.dl.cleaner.NoSuchUnusedFileException if a matching unused file could not be found
+	* @throws SystemException if a system exception occurred
+	*/
+	public static com.liferay.dl.cleaner.model.UnusedFile findByCompany_Deleted_First(
+		long companyId, boolean deleted,
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.dl.cleaner.NoSuchUnusedFileException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence()
+				   .findByCompany_Deleted_First(companyId, deleted,
+			orderByComparator);
+	}
+
+	/**
+	* Returns the first unused file in the ordered set where companyId = &#63; and deleted = &#63;.
+	*
+	* @param companyId the company ID
+	* @param deleted the deleted
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching unused file, or <code>null</code> if a matching unused file could not be found
+	* @throws SystemException if a system exception occurred
+	*/
+	public static com.liferay.dl.cleaner.model.UnusedFile fetchByCompany_Deleted_First(
+		long companyId, boolean deleted,
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence()
+				   .fetchByCompany_Deleted_First(companyId, deleted,
+			orderByComparator);
+	}
+
+	/**
+	* Returns the last unused file in the ordered set where companyId = &#63; and deleted = &#63;.
+	*
+	* @param companyId the company ID
+	* @param deleted the deleted
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching unused file
+	* @throws com.liferay.dl.cleaner.NoSuchUnusedFileException if a matching unused file could not be found
+	* @throws SystemException if a system exception occurred
+	*/
+	public static com.liferay.dl.cleaner.model.UnusedFile findByCompany_Deleted_Last(
+		long companyId, boolean deleted,
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.dl.cleaner.NoSuchUnusedFileException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence()
+				   .findByCompany_Deleted_Last(companyId, deleted,
+			orderByComparator);
+	}
+
+	/**
+	* Returns the last unused file in the ordered set where companyId = &#63; and deleted = &#63;.
+	*
+	* @param companyId the company ID
+	* @param deleted the deleted
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching unused file, or <code>null</code> if a matching unused file could not be found
+	* @throws SystemException if a system exception occurred
+	*/
+	public static com.liferay.dl.cleaner.model.UnusedFile fetchByCompany_Deleted_Last(
+		long companyId, boolean deleted,
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence()
+				   .fetchByCompany_Deleted_Last(companyId, deleted,
+			orderByComparator);
+	}
+
+	/**
+	* Returns the unused files before and after the current unused file in the ordered set where companyId = &#63; and deleted = &#63;.
+	*
+	* @param unusedFileId the primary key of the current unused file
+	* @param companyId the company ID
+	* @param deleted the deleted
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the previous, current, and next unused file
+	* @throws com.liferay.dl.cleaner.NoSuchUnusedFileException if a unused file with the primary key could not be found
+	* @throws SystemException if a system exception occurred
+	*/
+	public static com.liferay.dl.cleaner.model.UnusedFile[] findByCompany_Deleted_PrevAndNext(
+		long unusedFileId, long companyId, boolean deleted,
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.dl.cleaner.NoSuchUnusedFileException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence()
+				   .findByCompany_Deleted_PrevAndNext(unusedFileId, companyId,
+			deleted, orderByComparator);
+	}
+
+	/**
+	* Removes all the unused files where companyId = &#63; and deleted = &#63; from the database.
+	*
+	* @param companyId the company ID
+	* @param deleted the deleted
+	* @throws SystemException if a system exception occurred
+	*/
+	public static void removeByCompany_Deleted(long companyId, boolean deleted)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		getPersistence().removeByCompany_Deleted(companyId, deleted);
+	}
+
+	/**
+	* Returns the number of unused files where companyId = &#63; and deleted = &#63;.
+	*
+	* @param companyId the company ID
+	* @param deleted the deleted
+	* @return the number of matching unused files
+	* @throws SystemException if a system exception occurred
+	*/
+	public static int countByCompany_Deleted(long companyId, boolean deleted)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence().countByCompany_Deleted(companyId, deleted);
+	}
+
+	/**
 	* Caches the unused file in the entity cache if it is enabled.
 	*
 	* @param unusedFile the unused file

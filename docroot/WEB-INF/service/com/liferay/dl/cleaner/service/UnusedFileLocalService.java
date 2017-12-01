@@ -311,6 +311,32 @@ public interface UnusedFileLocalService extends BaseLocalService,
 		throws com.liferay.portal.kernel.exception.SystemException;
 
 	/**
+	* <p>This method is used to retrieve File by companyId and state</p>
+	*
+	* @param companyId
+	* @param deleted
+	* @param start
+	* @param end
+	* @return
+	* @throws SystemException
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public java.util.List<com.liferay.dl.cleaner.model.UnusedFile> getUnusedFilesByCompanyAndState(
+		long companyId, boolean deleted, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException;
+
+	/**
+	* This method is used to get the total amount of files
+	*
+	* @param companyId
+	* @param deleted
+	* @return
+	* @throws SystemException
+	*/
+	public int countUnusedFilesByCompanyAndState(long companyId, boolean deleted)
+		throws com.liferay.portal.kernel.exception.SystemException;
+
+	/**
 	* Method used to clean the document and library
 	*
 	* @param unusedFileId

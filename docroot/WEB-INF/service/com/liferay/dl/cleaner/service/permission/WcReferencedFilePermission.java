@@ -5,9 +5,8 @@ import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.security.permission.PermissionChecker;
 
-public class LostFilePermission {
-
-	private static final String _CLASS_NAME = "com.liferay.dl.cleaner.model.LostFile";
+public class WcReferencedFilePermission {
+	private static final String _CLASS_NAME = "com.liferay.dl.cleaner.model.WcReferencedFile";
 
     public static void check(PermissionChecker permissionChecker, long groupId, String actionId) throws PortalException, SystemException {
 
@@ -24,4 +23,5 @@ public class LostFilePermission {
 			groupId, _CLASS_NAME, groupId, actionId);
 
     }
+
 }

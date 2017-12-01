@@ -14,8 +14,8 @@
 
 package com.liferay.dl.cleaner.service.persistence;
 
-import com.liferay.dl.cleaner.model.LostFile;
-import com.liferay.dl.cleaner.service.LostFileLocalServiceUtil;
+import com.liferay.dl.cleaner.model.WcReferencedFile;
+import com.liferay.dl.cleaner.service.WcReferencedFileLocalServiceUtil;
 
 import com.liferay.portal.kernel.dao.orm.BaseActionableDynamicQuery;
 import com.liferay.portal.kernel.exception.SystemException;
@@ -24,14 +24,14 @@ import com.liferay.portal.kernel.exception.SystemException;
  * @author guywandji
  * @generated
  */
-public abstract class LostFileActionableDynamicQuery
+public abstract class WcReferencedFileActionableDynamicQuery
 	extends BaseActionableDynamicQuery {
-	public LostFileActionableDynamicQuery() throws SystemException {
-		setBaseLocalService(LostFileLocalServiceUtil.getService());
-		setClass(LostFile.class);
+	public WcReferencedFileActionableDynamicQuery() throws SystemException {
+		setBaseLocalService(WcReferencedFileLocalServiceUtil.getService());
+		setClass(WcReferencedFile.class);
 
 		setClassLoader(com.liferay.dl.cleaner.service.ClpSerializer.class.getClassLoader());
 
-		setPrimaryKeyPropertyName("lostFileId");
+		setPrimaryKeyPropertyName("wcRefencedFileId");
 	}
 }

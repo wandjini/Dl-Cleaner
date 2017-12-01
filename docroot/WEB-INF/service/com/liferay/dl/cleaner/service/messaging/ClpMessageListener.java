@@ -15,10 +15,10 @@
 package com.liferay.dl.cleaner.service.messaging;
 
 import com.liferay.dl.cleaner.service.ClpSerializer;
-import com.liferay.dl.cleaner.service.LostFileLocalServiceUtil;
-import com.liferay.dl.cleaner.service.LostFileServiceUtil;
 import com.liferay.dl.cleaner.service.UnusedFileLocalServiceUtil;
 import com.liferay.dl.cleaner.service.UnusedFileServiceUtil;
+import com.liferay.dl.cleaner.service.WcReferencedFileLocalServiceUtil;
+import com.liferay.dl.cleaner.service.WcReferencedFileServiceUtil;
 
 import com.liferay.portal.kernel.messaging.BaseMessageListener;
 import com.liferay.portal.kernel.messaging.Message;
@@ -38,12 +38,12 @@ public class ClpMessageListener extends BaseMessageListener {
 
 		if (command.equals("undeploy") &&
 				servletContextName.equals(getServletContextName())) {
-			LostFileLocalServiceUtil.clearService();
-
-			LostFileServiceUtil.clearService();
 			UnusedFileLocalServiceUtil.clearService();
 
 			UnusedFileServiceUtil.clearService();
+			WcReferencedFileLocalServiceUtil.clearService();
+
+			WcReferencedFileServiceUtil.clearService();
 		}
 	}
 }

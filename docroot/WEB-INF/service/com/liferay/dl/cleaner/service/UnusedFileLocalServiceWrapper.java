@@ -358,6 +358,39 @@ public class UnusedFileLocalServiceWrapper implements UnusedFileLocalService,
 	}
 
 	/**
+	* <p>This method is used to retrieve File by companyId and state</p>
+	*
+	* @param companyId
+	* @param deleted
+	* @param start
+	* @param end
+	* @return
+	* @throws SystemException
+	*/
+	@Override
+	public java.util.List<com.liferay.dl.cleaner.model.UnusedFile> getUnusedFilesByCompanyAndState(
+		long companyId, boolean deleted, int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return _unusedFileLocalService.getUnusedFilesByCompanyAndState(companyId,
+			deleted, start, end);
+	}
+
+	/**
+	* This method is used to get the total amount of files
+	*
+	* @param companyId
+	* @param deleted
+	* @return
+	* @throws SystemException
+	*/
+	@Override
+	public int countUnusedFilesByCompanyAndState(long companyId, boolean deleted)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return _unusedFileLocalService.countUnusedFilesByCompanyAndState(companyId,
+			deleted);
+	}
+
+	/**
 	* Method used to clean the document and library
 	*
 	* @param unusedFileId
