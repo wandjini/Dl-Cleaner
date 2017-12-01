@@ -96,11 +96,12 @@ public class UnusedFileModelImpl extends BaseModelImpl<UnusedFile>
 	public static final boolean COLUMN_BITMASK_ENABLED = GetterUtil.getBoolean(com.liferay.util.service.ServiceProps.get(
 				"value.object.column.bitmask.enabled.com.liferay.dl.cleaner.model.UnusedFile"),
 			true);
-	public static long DELETED_COLUMN_BITMASK = 1L;
-	public static long DLFILEVERSIONID_COLUMN_BITMASK = 2L;
-	public static long FILEENTRYID_COLUMN_BITMASK = 4L;
-	public static long GROUPID_COLUMN_BITMASK = 8L;
-	public static long CREATEDATE_COLUMN_BITMASK = 16L;
+	public static long COMPANYID_COLUMN_BITMASK = 1L;
+	public static long DELETED_COLUMN_BITMASK = 2L;
+	public static long DLFILEVERSIONID_COLUMN_BITMASK = 4L;
+	public static long FILEENTRYID_COLUMN_BITMASK = 8L;
+	public static long GROUPID_COLUMN_BITMASK = 16L;
+	public static long CREATEDATE_COLUMN_BITMASK = 32L;
 
 	/**
 	 * Converts the soap model instance into a normal model instance.
@@ -324,7 +325,19 @@ public class UnusedFileModelImpl extends BaseModelImpl<UnusedFile>
 
 	@Override
 	public void setCompanyId(long companyId) {
+		_columnBitmask |= COMPANYID_COLUMN_BITMASK;
+
+		if (!_setOriginalCompanyId) {
+			_setOriginalCompanyId = true;
+
+			_originalCompanyId = _companyId;
+		}
+
 		_companyId = companyId;
+	}
+
+	public long getOriginalCompanyId() {
+		return _originalCompanyId;
 	}
 
 	@JSON
@@ -593,6 +606,10 @@ public class UnusedFileModelImpl extends BaseModelImpl<UnusedFile>
 
 		unusedFileModelImpl._setOriginalGroupId = false;
 
+		unusedFileModelImpl._originalCompanyId = unusedFileModelImpl._companyId;
+
+		unusedFileModelImpl._setOriginalCompanyId = false;
+
 		unusedFileModelImpl._originalFileEntryId = unusedFileModelImpl._fileEntryId;
 
 		unusedFileModelImpl._setOriginalFileEntryId = false;
@@ -775,6 +792,8 @@ public class UnusedFileModelImpl extends BaseModelImpl<UnusedFile>
 	private long _originalGroupId;
 	private boolean _setOriginalGroupId;
 	private long _companyId;
+	private long _originalCompanyId;
+	private boolean _setOriginalCompanyId;
 	private long _userId;
 	private String _userUuid;
 	private String _userName;
