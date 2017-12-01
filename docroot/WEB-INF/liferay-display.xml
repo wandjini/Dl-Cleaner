@@ -4,5 +4,6 @@
 <display>
 	<category name="category.sample">
 		<portlet id="dl-cleaner" />
+		<portlet id="orphan-file"></portlet>
 	</category>
 </display>

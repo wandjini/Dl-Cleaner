@@ -7,32 +7,6 @@
 			<access>PROPERTY</access>
 		</persistence-unit-defaults>
 	</persistence-unit-metadata>
-	<mapped-superclass class="com.liferay.dl.cleaner.model.impl.LostFileModelImpl">
-		<attributes>
-			<id name="lostFileId" />
-			<basic name="groupId" />
-			<basic name="companyId" />
-			<basic name="userId" />
-			<basic name="userName" />
-			<basic name="createDate">
-				<temporal>TIMESTAMP</temporal>
-			</basic>
-			<basic name="modifiedDate">
-				<temporal>TIMESTAMP</temporal>
-			</basic>
-			<basic name="fileEntryId" />
-			<basic name="dlFileVersionId" />
-			<basic name="dlFileTitle" />
-			<basic name="deleted" />
-			<basic name="comment">
-				<column name="COMMENT_" />
-			</basic>
-			<transient name="modelAttributes" />
-			<transient name="primaryKey" />
-			<transient name="primaryKeyObj" />
-			<transient name="userUuid" />
-		</attributes>
-	</mapped-superclass>
 	<mapped-superclass class="com.liferay.dl.cleaner.model.impl.UnusedFileModelImpl">
 		<attributes>
 			<id name="unusedFileId" />
@@ -59,12 +33,37 @@
 			<transient name="userUuid" />
 		</attributes>
 	</mapped-superclass>
-	<entity class="com.liferay.dl.cleaner.model.impl.LostFileImpl" name="LostFile">
-		<table name="DlCleaner_LostFile" />
-		<attributes />
-	</entity>
+	<mapped-superclass class="com.liferay.dl.cleaner.model.impl.WcReferencedFileModelImpl">
+		<attributes>
+			<id name="wcRefencedFileId" />
+			<basic name="groupId" />
+			<basic name="companyId" />
+			<basic name="userId" />
+			<basic name="userName" />
+			<basic name="createDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="modifiedDate">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="articleId" />
+			<basic name="dlFileUuId" />
+			<basic name="orphan" />
+			<basic name="type">
+				<column name="TYPE_" />
+			</basic>
+			<transient name="modelAttributes" />
+			<transient name="primaryKey" />
+			<transient name="primaryKeyObj" />
+			<transient name="userUuid" />
+		</attributes>
+	</mapped-superclass>
 	<entity class="com.liferay.dl.cleaner.model.impl.UnusedFileImpl" name="UnusedFile">
 		<table name="DlCleaner_UnusedFile" />
+		<attributes />
+	</entity>
+	<entity class="com.liferay.dl.cleaner.model.impl.WcReferencedFileImpl" name="WcReferencedFile">
+		<table name="DlCleaner_WcReferencedFile" />
 		<attributes />
 	</entity>
 </entity-mappings>

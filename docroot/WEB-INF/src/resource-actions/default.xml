@@ -22,6 +22,6 @@
     </portlet-resource>
     <resource file="resource-actions/model.xml" />
 	<resource file="resource-actions/unused_file.xml" />
-	<resource file="resource-actions/lost_file.xml" />
+	<resource file="resource-actions/wc_referenced_file.xml" />
 </resource-action-mapping>
 
