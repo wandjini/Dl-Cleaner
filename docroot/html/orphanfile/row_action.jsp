@@ -11,6 +11,7 @@ WcReferencedFile wcReferencedFile = (WcReferencedFile) row.getObject();
  <% if(WcReferencedFilePermission.contains(permissionChecker, themeDisplay.getScopeGroupId(), ActionKeys.DELETE_WCREFERENCED_FILE)){ %>
 	<portlet:actionURL name="deleteWcRefencedFile" var="deleteWcRefencedFileURL">
 		<portlet:param name="wcReferencedFileId" value="<%= String.valueOf(wcReferencedFile.getWcRefencedFileId())%>"></portlet:param>
+		<portlet:param name="redirect" value="<%=themeDisplay.getURLCurrent() %>"/>
 	</portlet:actionURL>
 	<liferay-ui:icon-delete url="<%=deleteWcRefencedFileURL.toString()%>" />
 <% } %> 

@@ -1,5 +1,9 @@
 
 <%@include file="/html/init.jsp" %>
+<%
+	String navItem = ParamUtil.getString(request, "navItem", "unused_files");
+%>
+
 <liferay-portlet:renderURL varImpl="iteratorURL"></liferay-portlet:renderURL>
 <portlet:actionURL name="runJob" var="runJobUrl" ></portlet:actionURL>
 
@@ -7,30 +11,26 @@
 <liferay-ui:error key="generic-error" message="generic-error-msg"></liferay-ui:error>
 
 <aui:button href="<%=runJobUrl %>" value="run-job"/>
-<liferay-ui:search-container 
-	emptyResultsMessage="no-entries-were-found"
-	iteratorURL="<%= iteratorURL %>"
-	deltaConfigurable="true"
-	>
-	 <liferay-ui:search-container-results
-                results="<%= UnusedFileLocalServiceUtil.getUnusedFilesByCompanyAndState(themeDisplay.getCompanyId(), false,  searchContainer.getStart(), searchContainer.getEnd()) %>"
-                total="<%=UnusedFileLocalServiceUtil.countUnusedFilesByCompanyAndState(themeDisplay.getCompanyId(), false)%>"
-        />
-        <liferay-ui:search-container-row
-                className="com.liferay.dl.cleaner.model.UnusedFile"
-                keyProperty="unusedFileId" modelVar="unusedFile" escapedModel="<%= true %>">
-                <liferay-ui:search-container-column-text name="fileEntryId"  property="fileEntryId">
-                </liferay-ui:search-container-column-text>	
-                <liferay-ui:search-container-column-text name="title" property="dlFileTitle" >
-                	
-                </liferay-ui:search-container-column-text>
-                 <liferay-ui:search-container-column-text name="comment" property="comment" >
-                	
-                </liferay-ui:search-container-column-text>
-				<liferay-ui:search-container-column-jsp
-					align="right"
-					path="/html/row_action.jsp"
-				/>
-        </liferay-ui:search-container-row>
-        <liferay-ui:search-iterator />
-</liferay-ui:search-container>
+	<aui:nav cssClass="nav-tabs">
+		
+
+		<portlet:renderURL var="viewPendingURL">
+			<portlet:param name="mvcPath" value="/html/view.jsp"/>
+			<portlet:param name="navItem" value="unused_files" />
+		</portlet:renderURL>
+
+		<aui:nav-item href="<%= viewPendingURL %>" label="unused-files" selected='<%= navItem.equals("unused_files") %>' />
+		<portlet:renderURL var="viewApprovedURL">
+			<portlet:param name="mvcPath" value="/html/view.jsp"/>
+			<portlet:param name="navItem" value="referenced_files" />
+		</portlet:renderURL>
+
+		<aui:nav-item href="<%= viewApprovedURL %>" label="referenced-files" selected='<%= navItem.equals("referenced_files") %>' />
+		
+	</aui:nav>
+	<c:if test='<%=navItem.equals("unused_files") %>'>
+		<%@include file="/html/unused_files.jspf" %>
+	</c:if>
+	<c:if test='<%=navItem.equals("referenced_files") %>'>
+		<%@include file="/html/referenced_files.jspf" %>
+	</c:if>
