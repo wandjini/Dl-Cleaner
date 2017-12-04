@@ -1,12 +1,13 @@
 package com.liferay.dl.cleaner.messaging.impl;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.mail.internet.InternetAddress;
-
-import org.jsoup.Jsoup;
-import org.jsoup.select.Elements;
 
 import com.liferay.dl.cleaner.NoSuchUnusedFileException;
 import com.liferay.dl.cleaner.NoSuchWcReferencedFileException;
@@ -27,20 +28,14 @@ import com.liferay.portal.kernel.mail.MailMessage;
 import com.liferay.portal.kernel.messaging.Message;
 import com.liferay.portal.kernel.messaging.MessageListener;
 import com.liferay.portal.kernel.messaging.MessageListenerException;
-import com.liferay.portal.kernel.test.NewJVMJUnitTestRunner;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.kernel.xml.Attribute;
-import com.liferay.portal.kernel.xml.Document;
-import com.liferay.portal.kernel.xml.Element;
-import com.liferay.portal.kernel.xml.SAXReaderUtil;
 import com.liferay.portal.model.Image;
 import com.liferay.portal.model.Lock;
 import com.liferay.portal.model.User;
 import com.liferay.portal.service.ImageLocalServiceUtil;
 import com.liferay.portal.service.LockLocalServiceUtil;
 import com.liferay.portal.service.UserLocalServiceUtil;
-import com.liferay.portal.util.PortalUtil;
 import com.liferay.portlet.documentlibrary.model.DLFileEntry;
 import com.liferay.portlet.documentlibrary.service.DLFileEntryLocalServiceUtil;
 import com.liferay.portlet.journal.model.JournalArticle;
@@ -194,49 +189,24 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 			@SuppressWarnings("unchecked")
 			List<JournalArticle> journalArticles = 
 					JournalArticleLocalServiceUtil.dynamicQuery(dynamicQuery);
-
+			String xml = StringPool.BLANK;
 			for (JournalArticle journalArticle : journalArticles) {
 				
-				String xml = journalArticle.getContent();
-				Document document = null;
-				Element rootElement = null;
+				xml = journalArticle.getContent();
 				try {
+					String 
+					filePath = getReferencedDocumentsUuIdFromContent(xml);
 					
-					document = SAXReaderUtil.read(xml);
-					rootElement = document.getRootElement();
-					List<Element> dynamicElements = rootElement.elements("dynamic-element");
-					List<Attribute> elementAttributes = null;
-					List<Element> contentElements = null;
-					String type = StringPool.BLANK;
-					String filePath = StringPool.BLANK;
-					if(!dynamicElements.isEmpty()){
-						for(Element dynamicElement:dynamicElements){
-							elementAttributes = dynamicElement.attributes();
-							if(!elementAttributes.isEmpty()){
-								for(Attribute elementAttribute:elementAttributes){
-									if(elementAttribute.getName().equals("type") ){
-										type = elementAttribute.getValue();
-										if(type.equals(_DOCUMENT_LIBRARY) || type.equals(_IMAGE) || type.equals(_TEXT_AREA)){
-											contentElements = dynamicElement.elements("dynamic-content");
-											if(!contentElements.isEmpty()){
-												for(Element contentElement: contentElements){
-													filePath = getFilePathFromElement(contentElement, type);
-													if(Validator.isNotNull(filePath)){
-														valuesToProcess.add(JSONFactoryUtil.createJSONObject().put("groupId", journalArticle.getGroupId())
-															.put("filePath", filePath)
-															.put("articleId", journalArticle.getArticleId())
-															.put("companyId", journalArticle.getCompanyId())
-															.put("type", type));
-													}
-												}
-											}
-										}
-										break;
-									}
-								}
-							}
-						}
-					}
+					if(Validator.isNotNull(filePath))
+						addFileToProcess(journalArticle, filePath, _DOCUMENT_LIBRARY, valuesToProcess);
+					
+					filePath = getReferencedImagesIdFromContent(xml);
+					if(Validator.isNotNull(filePath))
+						addFileToProcess(journalArticle, filePath, _IMAGE ,valuesToProcess);
+					
+												
+								
+					
 				
 				}
 				catch (Exception e) {
@@ -258,18 +228,15 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 				boolean orphan = false;
 				String type = StringPool.BLANK;
 				for(JSONObject fileToProcess: valuesToProcess){
-					files = fileToProcess.getString("filePath").split(";");
+					files = fileToProcess.getString("filePath").split(StringPool.SLASH);
 					
 					for(int i = 0; i < files.length; i++){
-						type = fileToProcess.getString("type").equals(_IMAGE) ? _IMAGE : _DOCUMENT_LIBRARY;
-						String[] parameters = files[i].split(StringPool.SLASH);
-						if(type.equals(_IMAGE)){
-							String[] splitSrc =  parameters[parameters.length -1 ].split("=");
-							dlFileUuId = splitSrc[1].split("&")[0];
-						}
-						else{
-							dlFileUuId = parameters[parameters.length -1 ];
-						}
+						if(Validator.isNull(files[i]))
+							continue;
+						type = fileToProcess.getString("type");
+						
+						dlFileUuId = files[i];
+						
 						articleGroupId = fileToProcess.getLong("groupId");
 						articleId = fileToProcess.getString("articleId");
 						companyId = fileToProcess.getLong("companyId");
@@ -334,53 +301,75 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 	}	
 	
 	
-	/**
-	 * 
-	 * This Method retrieve the filePath based on element type
-	 * 
-	 * @param element
-	 * @param type
-	 * @return
-	 */
-	private String getFilePathFromElement(Element element, String type){
-		
-		String result = "";
-		if(type.equals(_DOCUMENT_LIBRARY) || type.equals(_IMAGE)){
-			result = element.getText();
-		}
-		else if(type.equals(_TEXT_AREA)){
-			String html = element.getText();
-			
-			if(Validator.isNotNull(html)){
-				org.jsoup.nodes.Document document = Jsoup.parse(html);
-				Elements anchors = document.select("a[href]"); 
-				anchors.addAll(document.select("img"));
-				if(!anchors.isEmpty()){
-					StringBuilder sb = new StringBuilder();
-					String data = StringPool.BLANK;
-					int size = anchors.size();
-					for(int i = 0; i < anchors.size(); i++){
-						data = anchors.get(i).attr("href");
-						if(Validator.isNull(data)){
-							data = anchors.get(i).attr("src");
-						}
-						if(data.startsWith("/documents")){
-							int index = data.indexOf("?");
-							if(index != -1){
-								data = data.substring(0,index);
-							}
-							sb.append(data +( (i < size - 1) ? ";" : "") );
-						}
-					}
-					result = sb.toString();
-				}
-			}
-		}
-		
-		return result;
-	}
+
 	
 	private final String _DOCUMENT_LIBRARY = "document_library";
-	private final String _TEXT_AREA = "text_area";
 	private final String _IMAGE = "image";
+	
+	private final String dlRegex = "\\/documents\\/[0-9]*\\/[0]\\/[a-zA-Z0-9_.-]*\\/[a-zA-Z0-9_-]*";
+	private final String imgRegExp = "\\/image\\/journal\\/article\\?img_id=[0-9]*";
+	/**
+	 * This method return a set of documents referenced in a journal article
+	 * 
+	 * @param content
+	 * @return
+	 */
+	private String getReferencedDocumentsUuIdFromContent(String content){
+		String docUuIds = StringPool.BLANK;
+		Set<String> results = new HashSet<>();
+		Pattern pattern = Pattern.compile(dlRegex);
+		 Matcher matcher = pattern.matcher(content);
+		 String[] splitLink = null;
+		 String tmpUuId = StringPool.BLANK;
+		 
+		 while(matcher.find()){
+			 results.add(matcher.group()); 
+			 splitLink = matcher.group().split(StringPool.SLASH);
+			 tmpUuId = splitLink[splitLink.length -1];
+			 if(!docUuIds.contains(StringPool.SLASH+tmpUuId+StringPool.SLASH)){
+				 docUuIds = (Validator.isNull(docUuIds) ? StringPool.SLASH + docUuIds : docUuIds) +  tmpUuId + StringPool.SLASH ;
+			 }
+		 }
+		 
+		return docUuIds;
+	}
+	
+	/**
+	 * This method return a set of images referenced in a journal article
+	 * 
+	 * @param content
+	 * @return
+	 */
+	private String getReferencedImagesIdFromContent(String content){
+		 String result = StringPool.BLANK;
+		 Pattern pattern = Pattern.compile(imgRegExp);
+		 Matcher matcher = pattern.matcher(content);
+		 String[] splitLink = null;
+		 String imgId = StringPool.BLANK;
+		 while(matcher.find()){
+			 splitLink = matcher.group().split(StringPool.EQUAL);
+			 imgId = splitLink[1];
+			 if(!result.contains(StringPool.SLASH +imgId+StringPool.SLASH )){
+				 result = (Validator.isNull(result) ? StringPool.SLASH + result : result) + imgId + StringPool.SLASH;
+			 }
+		 }
+		return result;
+	}
+
+	/**
+	 * This method adds file to process
+	 * 
+	 * @param journalArticle
+	 * @param filePath
+	 * @param valuesToProcess
+	 */
+	private void addFileToProcess( JournalArticle journalArticle, String filePath, String type, List<JSONObject> valuesToProcess){
+		if(Validator.isNotNull(filePath)){
+			valuesToProcess.add(JSONFactoryUtil.createJSONObject().put("groupId", journalArticle.getGroupId())
+				.put("filePath", filePath)
+				.put("articleId", journalArticle.getArticleId())
+				.put("companyId", journalArticle.getCompanyId())
+				.put("type", type));
+		}
+	}
 }
