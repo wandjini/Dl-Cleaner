@@ -1,27 +1,57 @@
-<liferay-ui:search-container 
-	emptyResultsMessage="no-entries-were-found"
-	iteratorURL="<%= iteratorURL %>"
-	deltaConfigurable="true"
-	>
-	 <liferay-ui:search-container-results
-                results="<%= UnusedFileLocalServiceUtil.getUnusedFilesByCompanyAndState(themeDisplay.getCompanyId(), false,  searchContainer.getStart(), searchContainer.getEnd()) %>"
-                total="<%=UnusedFileLocalServiceUtil.countUnusedFilesByCompanyAndState(themeDisplay.getCompanyId(), false)%>"
-        />
-        <liferay-ui:search-container-row
-                className="com.liferay.dl.cleaner.model.UnusedFile"
-                keyProperty="unusedFileId" modelVar="unusedFile" escapedModel="<%= true %>">
-                <liferay-ui:search-container-column-text name="fileEntryId"  property="fileEntryId">
-                </liferay-ui:search-container-column-text>	
-                <liferay-ui:search-container-column-text name="title" property="dlFileTitle" >
-                	
-                </liferay-ui:search-container-column-text>
-                 <liferay-ui:search-container-column-text name="comment" property="comment" >
-                	
-                </liferay-ui:search-container-column-text>
-				<liferay-ui:search-container-column-jsp
-					align="right"
-					path="/html/row_action.jsp"
-				/>
-        </liferay-ui:search-container-row>
-        <liferay-ui:search-iterator />
-</liferay-ui:search-container>
+<liferay-portlet:renderURL varImpl="iteratorURL">
+	<portlet:param name="navItem" value="unused_files" />
+</liferay-portlet:renderURL>
+<liferay-portlet:renderURL varImpl="searchUnusededFileURL">
+	<portlet:param name="mvcPath" value="/html/view.jsp" />
+	<portlet:param name="navItem" value="unused_files" />
+</liferay-portlet:renderURL>
+<%
+	String keyword = ParamUtil.getString(request, "keywords");
+	String orderByCol = ParamUtil.getString(request, "orderByCol", "createDate");
+	String orderByType = ParamUtil.getString(request, "orderByType", "desc");
+%>
+<aui:form action="<%=searchUnusededFileURL%>" name="fm">
+	<liferay-ui:search-container
+		displayTerms="<%=new DisplayTerms(renderRequest)%>"
+		emptyResultsMessage="no-entries-were-found"
+		iteratorURL="<%=iteratorURL%>" deltaConfigurable="true"
+		orderByType="<%=orderByType %>" orderByCol="<%=orderByCol %>">
+		
+		<liferay-ui:search-form page="/html/unused_files_search.jsp"
+			servletContext="<%=application%>" />
+		<liferay-ui:search-container-results
+			results="<%=UnusedFileLocalServiceUtil.searchUnusedFilesByKeywordCompanyAndState(keyword,
+							themeDisplay.getCompanyId(), groupId, deleted, orderByCol, orderByType,
+							searchContainer.getStart(), searchContainer.getEnd())%>"
+			total="<%=UnusedFileLocalServiceUtil.countSearchUnusedFilesByKeywordCompanyAndState(keyword,
+							themeDisplay.getCompanyId(), groupId, deleted)%>" />
+		<liferay-ui:search-container-row
+			className="com.liferay.dl.cleaner.model.UnusedFile"
+			keyProperty="unusedFileId" modelVar="unusedFile"
+			escapedModel="<%=true%>">
+			<liferay-ui:search-container-column-text name="fileEntryId"
+				property="fileEntryId">
+			</liferay-ui:search-container-column-text>
+			<liferay-ui:search-container-column-text name="title"
+				 orderable="<%=true %>" orderableProperty="dlFileTitle">
+				<%if(!unusedFile.isDeleted()) {%>
+				<a  target="_BLANK" href='<%=themeDisplay.getPortalURL()+
+					"/c/document_library/get_file?uuid="+unusedFile.getDlFileUuId()+"&groupId="+unusedFile.getGroupId() %>' >
+						<%=unusedFile.getDlFileTitle() %>	 
+				</a>
+				<%}
+				else {%>
+					<%=unusedFile.getDlFileTitle() %>
+				<%} %>
+				
+			</liferay-ui:search-container-column-text>
+			<liferay-ui:search-container-column-text name="comment"
+				property="comment">
+
+			</liferay-ui:search-container-column-text>
+			<liferay-ui:search-container-column-jsp align="right"
+				path="/html/row_action.jsp" />
+		</liferay-ui:search-container-row>
+		<liferay-ui:search-iterator />
+	</liferay-ui:search-container>
+</aui:form>

@@ -11,8 +11,12 @@ import javax.portlet.RenderResponse;
 import com.liferay.dl.cleaner.messaging.impl.CheckUnreferencedFilesMessageListener;
 import com.liferay.dl.cleaner.portlet.util.ActionKeys;
 import com.liferay.dl.cleaner.service.UnusedFileServiceUtil;
+import com.liferay.dl.cleaner.service.WcReferencedFileServiceUtil;
+import com.liferay.portal.NoSuchLockException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.messaging.Message;
 import com.liferay.portal.kernel.messaging.MessageBusUtil;
 import com.liferay.portal.kernel.servlet.SessionErrors;
@@ -30,50 +34,88 @@ import com.liferay.util.bridges.mvc.MVCPortlet;
  * @author guywandji
  *
  */
-public class DlCleanerPortlet extends MVCPortlet{
+public class DlCleanerPortlet extends MVCPortlet {
+
+	private static Log _log = LogFactoryUtil.getLog(DlCleanerPortlet.class);
 
 	@Override
 	public void doView(RenderRequest renderRequest, RenderResponse renderResponse)
 			throws IOException, PortletException {
-		
+
 		super.doView(renderRequest, renderResponse);
 	}
-	
-	public void deleteUnusedFile(ActionRequest actionRequest, ActionResponse actionResponse){
+
+	/**
+	 * This method remove deletes the unused file
+	 * 
+	 * @param actionRequest
+	 * @param actionResponse
+	 */
+	public void deleteUnusedFile(ActionRequest actionRequest, ActionResponse actionResponse) {
 		ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
 		long unusedFileId = ParamUtil.getLong(actionRequest, "unusedFileId");
-		
-	
+
 		try {
-			UnusedFileServiceUtil.deleteUnusedFile(themeDisplay.getUserId(), themeDisplay.getScopeGroupId(), unusedFileId);
+			UnusedFileServiceUtil.deleteUnusedFile(themeDisplay.getUserId(), themeDisplay.getScopeGroupId(),
+					unusedFileId);
 		} catch (Exception e) {
-			if(e instanceof PrincipalException){
+			if (e instanceof PrincipalException) {
 				SessionErrors.add(actionRequest, PrincipalException.class);
-			}
-			else{
-				SessionErrors.add(actionRequest,"generic-error");
+			} else {
+				SessionErrors.add(actionRequest, "generic-error");
 			}
 		}
 	}
-	public void startCleanerJob(ActionRequest actionRequest, ActionResponse actionResponse){
+
+	/**
+	 * This Method is used to start the job
+	 * 
+	 * @param actionRequest
+	 * @param actionResponse
+	 */
+	public void runJob(ActionRequest actionRequest, ActionResponse actionResponse) {
 		ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
-		JSONObject payLoad = JSONFactoryUtil.createJSONObject()
-				.put("userId", themeDisplay.getUserId())
-				.put("groupId", themeDisplay.getScopeGroupId());
-				
+		JSONObject payLoad = JSONFactoryUtil.createJSONObject().put("userId", themeDisplay.getUserId()).put("companyId",
+				themeDisplay.getCompanyId());
+
 		Message message = new Message();
 		message.setPayload(payLoad.toString());
 		try {
-			
+
 			Lock lock = LockLocalServiceUtil.getLock(CheckUnreferencedFilesMessageListener.class.getName(),
-					ActionKeys.KEY_JOB); 
-			if(lock == null)
+					ActionKeys.KEY_JOB);
+			if (lock == null)
 				MessageBusUtil.sendMessage(ActionKeys.DESTINATION_NAME, message);
 		} catch (Exception e) {
-			// TODO: handle exception
+			if (e instanceof NoSuchLockException) {
+				MessageBusUtil.sendMessage(ActionKeys.DESTINATION_NAME, message);
+			} else {
+				_log.error("Error runing the job", e);
+				SessionErrors.add(actionRequest, "generic-error");
+			}
 		}
-		
-	}
-	
 
+	}
+
+	/**
+	 * This method is used to delete referenced file
+	 * 
+	 * @param actionRequest
+	 * @param actionResponse
+	 */
+	public void deleteWcRefencedFile(ActionRequest actionRequest, ActionResponse actionResponse) {
+		ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
+		long wcReferencedFileId = ParamUtil.getLong(actionRequest, "wcReferencedFileId");
+
+		try {
+			WcReferencedFileServiceUtil.deleteWcReferencedFile(themeDisplay.getScopeGroupId(), wcReferencedFileId);
+
+		} catch (Exception e) {
+			if (e instanceof PrincipalException) {
+				SessionErrors.add(actionRequest, PrincipalException.class);
+			} else {
+				SessionErrors.add(actionRequest, "generic-error");
+			}
+		}
+	}
 }

@@ -36,6 +36,10 @@
 <%@ taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %>
 <%@ taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 <%@ taglib uri="http://liferay.com/tld/util" prefix="liferay-util" %>
+<%@page import="com.liferay.portal.kernel.dao.orm.QueryUtil"%>
+<%@page import="com.liferay.portal.service.GroupLocalServiceUtil"%>
+<%@page import="com.liferay.portal.model.Group"%>
+<%@page import="java.util.List"%>
 <portlet:defineObjects />
 <liferay-theme:defineObjects />
 <portlet:renderURL var="orPhanFilesUrl">
@@ -43,4 +47,6 @@
 </portlet:renderURL>
 <%
 	Boolean orphan = ParamUtil.getBoolean(renderRequest, "orphan", true);
+	long groupId = ParamUtil.getLong(request, "groupId");
+	boolean deleted = ParamUtil.getBoolean(request, "deleted", false);
 %>
