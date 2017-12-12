@@ -51,12 +51,11 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 
 	@Override
 	public void receive(Message message) throws MessageListenerException {
-		
-		
+
 		try {
-			LockLocalServiceUtil.lock(CheckUnreferencedFilesMessageListener.class.getName(),
-					ActionKeys.KEY_JOB, ActionKeys.JOB_OWNER);
-	
+			LockLocalServiceUtil.lock(CheckUnreferencedFilesMessageListener.class.getName(), ActionKeys.KEY_JOB,
+					ActionKeys.JOB_OWNER);
+
 		} catch (Exception e1) {
 			_log.error(e1);
 			return;
@@ -64,98 +63,98 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 		Object obj = message.getPayload();
 		long companyId = 0;
 		long userId = 0;
-		
+
 		try {
-			if(obj != null){
+			if (obj != null) {
 				JSONObject payload = JSONFactoryUtil.createJSONObject(obj.toString());
 				userId = payload.getLong("userId");
 				companyId = payload.getLong("companyId");
 			}
-			
-			getJournalArticleReferencedFiles(companyId,userId);
+
+			getJournalArticleReferencedFiles(companyId, userId);
 			getDlFilesWithNoReferenceInWebContent(companyId, userId);
 		} catch (Exception e) {
 			_log.error(e);
 			e.printStackTrace();
-		} 
-		finally{
+		} finally {
 			try {
 				Lock lock = LockLocalServiceUtil.getLock(CheckUnreferencedFilesMessageListener.class.getName(),
 						ActionKeys.KEY_JOB);
-				if(lock != null)
+				if (lock != null)
 					LockLocalServiceUtil.deleteLock(lock);
 			} catch (Exception e) {
 				_log.error(e);
 			}
-		
+
 		}
 	}
-	
-	
 
 	private final static Log _log = LogFactoryUtil.getLog(CheckUnreferencedFilesMessageListener.class);
-	
+
 	/**
-	 * This method retrieves Orphaned file versions and files without binary content
+	 * This method retrieves Orphaned file versions and files without binary
+	 * content
 	 * 
 	 * @param companyId
 	 * @param userId
 	 * @throws SystemException
 	 * @throws PortalException
 	 */
-	private void getDlFilesWithNoReferenceInWebContent(long companyId, long userId) throws SystemException, PortalException{
+	private void getDlFilesWithNoReferenceInWebContent(long companyId, long userId)
+			throws SystemException, PortalException {
 		int start = 0;
 		int end = 1000;
-		DynamicQuery dynamicQuery = null;; 
+		DynamicQuery dynamicQuery = null;
+		;
 		long count = DLFileEntryLocalServiceUtil.dynamicQueryCount(getDlFileDynanicQuery(companyId));
 		int unusedFilesFoundSize = 0;
 
 		_log.debug("Total number of DLFileVersions: " + count);
 		String comment = StringPool.BLANK;
 		while (start < count) {
-			_log.debug("Processing (start, end): (" + start + ", " + end + ")" );
+			_log.debug("Processing (start, end): (" + start + ", " + end + ")");
 			dynamicQuery = getDlFileDynanicQuery(companyId);
 			dynamicQuery.setLimit(start, end);
 			@SuppressWarnings("unchecked")
-			List<DLFileEntry> dlFileEntries = 
-					DLFileEntryLocalServiceUtil.dynamicQuery(dynamicQuery);
-			
+			List<DLFileEntry> dlFileEntries = DLFileEntryLocalServiceUtil.dynamicQuery(dynamicQuery);
+
 			for (DLFileEntry dlFileEntry : dlFileEntries) {
-										
+
 				try {
-					
-					WcReferencedFileLocalServiceUtil.getWcReferencedFilesByCompanyAndFileUUID(dlFileEntry.getCompanyId(), dlFileEntry.getUuid());
-					
-				}catch (NoSuchWcReferencedFileException ex) {
-					
+
+					WcReferencedFileLocalServiceUtil.getWcReferencedFilesByCompanyAndFileUUID(
+							dlFileEntry.getCompanyId(), dlFileEntry.getUuid());
+
+				} catch (NoSuchWcReferencedFileException ex) {
+
 					try {
-						UnusedFileLocalServiceUtil.getUnusedFilesByGroupFileIdVersionId(dlFileEntry.getGroupId(), 
+						UnusedFileLocalServiceUtil.getUnusedFilesByGroupFileIdVersionId(dlFileEntry.getGroupId(),
 								dlFileEntry.getFileEntryId(), dlFileEntry.getFileVersion().getFileVersionId());
-						
-						
+
 					} catch (NoSuchUnusedFileException e2) {
 						_log.error(e2);
-						_log.error("The file "+ dlFileEntry.getFileEntryId() +" doesn't exit yet in the table");
-						UnusedFileLocalServiceUtil.addUnusedFile(userId,dlFileEntry.getFileEntryId(), dlFileEntry.getFileVersion().getFileVersionId(), comment );
+						_log.error("The file " + dlFileEntry.getFileEntryId() + " doesn't exit yet in the table");
+						UnusedFileLocalServiceUtil.addUnusedFile(userId, dlFileEntry.getFileEntryId(),
+								dlFileEntry.getFileVersion().getFileVersionId(), StringPool.BLANK, comment);
 						unusedFilesFoundSize++;
 					}
-					
+
 				}
 
 			}
 
-			start+=1000;
-			end+=1000;
+			start += 1000;
+			end += 1000;
 		}
-		if(userId > 0 ){
+		if (userId > 0) {
 			try {
-				
+
 				User user = UserLocalServiceUtil.getUser(userId);
 				InternetAddress to = new InternetAddress(user.getEmailAddress());
 				InternetAddress from = new InternetAddress("noreply@liferay.com");
 				MailMessage mailMessage = new MailMessage();
 				mailMessage.setTo(to);
-				mailMessage.setFrom(from); 
+				mailMessage.setFrom(from);
 				mailMessage.setBody("Job WebContent Orphan files Finder is ended");
 				MailServiceUtil.sendEmail(mailMessage);
 			} catch (Exception e) {
@@ -163,7 +162,7 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 			}
 		}
 		_log.error(unusedFilesFoundSize + " unused files found");
-		
+
 	}
 
 	/**
@@ -174,185 +173,179 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 	 * @throws SystemException
 	 * @throws PortalException
 	 */
-	private void getJournalArticleReferencedFiles(long groupId, long userId) throws SystemException, PortalException{
+	private void getJournalArticleReferencedFiles(long groupId, long userId) throws SystemException, PortalException {
 		int start = 0;
 		int end = 1000;
-		DynamicQuery dynamicQuery = null;; 
+		DynamicQuery dynamicQuery = null;
+		;
 		long count = JournalArticleLocalServiceUtil.dynamicQueryCount(getJournalArticleDynanicQuery(groupId));
 		_log.debug("Total number of JournalArticles: " + count);
 		while (start < count) {
-			_log.debug("Processing (start, end): (" + start + ", " + end + ")" );
+			_log.debug("Processing (start, end): (" + start + ", " + end + ")");
 			dynamicQuery = getJournalArticleDynanicQuery(groupId);
 			dynamicQuery.setLimit(start, end);
 			List<JSONObject> valuesToProcess = new ArrayList<>();
-			
+
 			@SuppressWarnings("unchecked")
-			List<JournalArticle> journalArticles = 
-					JournalArticleLocalServiceUtil.dynamicQuery(dynamicQuery);
+			List<JournalArticle> journalArticles = JournalArticleLocalServiceUtil.dynamicQuery(dynamicQuery);
 			String xml = StringPool.BLANK;
 			for (JournalArticle journalArticle : journalArticles) {
-				
+
 				xml = journalArticle.getContent();
 				try {
-					String 
-					filePath = getReferencedDocumentsUuIdFromContent(xml);
-					
-					if(Validator.isNotNull(filePath))
-						addFileToProcess(journalArticle, filePath, _DOCUMENT_LIBRARY, valuesToProcess);
-					
-					filePath = getReferencedImagesIdFromContent(xml);
-					if(Validator.isNotNull(filePath))
-						addFileToProcess(journalArticle, filePath, _IMAGE ,valuesToProcess);
-					
-												
-								
-					
-				
-				}
-				catch (Exception e) {
-					 
-					_log.error(e);
-						
-				}
+					String filePath = getReferencedDocumentsUuIdFromContent(xml);
 
+					if (Validator.isNotNull(filePath))
+						addFileToProcess(journalArticle, filePath, _DOCUMENT_LIBRARY, valuesToProcess);
+
+					filePath = getReferencedImagesIdFromContent(xml);
+					if (Validator.isNotNull(filePath))
+						addFileToProcess(journalArticle, filePath, _IMAGE, valuesToProcess);
+
+				} catch (Exception e) {
+
+					_log.error(e);
+
+				}
 
 			}
-			
-			if(!valuesToProcess.isEmpty()){
-				
+
+			if (!valuesToProcess.isEmpty()) {
+
 				String[] files = null;
-				String dlFileUuId  = StringPool.BLANK;
+				String dlFileUuId = StringPool.BLANK;
 				String articleId = StringPool.BLANK;
 				long companyId = 0;
 				long articleGroupId = 0;
 				boolean orphan = false;
 				String type = StringPool.BLANK;
-				for(JSONObject fileToProcess: valuesToProcess){
+				for (JSONObject fileToProcess : valuesToProcess) {
 					files = fileToProcess.getString("filePath").split(StringPool.SLASH);
-					
-					for(int i = 0; i < files.length; i++){
-						if(Validator.isNull(files[i]))
+
+					for (int i = 0; i < files.length; i++) {
+						if (Validator.isNull(files[i]))
 							continue;
 						type = fileToProcess.getString("type");
-						
+
 						dlFileUuId = files[i];
-						
+
 						articleGroupId = fileToProcess.getLong("groupId");
 						articleId = fileToProcess.getString("articleId");
 						companyId = fileToProcess.getLong("companyId");
-						
-						try{
-							if(type.equals(_IMAGE)){
+
+						try {
+							if (type.equals(_IMAGE)) {
 								Image image = ImageLocalServiceUtil.getImage(Long.valueOf(dlFileUuId));
 								orphan = image == null;
-								
-							}
-							else{
-								DLFileEntry dlFileEntry =  DLFileEntryLocalServiceUtil.fetchDLFileEntryByUuidAndCompanyId(dlFileUuId, companyId);
+
+							} else {
+								DLFileEntry dlFileEntry = DLFileEntryLocalServiceUtil
+										.fetchDLFileEntryByUuidAndCompanyId(dlFileUuId, companyId);
 								orphan = dlFileEntry == null;
 							}
-							
-							WcReferencedFile wcReferencedFile =  WcReferencedFileLocalServiceUtil.getWcReferencedFilesByCompanyAndFileUUID(companyId, dlFileUuId);
-							if(!wcReferencedFile.isOrphan()  &&  orphan){
+
+							WcReferencedFile wcReferencedFile = WcReferencedFileLocalServiceUtil
+									.getWcReferencedFilesByCompanyAndFileUUID(companyId, dlFileUuId);
+							if (!wcReferencedFile.isOrphan() && orphan) {
 								wcReferencedFile.setOrphan(orphan);
 								WcReferencedFileLocalServiceUtil.updateWcReferencedFile(wcReferencedFile);
 							}
-							
-						}catch (NoSuchWcReferencedFileException e) {
-							WcReferencedFileLocalServiceUtil.addWcReferencedFile(userId, articleGroupId, dlFileUuId, articleId, type, orphan );
+
+						} catch (NoSuchWcReferencedFileException e) {
+							WcReferencedFileLocalServiceUtil.addWcReferencedFile(userId, articleGroupId, dlFileUuId,
+									articleId, type, orphan);
 						}
-						
+
 					}
-					
+
 				}
 			}
-			start+=1000;
-			end+=1000;
+			start += 1000;
+			end += 1000;
 		}
-		
+
 	}
-	
+
 	/**
 	 * This method provide dynamicQuery for DlFileVersions
 	 * 
 	 * @param companyId
 	 * @return
 	 */
-	private DynamicQuery getDlFileDynanicQuery(long companyId){
+	private DynamicQuery getDlFileDynanicQuery(long companyId) {
 		DynamicQuery dynamicQuery = DLFileEntryLocalServiceUtil.dynamicQuery();
-		if(companyId > 0){
+		if (companyId > 0) {
 			dynamicQuery.add(RestrictionsFactoryUtil.eq("companyId", companyId));
 		}
 		return dynamicQuery;
 	}
-	
+
 	/**
 	 * This method provide dynamicQuery for JournalArticle
 	 * 
 	 * @param companyId
 	 * @return
 	 */
-	private DynamicQuery getJournalArticleDynanicQuery(long companyId){
+	private DynamicQuery getJournalArticleDynanicQuery(long companyId) {
 		DynamicQuery dynamicQuery = JournalArticleLocalServiceUtil.dynamicQuery();
-		if(companyId > 0){
+		if (companyId > 0) {
 			dynamicQuery.add(RestrictionsFactoryUtil.eq("companyId", companyId));
 		}
 		return dynamicQuery;
-	}	
-	
-	
+	}
 
-	
 	private final String _DOCUMENT_LIBRARY = "document_library";
 	private final String _IMAGE = "image";
-	
-	private final String dlRegex = "\\/documents\\/[0-9]*\\/[0]\\/[a-zA-Z0-9_.-]*\\/[a-zA-Z0-9_-]*";
+
+	private final String dlRegex = "\\/documents\\/[0-9]*\\/[0-9]*\\/[a-zA-Z0-9_.-]*\\/[a-zA-Z0-9_-]*";
 	private final String imgRegExp = "\\/image\\/journal\\/article\\?img_id=[0-9]*";
+
 	/**
 	 * This method return a set of documents referenced in a journal article
 	 * 
 	 * @param content
 	 * @return
 	 */
-	private String getReferencedDocumentsUuIdFromContent(String content){
+	private String getReferencedDocumentsUuIdFromContent(String content) {
 		String docUuIds = StringPool.BLANK;
 		Set<String> results = new HashSet<>();
 		Pattern pattern = Pattern.compile(dlRegex);
-		 Matcher matcher = pattern.matcher(content);
-		 String[] splitLink = null;
-		 String tmpUuId = StringPool.BLANK;
-		 
-		 while(matcher.find()){
-			 results.add(matcher.group()); 
-			 splitLink = matcher.group().split(StringPool.SLASH);
-			 tmpUuId = splitLink[splitLink.length -1];
-			 if(!docUuIds.contains(StringPool.SLASH+tmpUuId+StringPool.SLASH)){
-				 docUuIds = (Validator.isNull(docUuIds) ? StringPool.SLASH + docUuIds : docUuIds) +  tmpUuId + StringPool.SLASH ;
-			 }
-		 }
-		 
+		Matcher matcher = pattern.matcher(content);
+		String[] splitLink = null;
+		String tmpUuId = StringPool.BLANK;
+
+		while (matcher.find()) {
+			results.add(matcher.group());
+			splitLink = matcher.group().split(StringPool.SLASH);
+			tmpUuId = splitLink[splitLink.length - 1];
+			if (!docUuIds.contains(StringPool.SLASH + tmpUuId + StringPool.SLASH)) {
+				docUuIds = (Validator.isNull(docUuIds) ? StringPool.SLASH + docUuIds : docUuIds) + tmpUuId
+						+ StringPool.SLASH;
+			}
+		}
+
 		return docUuIds;
 	}
-	
+
 	/**
 	 * This method return a set of images referenced in a journal article
 	 * 
 	 * @param content
 	 * @return
 	 */
-	private String getReferencedImagesIdFromContent(String content){
-		 String result = StringPool.BLANK;
-		 Pattern pattern = Pattern.compile(imgRegExp);
-		 Matcher matcher = pattern.matcher(content);
-		 String[] splitLink = null;
-		 String imgId = StringPool.BLANK;
-		 while(matcher.find()){
-			 splitLink = matcher.group().split(StringPool.EQUAL);
-			 imgId = splitLink[1];
-			 if(!result.contains(StringPool.SLASH +imgId+StringPool.SLASH )){
-				 result = (Validator.isNull(result) ? StringPool.SLASH + result : result) + imgId + StringPool.SLASH;
-			 }
-		 }
+	private String getReferencedImagesIdFromContent(String content) {
+		String result = StringPool.BLANK;
+		Pattern pattern = Pattern.compile(imgRegExp);
+		Matcher matcher = pattern.matcher(content);
+		String[] splitLink = null;
+		String imgId = StringPool.BLANK;
+		while (matcher.find()) {
+			splitLink = matcher.group().split(StringPool.EQUAL);
+			imgId = splitLink[1];
+			if (!result.contains(StringPool.SLASH + imgId + StringPool.SLASH)) {
+				result = (Validator.isNull(result) ? StringPool.SLASH + result : result) + imgId + StringPool.SLASH;
+			}
+		}
 		return result;
 	}
 
@@ -363,13 +356,12 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 	 * @param filePath
 	 * @param valuesToProcess
 	 */
-	private void addFileToProcess( JournalArticle journalArticle, String filePath, String type, List<JSONObject> valuesToProcess){
-		if(Validator.isNotNull(filePath)){
+	private void addFileToProcess(JournalArticle journalArticle, String filePath, String type,
+			List<JSONObject> valuesToProcess) {
+		if (Validator.isNotNull(filePath)) {
 			valuesToProcess.add(JSONFactoryUtil.createJSONObject().put("groupId", journalArticle.getGroupId())
-				.put("filePath", filePath)
-				.put("articleId", journalArticle.getArticleId())
-				.put("companyId", journalArticle.getCompanyId())
-				.put("type", type));
+					.put("filePath", filePath).put("articleId", journalArticle.getArticleId())
+					.put("companyId", journalArticle.getCompanyId()).put("type", type));
 		}
 	}
 }
