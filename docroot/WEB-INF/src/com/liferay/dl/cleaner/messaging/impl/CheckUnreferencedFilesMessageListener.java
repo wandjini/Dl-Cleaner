@@ -289,7 +289,12 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 		return dynamicQuery;
 	}
 
-		
+	private final String _DOCUMENT_LIBRARY = "document_library";
+	private final String _IMAGE = "image";
+
+	private final String dlRegex = "\\/documents\\/[0-9]*\\/[0-9]*\\/[a-zA-Z0-9_.-]*\\/[a-zA-Z0-9_-]*";
+	private final String imgRegExp = "\\/image\\/journal\\/article\\?img_id=[0-9]*";
+
 	/**
 	 * This method return a set of documents referenced in a journal article
 	 * 
