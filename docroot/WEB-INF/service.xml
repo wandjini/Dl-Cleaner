@@ -20,6 +20,7 @@
 		<column name="fileEntryId" type="long"></column>
 		<column name="dlFileVersionId" type="long"></column>
 		<column name="dlFileTitle" type="String"></column>
+		<column name="dlFileUuId" type="String"></column>
 		<column name="deleted" type="boolean"></column>
 		<column name="comment" type="String"></column>
 		

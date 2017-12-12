@@ -26,10 +26,14 @@ import com.liferay.portal.security.auth.PrincipalException;
  * The implementation of the unused file remote service.
  *
  * <p>
- * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the {@link com.liferay.dl.cleaner.service.UnusedFileService} interface.
+ * All custom service methods should be put in this class. Whenever methods are
+ * added, rerun ServiceBuilder to copy their definitions into the
+ * {@link com.liferay.dl.cleaner.service.UnusedFileService} interface.
  *
  * <p>
- * This is a remote service. Methods of this service are expected to have security checks based on the propagated JAAS credentials because this service can be accessed remotely.
+ * This is a remote service. Methods of this service are expected to have
+ * security checks based on the propagated JAAS credentials because this service
+ * can be accessed remotely.
  * </p>
  *
  * @author guywandji
@@ -40,11 +44,14 @@ public class UnusedFileServiceImpl extends UnusedFileServiceBaseImpl {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never reference this interface directly. Always use {@link com.liferay.dl.cleaner.service.UnusedFileServiceUtil} to access the unused file remote service.
+	 * Never reference this interface directly. Always use {@link
+	 * com.liferay.dl.cleaner.service.UnusedFileServiceUtil} to access the
+	 * unused file remote service.
 	 */
-	
-	public void deleteUnusedFile(long userId,long groupId, long unusedFileId) throws PrincipalException, PortalException, SystemException{
-		
+
+	public void deleteUnusedFile(long userId, long groupId, long unusedFileId)
+			throws PrincipalException, PortalException, SystemException {
+
 		UnusedFilePermission.check(getPermissionChecker(), groupId, ActionKeys.DELETE_UNUSED_FILE);
 		UnusedFileLocalServiceUtil.cleanUnusedFile(userId, unusedFileId);
 	}
