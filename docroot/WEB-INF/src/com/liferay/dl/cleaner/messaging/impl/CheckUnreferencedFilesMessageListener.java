@@ -165,21 +165,21 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 	/**
 	 * This method retrieves All referenced files in the web content
 	 * 
-	 * @param groupId
+	 * @param companyId
 	 * @param userId
 	 * @throws SystemException
 	 * @throws PortalException
 	 */
-	private void getJournalArticleReferencedFiles(long groupId, long userId) throws SystemException, PortalException {
+	private void getJournalArticleReferencedFiles(long companyId, long userId) throws SystemException, PortalException {
 		int start = 0;
 		int end = 1000;
 		DynamicQuery dynamicQuery = null;
 		;
-		long count = JournalArticleLocalServiceUtil.dynamicQueryCount(getJournalArticleDynanicQuery(groupId));
+		long count = JournalArticleLocalServiceUtil.dynamicQueryCount(getJournalArticleDynanicQuery(companyId));
 		_log.debug("Total number of JournalArticles: " + count);
 		while (start < count) {
 			_log.debug("Processing (start, end): (" + start + ", " + end + ")");
-			dynamicQuery = getJournalArticleDynanicQuery(groupId);
+			dynamicQuery = getJournalArticleDynanicQuery(companyId);
 			dynamicQuery.setLimit(start, end);
 
 			@SuppressWarnings("unchecked")
@@ -206,6 +206,55 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 
 			}
 
+			if (!valuesToProcess.isEmpty()) {
+
+				String[] files = null;
+				String dlFileUuId = StringPool.BLANK;
+				String articleId = StringPool.BLANK;
+				long articleGroupId = 0;
+				boolean orphan = false;
+				String type = StringPool.BLANK;
+				for (JSONObject fileToProcess : valuesToProcess) {
+					files = fileToProcess.getString("filePath").split(StringPool.SLASH);
+
+					for (int i = 0; i < files.length; i++) {
+						if (Validator.isNull(files[i]))
+							continue;
+						type = fileToProcess.getString("type");
+
+						dlFileUuId = files[i];
+
+						articleGroupId = fileToProcess.getLong("groupId");
+						articleId = fileToProcess.getString("articleId");
+						companyId = fileToProcess.getLong("companyId");
+
+						try {
+							if (type.equals(_IMAGE)) {
+								Image image = ImageLocalServiceUtil.getImage(Long.valueOf(dlFileUuId));
+								orphan = image == null;
+
+							} else {
+								DLFileEntry dlFileEntry = DLFileEntryLocalServiceUtil
+										.fetchDLFileEntryByUuidAndCompanyId(dlFileUuId, companyId);
+								orphan = dlFileEntry == null;
+							}
+
+							WcReferencedFile wcReferencedFile = WcReferencedFileLocalServiceUtil
+									.getWcReferencedFilesByCompanyAndFileUUID(companyId, dlFileUuId);
+							if (!wcReferencedFile.isOrphan() && orphan) {
+								wcReferencedFile.setOrphan(orphan);
+								WcReferencedFileLocalServiceUtil.updateWcReferencedFile(wcReferencedFile);
+							}
+
+						} catch (NoSuchWcReferencedFileException e) {
+							WcReferencedFileLocalServiceUtil.addWcReferencedFile(userId, articleGroupId, dlFileUuId,
+									articleId, type, orphan);
+						}
+
+					}
+
+				}
+			}
 			start += 1000;
 			end += 1000;
 		}
