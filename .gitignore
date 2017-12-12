@@ -9,3 +9,7 @@ docroot/WEB-INF/src/com/liferay/dl/cleaner/model/impl/*.java
 docroot/WEB-INF/lib/
 docroot/WEB-INF/src/service.properties
 debug.log
+.classpath
+.project
+.settings/
+ivy.xml.MD5
