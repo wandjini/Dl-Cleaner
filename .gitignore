@@ -14,3 +14,4 @@ debug.log
 .settings/
 ivy.xml.MD5
 docroot/css/.sass-cache/
+.ant-targets-build.xml
