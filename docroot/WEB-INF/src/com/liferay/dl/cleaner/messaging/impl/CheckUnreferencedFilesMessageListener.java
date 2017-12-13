@@ -1,9 +1,6 @@
 package com.liferay.dl.cleaner.messaging.impl;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -65,6 +62,7 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 		long userId = 0;
 
 		try {
+			UnusedFileLocalServiceUtil.cleanAll();
 			if (obj != null) {
 				JSONObject payload = JSONFactoryUtil.createJSONObject(obj.toString());
 				userId = payload.getLong("userId");
@@ -92,8 +90,7 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 	private final static Log _log = LogFactoryUtil.getLog(CheckUnreferencedFilesMessageListener.class);
 
 	/**
-	 * This method retrieves Orphaned file versions and files without binary
-	 * content
+	 * This method retrieves Orphaned files
 	 * 
 	 * @param companyId
 	 * @param userId
@@ -132,7 +129,7 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 								dlFileEntry.getFileEntryId(), dlFileEntry.getFileVersion().getFileVersionId());
 
 					} catch (NoSuchUnusedFileException e2) {
-						_log.error(e2);
+						
 						_log.error("The file " + dlFileEntry.getFileEntryId() + " doesn't exit yet in the table");
 						UnusedFileLocalServiceUtil.addUnusedFile(userId, dlFileEntry.getFileEntryId(),
 								dlFileEntry.getFileVersion().getFileVersionId(), StringPool.BLANK, comment);
@@ -184,7 +181,6 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 			_log.debug("Processing (start, end): (" + start + ", " + end + ")");
 			dynamicQuery = getJournalArticleDynanicQuery(groupId);
 			dynamicQuery.setLimit(start, end);
-			List<JSONObject> valuesToProcess = new ArrayList<>();
 
 			@SuppressWarnings("unchecked")
 			List<JournalArticle> journalArticles = JournalArticleLocalServiceUtil.dynamicQuery(dynamicQuery);
@@ -196,11 +192,11 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 					String filePath = getReferencedDocumentsUuIdFromContent(xml);
 
 					if (Validator.isNotNull(filePath))
-						addFileToProcess(journalArticle, filePath, _DOCUMENT_LIBRARY, valuesToProcess);
+						addWcReferencedFile(userId, journalArticle, filePath, _DOCUMENT_LIBRARY);
 
 					filePath = getReferencedImagesIdFromContent(xml);
 					if (Validator.isNotNull(filePath))
-						addFileToProcess(journalArticle, filePath, _IMAGE, valuesToProcess);
+						addWcReferencedFile(userId, journalArticle, filePath, _IMAGE);
 
 				} catch (Exception e) {
 
@@ -210,56 +206,6 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 
 			}
 
-			if (!valuesToProcess.isEmpty()) {
-
-				String[] files = null;
-				String dlFileUuId = StringPool.BLANK;
-				String articleId = StringPool.BLANK;
-				long companyId = 0;
-				long articleGroupId = 0;
-				boolean orphan = false;
-				String type = StringPool.BLANK;
-				for (JSONObject fileToProcess : valuesToProcess) {
-					files = fileToProcess.getString("filePath").split(StringPool.SLASH);
-
-					for (int i = 0; i < files.length; i++) {
-						if (Validator.isNull(files[i]))
-							continue;
-						type = fileToProcess.getString("type");
-
-						dlFileUuId = files[i];
-
-						articleGroupId = fileToProcess.getLong("groupId");
-						articleId = fileToProcess.getString("articleId");
-						companyId = fileToProcess.getLong("companyId");
-
-						try {
-							if (type.equals(_IMAGE)) {
-								Image image = ImageLocalServiceUtil.getImage(Long.valueOf(dlFileUuId));
-								orphan = image == null;
-
-							} else {
-								DLFileEntry dlFileEntry = DLFileEntryLocalServiceUtil
-										.fetchDLFileEntryByUuidAndCompanyId(dlFileUuId, companyId);
-								orphan = dlFileEntry == null;
-							}
-
-							WcReferencedFile wcReferencedFile = WcReferencedFileLocalServiceUtil
-									.getWcReferencedFilesByCompanyAndFileUUID(companyId, dlFileUuId);
-							if (!wcReferencedFile.isOrphan() && orphan) {
-								wcReferencedFile.setOrphan(orphan);
-								WcReferencedFileLocalServiceUtil.updateWcReferencedFile(wcReferencedFile);
-							}
-
-						} catch (NoSuchWcReferencedFileException e) {
-							WcReferencedFileLocalServiceUtil.addWcReferencedFile(userId, articleGroupId, dlFileUuId,
-									articleId, type, orphan);
-						}
-
-					}
-
-				}
-			}
 			start += 1000;
 			end += 1000;
 		}
@@ -294,12 +240,7 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 		return dynamicQuery;
 	}
 
-	private final String _DOCUMENT_LIBRARY = "document_library";
-	private final String _IMAGE = "image";
-
-	private final String dlRegex = "\\/documents\\/[0-9]*\\/[0-9]*\\/[a-zA-Z0-9_.-]*\\/[a-zA-Z0-9_-]*";
-	private final String imgRegExp = "\\/image\\/journal\\/article\\?img_id=[0-9]*";
-
+		
 	/**
 	 * This method return a set of documents referenced in a journal article
 	 * 
@@ -307,15 +248,14 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 	 * @return
 	 */
 	private String getReferencedDocumentsUuIdFromContent(String content) {
+
 		String docUuIds = StringPool.BLANK;
-		Set<String> results = new HashSet<>();
 		Pattern pattern = Pattern.compile(dlRegex);
 		Matcher matcher = pattern.matcher(content);
 		String[] splitLink = null;
 		String tmpUuId = StringPool.BLANK;
 
 		while (matcher.find()) {
-			results.add(matcher.group());
 			splitLink = matcher.group().split(StringPool.SLASH);
 			tmpUuId = splitLink[splitLink.length - 1];
 			if (!docUuIds.contains(StringPool.SLASH + tmpUuId + StringPool.SLASH)) {
@@ -350,18 +290,63 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 	}
 
 	/**
-	 * This method adds file to process
+	 * This method adds referenced web content file
 	 * 
+	 * @param userId
 	 * @param journalArticle
 	 * @param filePath
-	 * @param valuesToProcess
+	 * @throws SystemException
+	 * @throws PortalException
+	 * @throws NumberFormatException
 	 */
-	private void addFileToProcess(JournalArticle journalArticle, String filePath, String type,
-			List<JSONObject> valuesToProcess) {
+	private void addWcReferencedFile(long userId, JournalArticle journalArticle, String filePath, String type)
+			throws NumberFormatException, PortalException, SystemException {
 		if (Validator.isNotNull(filePath)) {
-			valuesToProcess.add(JSONFactoryUtil.createJSONObject().put("groupId", journalArticle.getGroupId())
-					.put("filePath", filePath).put("articleId", journalArticle.getArticleId())
-					.put("companyId", journalArticle.getCompanyId()).put("type", type));
+
+			String[] files = null;
+			String dlFileUuId = StringPool.BLANK;
+			String articleId = journalArticle.getArticleId();
+			long companyId = journalArticle.getCompanyId();
+			long articleGroupId = journalArticle.getGroupId();;
+			boolean orphan = false;
+			files = filePath.split(StringPool.SLASH);
+			
+			for (int i = 0; i < files.length; i++) {
+				if (Validator.isNull(files[i]))
+					continue;
+
+				dlFileUuId = files[i];
+				try {
+					if (type.equals(_IMAGE)) {
+						Image image = ImageLocalServiceUtil.getImage(Long.valueOf(dlFileUuId));
+						orphan = image == null;
+
+					} else {
+						DLFileEntry dlFileEntry = DLFileEntryLocalServiceUtil
+								.fetchDLFileEntryByUuidAndCompanyId(dlFileUuId, companyId);
+						orphan = dlFileEntry == null;
+					}
+
+					WcReferencedFile wcReferencedFile = WcReferencedFileLocalServiceUtil
+							.getWcReferencedFilesByCompanyAndFileUUID(companyId, dlFileUuId);
+					if (!wcReferencedFile.isOrphan() && orphan) {
+						wcReferencedFile.setOrphan(orphan);
+						WcReferencedFileLocalServiceUtil.updateWcReferencedFile(wcReferencedFile);
+					}
+
+				} catch (NoSuchWcReferencedFileException e) {
+					WcReferencedFileLocalServiceUtil.addWcReferencedFile(userId, articleGroupId, dlFileUuId, articleId,
+							type, orphan);
+				}
+
+			}
 		}
 	}
+	
+	private final String _DOCUMENT_LIBRARY = "document_library";
+	private final String _IMAGE = "image";
+
+	private final String dlRegex = "\\/documents\\/[0-9]*\\/[0-9]*\\/[^\\/]*\\/[a-zA-Z0-9_-]*";
+	private final String imgRegExp = "\\/image\\/journal\\/article\\?img_id=[0-9]*";
+
 }
