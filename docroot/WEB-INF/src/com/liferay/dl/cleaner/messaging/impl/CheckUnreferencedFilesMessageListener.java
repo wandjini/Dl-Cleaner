@@ -165,21 +165,21 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 	/**
 	 * This method retrieves All referenced files in the web content
 	 * 
-	 * @param groupId
+	 * @param companyId
 	 * @param userId
 	 * @throws SystemException
 	 * @throws PortalException
 	 */
-	private void getJournalArticleReferencedFiles(long groupId, long userId) throws SystemException, PortalException {
+	private void getJournalArticleReferencedFiles(long companyId, long userId) throws SystemException, PortalException {
 		int start = 0;
 		int end = 1000;
 		DynamicQuery dynamicQuery = null;
 		;
-		long count = JournalArticleLocalServiceUtil.dynamicQueryCount(getJournalArticleDynanicQuery(groupId));
+		long count = JournalArticleLocalServiceUtil.dynamicQueryCount(getJournalArticleDynanicQuery(companyId));
 		_log.debug("Total number of JournalArticles: " + count);
 		while (start < count) {
 			_log.debug("Processing (start, end): (" + start + ", " + end + ")");
-			dynamicQuery = getJournalArticleDynanicQuery(groupId);
+			dynamicQuery = getJournalArticleDynanicQuery(companyId);
 			dynamicQuery.setLimit(start, end);
 
 			@SuppressWarnings("unchecked")
@@ -203,9 +203,8 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 					_log.error(e);
 
 				}
-
 			}
-
+			
 			start += 1000;
 			end += 1000;
 		}
@@ -240,7 +239,6 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 		return dynamicQuery;
 	}
 
-		
 	/**
 	 * This method return a set of documents referenced in a journal article
 	 * 

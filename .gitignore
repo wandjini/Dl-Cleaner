@@ -7,5 +7,12 @@ docroot/WEB-INF/service/com/liferay/dl/cleaner/model/*.java
 docroot/WEB-INF/service/com/liferay/dl/cleaner/service/*.java
 docroot/WEB-INF/src/com/liferay/dl/cleaner/model/impl/*.java
 docroot/WEB-INF/lib/
+docroot/WEB-INF/tld/
 docroot/WEB-INF/src/service.properties
 debug.log
+.classpath
+.project
+.settings/
+ivy.xml.MD5
+docroot/css/.sass-cache/
+.ant-targets-build.xml
