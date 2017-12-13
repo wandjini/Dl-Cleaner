@@ -203,58 +203,8 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 					_log.error(e);
 
 				}
-
 			}
-
-			if (!valuesToProcess.isEmpty()) {
-
-				String[] files = null;
-				String dlFileUuId = StringPool.BLANK;
-				String articleId = StringPool.BLANK;
-				long articleGroupId = 0;
-				boolean orphan = false;
-				String type = StringPool.BLANK;
-				for (JSONObject fileToProcess : valuesToProcess) {
-					files = fileToProcess.getString("filePath").split(StringPool.SLASH);
-
-					for (int i = 0; i < files.length; i++) {
-						if (Validator.isNull(files[i]))
-							continue;
-						type = fileToProcess.getString("type");
-
-						dlFileUuId = files[i];
-
-						articleGroupId = fileToProcess.getLong("groupId");
-						articleId = fileToProcess.getString("articleId");
-						companyId = fileToProcess.getLong("companyId");
-
-						try {
-							if (type.equals(_IMAGE)) {
-								Image image = ImageLocalServiceUtil.getImage(Long.valueOf(dlFileUuId));
-								orphan = image == null;
-
-							} else {
-								DLFileEntry dlFileEntry = DLFileEntryLocalServiceUtil
-										.fetchDLFileEntryByUuidAndCompanyId(dlFileUuId, companyId);
-								orphan = dlFileEntry == null;
-							}
-
-							WcReferencedFile wcReferencedFile = WcReferencedFileLocalServiceUtil
-									.getWcReferencedFilesByCompanyAndFileUUID(companyId, dlFileUuId);
-							if (!wcReferencedFile.isOrphan() && orphan) {
-								wcReferencedFile.setOrphan(orphan);
-								WcReferencedFileLocalServiceUtil.updateWcReferencedFile(wcReferencedFile);
-							}
-
-						} catch (NoSuchWcReferencedFileException e) {
-							WcReferencedFileLocalServiceUtil.addWcReferencedFile(userId, articleGroupId, dlFileUuId,
-									articleId, type, orphan);
-						}
-
-					}
-
-				}
-			}
+			
 			start += 1000;
 			end += 1000;
 		}
@@ -288,12 +238,6 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 		}
 		return dynamicQuery;
 	}
-
-	private final String _DOCUMENT_LIBRARY = "document_library";
-	private final String _IMAGE = "image";
-
-	private final String dlRegex = "\\/documents\\/[0-9]*\\/[0-9]*\\/[a-zA-Z0-9_.-]*\\/[a-zA-Z0-9_-]*";
-	private final String imgRegExp = "\\/image\\/journal\\/article\\?img_id=[0-9]*";
 
 	/**
 	 * This method return a set of documents referenced in a journal article
