@@ -19,21 +19,21 @@ import com.liferay.portal.NoSuchModelException;
 /**
  * @author guywandji
  */
-public class NoSuchLostFileException extends NoSuchModelException {
+public class NoSuchWcOrphanFileException extends NoSuchModelException {
 
-	public NoSuchLostFileException() {
+	public NoSuchWcOrphanFileException() {
 		super();
 	}
 
-	public NoSuchLostFileException(String msg) {
+	public NoSuchWcOrphanFileException(String msg) {
 		super(msg);
 	}
 
-	public NoSuchLostFileException(String msg, Throwable cause) {
+	public NoSuchWcOrphanFileException(String msg, Throwable cause) {
 		super(msg, cause);
 	}
 
-	public NoSuchLostFileException(Throwable cause) {
+	public NoSuchWcOrphanFileException(Throwable cause) {
 		super(cause);
 	}
 
