@@ -1,8 +1,5 @@
 
 <%@include file="/html/init.jsp" %>
-<%
-	String navItem = ParamUtil.getString(request, "navItem", "unused_files");
-%>
 
 
 <portlet:actionURL name="runJob" var="runJobUrl" ></portlet:actionURL>

@@ -2,7 +2,6 @@
 <%
 SearchContainer searchContainer = (SearchContainer)request.getAttribute("liferay-ui:search:searchContainer");
 DisplayTerms displayTerms = searchContainer.getDisplayTerms();
-List<Group> groups = GroupLocalServiceUtil.search(themeDisplay.getCompanyId(), null, QueryUtil.ALL_POS, QueryUtil.ALL_POS); 
 %>
 <liferay-ui:search-toggle
 	buttonLabel="Search"
@@ -13,7 +12,7 @@ List<Group> groups = GroupLocalServiceUtil.search(themeDisplay.getCompanyId(), n
 		<aui:option label="NO" value="false" selected="<%= !deleted %>"></aui:option>
 	</aui:select>
 
-	<aui:select name="groupId">
+	<aui:select name="groupId" label="site">
 	
 		<aui:option label="ALL" value="0"></aui:option>
 		<%if(groups != null && !groups.isEmpty()){

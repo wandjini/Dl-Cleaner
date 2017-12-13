@@ -1,3 +1,4 @@
+<%@page import="com.liferay.portal.kernel.dao.search.RowChecker"%>
 <%
 /**
  * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
@@ -40,6 +41,8 @@
 <%@page import="com.liferay.portal.service.GroupLocalServiceUtil"%>
 <%@page import="com.liferay.portal.model.Group"%>
 <%@page import="java.util.List"%>
+<%@page import="com.liferay.portal.kernel.language.UnicodeLanguageUtil"%>
+
 <portlet:defineObjects />
 <liferay-theme:defineObjects />
 <portlet:renderURL var="orPhanFilesUrl">
@@ -49,4 +52,17 @@
 	Boolean orphan = ParamUtil.getBoolean(renderRequest, "orphan", true);
 	long groupId = ParamUtil.getLong(request, "groupId");
 	boolean deleted = ParamUtil.getBoolean(request, "deleted", false);
+	List<Group> groups = GroupLocalServiceUtil.search(themeDisplay.getCompanyId(), null, QueryUtil.ALL_POS, QueryUtil.ALL_POS); 
+	String keyword = ParamUtil.getString(request, "keywords");
+	String orderByCol = ParamUtil.getString(request, "orderByCol", "createDate");
+	String orderByType = ParamUtil.getString(request, "orderByType", "desc");
+	RowChecker rowChecker = new RowChecker(renderResponse);
+	String navItem = ParamUtil.getString(request, "navItem", "unused_files");
+
 %>
+<portlet:renderURL var="redirectURL">
+		<portlet:param name="mvcPath" value="/html/view.jsp"/>
+		<portlet:param name="navItem" value="<%=navItem %>"/>
+		<portlet:param name="orphan" value="<%=String.valueOf(orphan)%>"/>
+		<portlet:param name="groupId" value="<%=String.valueOf(groupId)%>"/>
+	</portlet:renderURL>

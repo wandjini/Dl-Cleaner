@@ -5,17 +5,18 @@
 	<portlet:param name="mvcPath" value="/html/view.jsp" />
 	<portlet:param name="navItem" value="unused_files" />
 </liferay-portlet:renderURL>
-<%
-	String keyword = ParamUtil.getString(request, "keywords");
-	String orderByCol = ParamUtil.getString(request, "orderByCol", "createDate");
-	String orderByType = ParamUtil.getString(request, "orderByType", "desc");
-%>
+<portlet:actionURL name="deleteUnusedFile" var="deleteUnusedFileURL">
+	<portlet:param name="redirect" value="<%=redirectURL %>"/>
+</portlet:actionURL>
+
+
 <aui:form action="<%=searchUnusededFileURL%>" name="fm">
 	<liferay-ui:search-container
 		displayTerms="<%=new DisplayTerms(renderRequest)%>"
 		emptyResultsMessage="no-entries-were-found"
 		iteratorURL="<%=iteratorURL%>" deltaConfigurable="true"
-		orderByType="<%=orderByType %>" orderByCol="<%=orderByCol %>">
+		orderByType="<%=orderByType %>" orderByCol="<%=orderByCol %>"
+		rowChecker="<%= rowChecker %>">
 		
 		<liferay-ui:search-form page="/html/unused_files_search.jsp"
 			servletContext="<%=application%>" />
@@ -49,9 +50,29 @@
 				property="comment">
 
 			</liferay-ui:search-container-column-text>
-			<liferay-ui:search-container-column-jsp align="right"
-				path="/html/row_action.jsp" />
+			
 		</liferay-ui:search-container-row>
 		<liferay-ui:search-iterator />
 	</liferay-ui:search-container>
+<aui:button name="delete" type="button" icon="icon-delete" value="delete" onClick='<%= renderResponse.getNamespace() +  "deleteUnusedFiles();"%>'/>
+	<aui:input name="deleteUnusedFileIds" type="hidden" />
 </aui:form>
+
+<aui:script>
+	Liferay.provide(
+		window,
+		'<portlet:namespace />deleteUnusedFiles',
+		function() {
+			var deleteUnusedFileIds = Liferay.Util.listCheckedExcept(document.<portlet:namespace />fm, '<portlet:namespace />allRowIds');	
+			
+			if (deleteUnusedFileIds && confirm('<%= UnicodeLanguageUtil.get(pageContext, "are-you-sure-you-want-to-delete-the-selected-rows") %>')) {
+				document.<portlet:namespace />fm.<portlet:namespace />deleteUnusedFileIds.value = deleteUnusedFileIds;
+
+				submitForm(document.<portlet:namespace />fm, '<%=deleteUnusedFileURL %>');
+			} else {
+				
+			}
+		},
+		['liferay-util-list-fields']
+	);
+</aui:script>
