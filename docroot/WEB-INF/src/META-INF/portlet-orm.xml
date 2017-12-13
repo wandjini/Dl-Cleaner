@@ -23,6 +23,7 @@
 			<basic name="fileEntryId" />
 			<basic name="dlFileVersionId" />
 			<basic name="dlFileTitle" />
+			<basic name="dlFileUuId" />
 			<basic name="deleted" />
 			<basic name="comment">
 				<column name="COMMENT_" />
@@ -46,7 +47,7 @@
 			<basic name="modifiedDate">
 				<temporal>TIMESTAMP</temporal>
 			</basic>
-			<basic name="articleId" />
+			<basic name="wcUrlTitle" />
 			<basic name="dlFileUuId" />
 			<basic name="orphan" />
 			<basic name="type">
