@@ -55,7 +55,7 @@
     	<column name="createDate" type="Date"></column>
     	<column name="modifiedDate" type="Date"></column>
 		<!-- Others -->
-		<column name="articleId" type="String"></column>
+		<column name="wcUrlTitle" type="String"></column>
 		<column name="dlFileUuId" type="String"></column>
 		<column name="orphan" type="boolean"></column>
 		<column name="type" type="String"></column>
