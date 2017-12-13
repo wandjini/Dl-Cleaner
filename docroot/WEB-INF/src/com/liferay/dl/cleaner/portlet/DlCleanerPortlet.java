@@ -53,11 +53,14 @@ public class DlCleanerPortlet extends MVCPortlet {
 	 */
 	public void deleteUnusedFile(ActionRequest actionRequest, ActionResponse actionResponse) {
 		ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
-		long unusedFileId = ParamUtil.getLong(actionRequest, "unusedFileId");
+		long[] deleteUnusedFileIds = ParamUtil.getLongValues(actionRequest, "deleteUnusedFileIds");
 
 		try {
-			UnusedFileServiceUtil.deleteUnusedFile(themeDisplay.getUserId(), themeDisplay.getScopeGroupId(),
-					unusedFileId);
+			if(deleteUnusedFileIds != null && deleteUnusedFileIds.length > 0){
+				for(long unusedFileId : deleteUnusedFileIds)	
+					UnusedFileServiceUtil.deleteUnusedFile(themeDisplay.getUserId(), themeDisplay.getScopeGroupId(),
+							unusedFileId);
+			}
 		} catch (Exception e) {
 			if (e instanceof PrincipalException) {
 				SessionErrors.add(actionRequest, PrincipalException.class);
@@ -105,11 +108,14 @@ public class DlCleanerPortlet extends MVCPortlet {
 	 */
 	public void deleteWcRefencedFile(ActionRequest actionRequest, ActionResponse actionResponse) {
 		ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
-		long wcReferencedFileId = ParamUtil.getLong(actionRequest, "wcReferencedFileId");
-
+		//long wcReferencedFileId = ParamUtil.getLong(actionRequest, "wcReferencedFileId");
+		long[] deleteWcReferencedFileIds = ParamUtil.getLongValues(actionRequest, "deleteWcReferencedFileIds");
 		try {
-			WcReferencedFileServiceUtil.deleteWcReferencedFile(themeDisplay.getScopeGroupId(), wcReferencedFileId);
-
+			if(deleteWcReferencedFileIds != null && deleteWcReferencedFileIds.length > 0){
+				for(long wcReferencedFileId : deleteWcReferencedFileIds )
+					WcReferencedFileServiceUtil.deleteWcReferencedFile(themeDisplay.getScopeGroupId(), wcReferencedFileId);
+			}
+			
 		} catch (Exception e) {
 			if (e instanceof PrincipalException) {
 				SessionErrors.add(actionRequest, PrincipalException.class);
