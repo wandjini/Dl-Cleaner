@@ -20,8 +20,13 @@ import java.util.List;
 import com.liferay.dl.cleaner.NoSuchWcReferencedFileException;
 import com.liferay.dl.cleaner.model.WcReferencedFile;
 import com.liferay.dl.cleaner.service.base.WcReferencedFileLocalServiceBaseImpl;
+import com.liferay.portal.kernel.dao.orm.Disjunction;
+import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.dao.orm.OrderFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.User;
 import com.liferay.portlet.journal.model.JournalArticle;
 import com.liferay.portlet.journal.service.JournalArticleLocalServiceUtil;
@@ -82,7 +87,7 @@ public class WcReferencedFileLocalServiceImpl extends WcReferencedFileLocalServi
 			;
 			wcRefencedFile.setCompanyId(journalArticle.getCompanyId());
 			wcRefencedFile.setGroupId(groupId);
-			wcRefencedFile.setArticleId(articleId);
+			wcRefencedFile.setWcUrlTitle(journalArticle.getUrlTitle());
 			wcRefencedFile.setType(type);
 			if (userId > 0) {
 				User user = userLocalService.fetchUser(userId);
@@ -203,5 +208,90 @@ public class WcReferencedFileLocalServiceImpl extends WcReferencedFileLocalServi
 	public int countWcReferencedFilesByCompanyIdAndOrphan(long companyId, boolean orphan) throws SystemException {
 
 		return wcReferencedFilePersistence.countByCompany_Orphan(companyId, orphan);
+	}
+	
+	/**
+	 * This method returns web content referenced files based on filters
+	 * 
+	 * 
+	 * @param keywords
+	 * @param companyId
+	 * @param groupId
+	 * @param orphan
+	 * @param orderByCol
+	 * @param orderType
+	 * @param start
+	 * @param end
+	 * @return
+	 * @throws SystemException
+	 */
+	@SuppressWarnings("unchecked")
+	public List<WcReferencedFile> searchWcReferencedFiles(String keywords, long companyId, long groupId,
+			boolean orphan, String orderByCol, String orderType, int start, int end) throws SystemException{
+		DynamicQuery dynamicQuery = getAdvancedSearchDynamicQuery(keywords, companyId, groupId, orphan, orderByCol, orderType);
+		if(start > -1 && end > -1)
+			dynamicQuery.setLimit(start, end);
+		return dynamicQuery(dynamicQuery);
+	}
+	
+	/**
+	 * Returns the total based on filter
+	 * 
+	 * @param keywords
+	 * @param companyId
+	 * @param groupId
+	 * @param orphan
+	 * @return
+	 * @throws SystemException
+	 */
+	public int  countSearchWcReferencedFiles(String keywords, long companyId, long groupId,
+			boolean orphan) throws SystemException{
+		DynamicQuery dynamicQuery = getAdvancedSearchDynamicQuery(keywords, companyId, groupId, orphan,
+				null, null);
+		
+		return new Long(dynamicQueryCount(dynamicQuery)).intValue();
+	}
+	
+	/**
+	 * This method provide the advanced dynamic query
+	 * 
+	 * @param keywords
+	 * @param companyId
+	 * @param groupId
+	 * @param orphan
+	 * @param orderByCol
+	 * @param orderType
+	 * @return
+	 */
+	DynamicQuery getAdvancedSearchDynamicQuery(String keywords, long companyId, long groupId, boolean orphan,
+			String orderByCol, String orderType) {
+		DynamicQuery dynamicQuery = dynamicQuery();
+
+		dynamicQuery.add(RestrictionsFactoryUtil.eq("orphan", orphan));
+
+		if (companyId > 0) {
+			dynamicQuery.add(RestrictionsFactoryUtil.eq("companyId", companyId));
+
+		}
+		if (groupId > 0) {
+			dynamicQuery.add(RestrictionsFactoryUtil.eq("groupId", groupId));
+
+		}
+
+		if (Validator.isNotNull(keywords)) {
+			Disjunction disjunction = RestrictionsFactoryUtil.disjunction();
+			disjunction.add(RestrictionsFactoryUtil.ilike("userName", "%" + keywords + "%"));
+			disjunction.add(RestrictionsFactoryUtil.ilike("wcUrlTitle", "%" + keywords + "%"));
+			disjunction.add(RestrictionsFactoryUtil.ilike("type", "%" + keywords + "%"));
+			dynamicQuery.add(disjunction);
+		}
+
+		if (Validator.isNotNull(orderByCol) && Validator.isNotNull(orderType)) {
+			if ("asc".equals(orderType))
+				dynamicQuery.addOrder(OrderFactoryUtil.asc(orderByCol));
+			else
+				dynamicQuery.addOrder(OrderFactoryUtil.desc(orderByCol));
+		}
+		return dynamicQuery;
 	}
 }

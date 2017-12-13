@@ -297,6 +297,15 @@ public class UnusedFileLocalServiceImpl extends UnusedFileLocalServiceBaseImpl {
 	}
 
 	/**
+	 * This method is  used to clean the whole table
+	 * 
+	 * @throws SystemException
+	 */
+	public void cleanAll() throws SystemException{
+		
+		unusedFilePersistence.removeAll();
+	}
+	/**
 	 * This method returns the advanced dynamicQuery used to filtered unused
 	 * files
 	 * 
