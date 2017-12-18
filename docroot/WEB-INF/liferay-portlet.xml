@@ -9,12 +9,9 @@
 		<scheduler-entry>
             <scheduler-event-listener-class>com.liferay.dl.cleaner.messaging.impl.CheckUnreferencedFilesMessageListener</scheduler-event-listener-class>
             <trigger>
-                <simple>
-                    <simple-trigger-value>
-                        5
-                    </simple-trigger-value>
-                    <time-unit>hour</time-unit>
-                </simple>
+            	<cron>
+            		<cron-trigger-value>0 0 3 * * ? *</cron-trigger-value>  
+            	</cron>
             </trigger>
 		</scheduler-entry>
 		<control-panel-entry-category>

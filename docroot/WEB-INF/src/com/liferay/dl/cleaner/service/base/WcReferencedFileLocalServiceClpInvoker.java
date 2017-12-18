@@ -141,24 +141,28 @@ public class WcReferencedFileLocalServiceClpInvoker {
 
 		_methodParameterTypes51 = new String[] { "long" };
 
-		_methodName52 = "getWcReferencedFilesByCompanyIdAndOrphan";
+		_methodName52 = "cleanAll";
 
-		_methodParameterTypes52 = new String[] { "long", "boolean", "int", "int" };
+		_methodParameterTypes52 = new String[] {  };
 
-		_methodName53 = "countWcReferencedFilesByCompanyIdAndOrphan";
+		_methodName53 = "getWcReferencedFilesByCompanyIdAndOrphan";
 
-		_methodParameterTypes53 = new String[] { "long", "boolean" };
+		_methodParameterTypes53 = new String[] { "long", "boolean", "int", "int" };
 
-		_methodName54 = "searchWcReferencedFiles";
+		_methodName54 = "countWcReferencedFilesByCompanyIdAndOrphan";
 
-		_methodParameterTypes54 = new String[] {
+		_methodParameterTypes54 = new String[] { "long", "boolean" };
+
+		_methodName55 = "searchWcReferencedFiles";
+
+		_methodParameterTypes55 = new String[] {
 				"java.lang.String", "long", "long", "boolean",
 				"java.lang.String", "java.lang.String", "int", "int"
 			};
 
-		_methodName55 = "countSearchWcReferencedFiles";
+		_methodName56 = "countSearchWcReferencedFiles";
 
-		_methodParameterTypes55 = new String[] {
+		_methodParameterTypes56 = new String[] {
 				"java.lang.String", "long", "long", "boolean"
 			};
 	}
@@ -306,20 +310,27 @@ public class WcReferencedFileLocalServiceClpInvoker {
 
 		if (_methodName52.equals(name) &&
 				Arrays.deepEquals(_methodParameterTypes52, parameterTypes)) {
+			WcReferencedFileLocalServiceUtil.cleanAll();
+
+			return null;
+		}
+
+		if (_methodName53.equals(name) &&
+				Arrays.deepEquals(_methodParameterTypes53, parameterTypes)) {
 			return WcReferencedFileLocalServiceUtil.getWcReferencedFilesByCompanyIdAndOrphan(((Long)arguments[0]).longValue(),
 				((Boolean)arguments[1]).booleanValue(),
 				((Integer)arguments[2]).intValue(),
 				((Integer)arguments[3]).intValue());
 		}
 
-		if (_methodName53.equals(name) &&
-				Arrays.deepEquals(_methodParameterTypes53, parameterTypes)) {
+		if (_methodName54.equals(name) &&
+				Arrays.deepEquals(_methodParameterTypes54, parameterTypes)) {
 			return WcReferencedFileLocalServiceUtil.countWcReferencedFilesByCompanyIdAndOrphan(((Long)arguments[0]).longValue(),
 				((Boolean)arguments[1]).booleanValue());
 		}
 
-		if (_methodName54.equals(name) &&
-				Arrays.deepEquals(_methodParameterTypes54, parameterTypes)) {
+		if (_methodName55.equals(name) &&
+				Arrays.deepEquals(_methodParameterTypes55, parameterTypes)) {
 			return WcReferencedFileLocalServiceUtil.searchWcReferencedFiles((java.lang.String)arguments[0],
 				((Long)arguments[1]).longValue(),
 				((Long)arguments[2]).longValue(),
@@ -329,8 +340,8 @@ public class WcReferencedFileLocalServiceClpInvoker {
 				((Integer)arguments[7]).intValue());
 		}
 
-		if (_methodName55.equals(name) &&
-				Arrays.deepEquals(_methodParameterTypes55, parameterTypes)) {
+		if (_methodName56.equals(name) &&
+				Arrays.deepEquals(_methodParameterTypes56, parameterTypes)) {
 			return WcReferencedFileLocalServiceUtil.countSearchWcReferencedFiles((java.lang.String)arguments[0],
 				((Long)arguments[1]).longValue(),
 				((Long)arguments[2]).longValue(),
@@ -396,4 +407,6 @@ public class WcReferencedFileLocalServiceClpInvoker {
 	private String[] _methodParameterTypes54;
 	private String _methodName55;
 	private String[] _methodParameterTypes55;
+	private String _methodName56;
+	private String[] _methodParameterTypes56;
 }

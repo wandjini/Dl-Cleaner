@@ -1,6 +1,7 @@
 package com.liferay.dl.cleaner.portlet;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -13,6 +14,9 @@ import com.liferay.dl.cleaner.portlet.util.ActionKeys;
 import com.liferay.dl.cleaner.service.UnusedFileServiceUtil;
 import com.liferay.dl.cleaner.service.WcReferencedFileServiceUtil;
 import com.liferay.portal.NoSuchLockException;
+import com.liferay.portal.kernel.cluster.ClusterInvokeThreadLocal;
+import com.liferay.portal.kernel.cluster.ClusterMasterExecutorUtil;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
@@ -20,6 +24,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.messaging.Message;
 import com.liferay.portal.kernel.messaging.MessageBusUtil;
 import com.liferay.portal.kernel.servlet.SessionErrors;
+import com.liferay.portal.kernel.util.MethodHandler;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.model.Lock;
@@ -39,12 +44,49 @@ public class DlCleanerPortlet extends MVCPortlet {
 	private static Log _log = LogFactoryUtil.getLog(DlCleanerPortlet.class);
 
 	@Override
+	public void init() throws PortletException {
+
+		Lock lock = getLock();
+		boolean isClusterEnabled = ClusterInvokeThreadLocal.isEnabled();
+		if (lock != null && (!isClusterEnabled || ClusterMasterExecutorUtil.isMaster())) {
+			try {
+				LockLocalServiceUtil.deleteLock(lock);
+			} catch (SystemException e) {
+				_log.error(e);
+			}
+		}
+		super.init();
+	}
+
+	@Override
 	public void doView(RenderRequest renderRequest, RenderResponse renderResponse)
 			throws IOException, PortletException {
+
+		Lock lock = getLock();
+		if (lock != null) {
+			include("/html/task_running.jsp", renderRequest, renderResponse);
+			return;
+		}
 
 		super.doView(renderRequest, renderResponse);
 	}
 
+	private Lock getLock() {
+		Lock lock = null;
+		try {
+			lock = LockLocalServiceUtil.getLock(CheckUnreferencedFilesMessageListener.class.getName(),ActionKeys.KEY_JOB);
+		} catch(Exception e) {
+			if (e instanceof NoSuchLockException) {
+				if (_log.isDebugEnabled()) {
+					_log.debug("There is no lock, so no task should be running");
+				}
+			}
+			else {
+				_log.error(e);
+			}
+		}
+		return lock;
+	}
 	/**
 	 * This method remove deletes the unused file
 	 * 
@@ -83,21 +125,31 @@ public class DlCleanerPortlet extends MVCPortlet {
 
 		Message message = new Message();
 		message.setPayload(payLoad.toString());
-		try {
 
-			Lock lock = LockLocalServiceUtil.getLock(CheckUnreferencedFilesMessageListener.class.getName(),
-					ActionKeys.KEY_JOB);
-			if (lock == null)
-				MessageBusUtil.sendMessage(ActionKeys.DESTINATION_NAME, message);
-		} catch (Exception e) {
-			if (e instanceof NoSuchLockException) {
-				MessageBusUtil.sendMessage(ActionKeys.DESTINATION_NAME, message);
-			} else {
-				_log.error("Error runing the job", e);
-				SessionErrors.add(actionRequest, "generic-error");
-			}
+		Lock lock = getLock();
+		if (lock == null) {
+			executeJob(message, actionResponse);
 		}
 
+	}
+	
+	private void executeJob(Message message, ActionResponse actionResponse) {
+		if (ClusterInvokeThreadLocal.isEnabled()) {
+			try {
+				Method method = MessageBusUtil.class.getMethod("sendMessage", String.class, Message.class);
+				MethodHandler methodHandler = new MethodHandler(
+						method, ActionKeys.DESTINATION_NAME, message);
+
+				ClusterMasterExecutorUtil.executeOnMaster(methodHandler);
+			} catch(NoSuchMethodException nsme) {
+				_log.error("The method doesn't exist", nsme);
+			} catch(SystemException se) {
+				_log.error(se);
+			}
+		} else {
+			MessageBusUtil.sendMessage(ActionKeys.DESTINATION_NAME, message);
+		}
+		actionResponse.setRenderParameter("mvcPath", "/html/task_running.jsp");
 	}
 
 	/**

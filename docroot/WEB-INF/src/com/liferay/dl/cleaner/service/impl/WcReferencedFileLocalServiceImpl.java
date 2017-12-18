@@ -178,6 +178,15 @@ public class WcReferencedFileLocalServiceImpl extends WcReferencedFileLocalServi
 
 		wcReferencedFilePersistence.remove(wcRefencedFileId);
 	}
+	
+	/**
+	 * This method is  used to clean the whole table
+	 * 
+	 * @throws SystemException
+	 */
+	public void cleanAll() throws SystemException {
+		wcReferencedFilePersistence.removeAll();
+	}
 
 	/**
 	 * Retrieves items by companyId and orfan

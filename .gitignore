@@ -1,14 +1,7 @@
 #ignoring all compiled classes
 docroot/WEB-INF/classes/
-docroot/WEB-INF/src/com/liferay/dl/cleaner/service/base/
-docroot/WEB-INF/src/com/liferay/dl/cleaner/service/http/
-docroot/WEB-INF/src/com/liferay/dl/cleaner/service/persistence/
-docroot/WEB-INF/service/com/liferay/dl/cleaner/model/*.java
-docroot/WEB-INF/service/com/liferay/dl/cleaner/service/*.java
-docroot/WEB-INF/src/com/liferay/dl/cleaner/model/impl/*.java
 docroot/WEB-INF/lib/
 docroot/WEB-INF/tld/
-docroot/WEB-INF/src/service.properties
 debug.log
 .classpath
 .project
