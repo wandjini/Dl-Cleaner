@@ -42,6 +42,20 @@ public class DlCleanerPortlet extends MVCPortlet {
 	public void doView(RenderRequest renderRequest, RenderResponse renderResponse)
 			throws IOException, PortletException {
 
+		try {
+			LockLocalServiceUtil.getLock(CheckUnreferencedFilesMessageListener.class.getName(),ActionKeys.KEY_JOB);
+			include("/html/task_running.jsp", renderRequest, renderResponse);
+			return;
+		} catch(Exception e) {
+			if (e instanceof NoSuchLockException) {
+				if (_log.isDebugEnabled()) {
+					_log.debug("There is no lock, so no task should be running");
+				}
+			}
+			else {
+				_log.error(e);
+			}
+		}
 		super.doView(renderRequest, renderResponse);
 	}
 
@@ -88,16 +102,21 @@ public class DlCleanerPortlet extends MVCPortlet {
 			Lock lock = LockLocalServiceUtil.getLock(CheckUnreferencedFilesMessageListener.class.getName(),
 					ActionKeys.KEY_JOB);
 			if (lock == null)
-				MessageBusUtil.sendMessage(ActionKeys.DESTINATION_NAME, message);
+				executeJob(message, actionResponse);
 		} catch (Exception e) {
 			if (e instanceof NoSuchLockException) {
-				MessageBusUtil.sendMessage(ActionKeys.DESTINATION_NAME, message);
+				executeJob( message, actionResponse);
 			} else {
 				_log.error("Error runing the job", e);
 				SessionErrors.add(actionRequest, "generic-error");
 			}
 		}
 
+	}
+	
+	private void executeJob(Message message, ActionResponse actionResponse) {
+		MessageBusUtil.sendMessage(ActionKeys.DESTINATION_NAME, message);
+		actionResponse.setRenderParameter("mvcPath", "/html/task_running.jsp");
 	}
 
 	/**
