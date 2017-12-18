@@ -63,6 +63,7 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 
 		try {
 			UnusedFileLocalServiceUtil.cleanAll();
+			WcReferencedFileLocalServiceUtil.cleanAll();
 			if (obj != null) {
 				JSONObject payload = JSONFactoryUtil.createJSONObject(obj.toString());
 				userId = payload.getLong("userId");
