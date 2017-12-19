@@ -192,15 +192,24 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 				try {
 					String filePath = getReferencedDocumentsUuIdFromContent(xml);
 
-					if (Validator.isNotNull(filePath))
+					if (Validator.isNotNull(filePath)) {
+						if (_log.isDebugEnabled()){
+							_log.debug("uuids: " + filePath);
+						}
 						addWcReferencedFile(userId, journalArticle, filePath, _DOCUMENT_LIBRARY);
+					}
 
 					filePath = getReferencedImagesIdFromContent(xml);
-					if (Validator.isNotNull(filePath))
+					if (Validator.isNotNull(filePath)) {
+						if (_log.isDebugEnabled()){
+							_log.debug("uuids: " + filePath);
+						}
 						addWcReferencedFile(userId, journalArticle, filePath, _IMAGE);
+					}
 
 				} catch (Exception e) {
-
+					_log.error("There was a problem while parsing and storing the content: " + journalArticle.getArticleId());
+					_log.error("This is the full content: " + xml);
 					_log.error(e);
 
 				}
