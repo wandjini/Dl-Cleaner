@@ -354,9 +354,9 @@ public class WcReferencedFilePersistenceImpl extends BasePersistenceImpl<WcRefer
 	}
 
 	private static final String _FINDER_COLUMN_GROUP_DLFILEUUID_GROUPID_2 = "wcReferencedFile.groupId = ? AND ";
-	private static final String _FINDER_COLUMN_GROUP_DLFILEUUID_DLFILEUUID_1 = "wcReferencedFile.dlFileUuId IS NULL";
-	private static final String _FINDER_COLUMN_GROUP_DLFILEUUID_DLFILEUUID_2 = "wcReferencedFile.dlFileUuId = ?";
-	private static final String _FINDER_COLUMN_GROUP_DLFILEUUID_DLFILEUUID_3 = "(wcReferencedFile.dlFileUuId IS NULL OR wcReferencedFile.dlFileUuId = '')";
+	private static final String _FINDER_COLUMN_GROUP_DLFILEUUID_DLFILEUUID_1 = "CAST_CLOB_TEXT(wcReferencedFile.dlFileUuId) IS NULL";
+	private static final String _FINDER_COLUMN_GROUP_DLFILEUUID_DLFILEUUID_2 = "CAST_CLOB_TEXT(wcReferencedFile.dlFileUuId) = ?";
+	private static final String _FINDER_COLUMN_GROUP_DLFILEUUID_DLFILEUUID_3 = "(CAST_CLOB_TEXT(wcReferencedFile.dlFileUuId) IS NULL OR CAST_CLOB_TEXT(wcReferencedFile.dlFileUuId) = '')";
 	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_GROUP = new FinderPath(WcReferencedFileModelImpl.ENTITY_CACHE_ENABLED,
 			WcReferencedFileModelImpl.FINDER_CACHE_ENABLED,
 			WcReferencedFileImpl.class, FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
@@ -1116,9 +1116,9 @@ public class WcReferencedFilePersistenceImpl extends BasePersistenceImpl<WcRefer
 	}
 
 	private static final String _FINDER_COLUMN_COMPANY_DLFILEUUID_COMPANYID_2 = "wcReferencedFile.companyId = ? AND ";
-	private static final String _FINDER_COLUMN_COMPANY_DLFILEUUID_DLFILEUUID_1 = "wcReferencedFile.dlFileUuId IS NULL";
-	private static final String _FINDER_COLUMN_COMPANY_DLFILEUUID_DLFILEUUID_2 = "wcReferencedFile.dlFileUuId = ?";
-	private static final String _FINDER_COLUMN_COMPANY_DLFILEUUID_DLFILEUUID_3 = "(wcReferencedFile.dlFileUuId IS NULL OR wcReferencedFile.dlFileUuId = '')";
+	private static final String _FINDER_COLUMN_COMPANY_DLFILEUUID_DLFILEUUID_1 = "CAST_CLOB_TEXT(wcReferencedFile.dlFileUuId) IS NULL";
+	private static final String _FINDER_COLUMN_COMPANY_DLFILEUUID_DLFILEUUID_2 = "CAST_CLOB_TEXT(wcReferencedFile.dlFileUuId) = ?";
+	private static final String _FINDER_COLUMN_COMPANY_DLFILEUUID_DLFILEUUID_3 = "(CAST_CLOB_TEXT(wcReferencedFile.dlFileUuId) IS NULL OR CAST_CLOB_TEXT(wcReferencedFile.dlFileUuId) = '')";
 	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_COMPANY_ORPHAN =
 		new FinderPath(WcReferencedFileModelImpl.ENTITY_CACHE_ENABLED,
 			WcReferencedFileModelImpl.FINDER_CACHE_ENABLED,
