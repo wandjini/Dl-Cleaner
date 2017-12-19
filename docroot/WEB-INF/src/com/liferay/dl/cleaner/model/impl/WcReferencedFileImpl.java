@@ -14,6 +14,10 @@
 
 package com.liferay.dl.cleaner.model.impl;
 
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.service.GroupLocalServiceUtil;
+
 /**
  * The extended model implementation for the WcReferencedFile service. Represents a row in the &quot;DlCleaner_WcReferencedFile&quot; database table, with each column mapped to a property of this class.
  *
@@ -30,5 +34,9 @@ public class WcReferencedFileImpl extends WcReferencedFileBaseImpl {
 	 * Never reference this class directly. All methods that expect a wc referenced file model instance should use the {@link com.liferay.dl.cleaner.model.WcReferencedFile} interface instead.
 	 */
 	public WcReferencedFileImpl() {
+	}
+	public String getGroup() throws PortalException, SystemException{
+		
+		return GroupLocalServiceUtil.getGroup(this.getGroupId()).getDescriptiveName();
 	}
 }
