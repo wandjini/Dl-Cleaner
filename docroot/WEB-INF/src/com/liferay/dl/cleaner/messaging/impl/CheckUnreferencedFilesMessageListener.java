@@ -10,6 +10,7 @@ import com.liferay.dl.cleaner.NoSuchUnusedFileException;
 import com.liferay.dl.cleaner.NoSuchWcReferencedFileException;
 import com.liferay.dl.cleaner.model.WcReferencedFile;
 import com.liferay.dl.cleaner.portlet.util.ActionKeys;
+import com.liferay.dl.cleaner.portlet.util.PropsUtil;
 import com.liferay.dl.cleaner.service.UnusedFileLocalServiceUtil;
 import com.liferay.dl.cleaner.service.WcReferencedFileLocalServiceUtil;
 import com.liferay.mail.service.MailServiceUtil;
@@ -144,13 +145,23 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 			start += 1000;
 			end += 1000;
 		}
-		if (userId > 0) {
-			try {
-
-				User user = UserLocalServiceUtil.getUser(userId);
-				InternetAddress to = new InternetAddress(user.getEmailAddress());
-				InternetAddress from = new InternetAddress("noreply@liferay.com");
-				MailMessage mailMessage = new MailMessage();
+		String emailSender = PropsUtil.getEmailsenderAddress();
+		String destination = PropsUtil.getDefaultDestinationAddress();
+		User user = null;
+		try {
+				if (userId > 0) {
+					user = UserLocalServiceUtil.getUser(userId);
+				}	
+				MailMessage mailMessage = new MailMessage();	
+				
+				InternetAddress to = user != null ? new InternetAddress(user.getEmailAddress()) : new InternetAddress(destination);
+				
+				InternetAddress from = new InternetAddress(emailSender);
+				if(user != null && !destination.equals(user.getEmailAddress())){
+					InternetAddress cc = new InternetAddress(destination);
+					mailMessage.setCC(new InternetAddress[]{cc});
+				}
+				
 				mailMessage.setTo(to);
 				mailMessage.setFrom(from);
 				mailMessage.setBody("Job WebContent Orphan files Finder is ended");
@@ -158,7 +169,7 @@ public class CheckUnreferencedFilesMessageListener implements MessageListener {
 			} catch (Exception e) {
 				_log.error("Error sending notification", e);
 			}
-		}
+		
 		_log.error(unusedFilesFoundSize + " unused files found");
 
 	}
