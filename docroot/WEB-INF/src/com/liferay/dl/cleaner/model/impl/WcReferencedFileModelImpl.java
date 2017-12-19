@@ -74,12 +74,12 @@ public class WcReferencedFileModelImpl extends BaseModelImpl<WcReferencedFile>
 			{ "userName", Types.VARCHAR },
 			{ "createDate", Types.TIMESTAMP },
 			{ "modifiedDate", Types.TIMESTAMP },
-			{ "wcUrlTitle", Types.VARCHAR },
-			{ "dlFileUuId", Types.VARCHAR },
+			{ "wcUrlTitle", Types.CLOB },
+			{ "dlFileUuId", Types.CLOB },
 			{ "orphan", Types.BOOLEAN },
 			{ "type_", Types.VARCHAR }
 		};
-	public static final String TABLE_SQL_CREATE = "create table DlCleaner_WcReferencedFile (wcRefencedFileId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,wcUrlTitle VARCHAR(75) null,dlFileUuId VARCHAR(75) null,orphan BOOLEAN,type_ VARCHAR(75) null)";
+	public static final String TABLE_SQL_CREATE = "create table DlCleaner_WcReferencedFile (wcRefencedFileId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,wcUrlTitle TEXT null,dlFileUuId TEXT null,orphan BOOLEAN,type_ VARCHAR(75) null)";
 	public static final String TABLE_SQL_DROP = "drop table DlCleaner_WcReferencedFile";
 	public static final String ORDER_BY_JPQL = " ORDER BY wcReferencedFile.createDate DESC";
 	public static final String ORDER_BY_SQL = " ORDER BY DlCleaner_WcReferencedFile.createDate DESC";

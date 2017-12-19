@@ -9,9 +9,9 @@ create table DlCleaner_UnusedFile (
 	fileEntryId LONG,
 	dlFileVersionId LONG,
 	dlFileTitle VARCHAR(75) null,
-	dlFileUuId VARCHAR(75) null,
+	dlFileUuId TEXT null,
 	deleted BOOLEAN,
-	comment_ STRING null
+	comment_ TEXT null
 );
 
 create table DlCleaner_WcReferencedFile (
@@ -22,8 +22,8 @@ create table DlCleaner_WcReferencedFile (
 	userName VARCHAR(75) null,
 	createDate DATE null,
 	modifiedDate DATE null,
-	wcUrlTitle VARCHAR(75) null,
-	dlFileUuId VARCHAR(75) null,
+	wcUrlTitle TEXT null,
+	dlFileUuId TEXT null,
 	orphan BOOLEAN,
 	type_ VARCHAR(75) null
 );

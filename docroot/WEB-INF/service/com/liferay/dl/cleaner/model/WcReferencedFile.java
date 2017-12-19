@@ -31,4 +31,7 @@ public interface WcReferencedFile extends WcReferencedFileModel, PersistedModel 
 	 *
 	 * Never modify this interface directly. Add methods to {@link com.liferay.dl.cleaner.model.impl.WcReferencedFileImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
+	public java.lang.String getGroup()
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException;
 }

@@ -429,6 +429,25 @@ public class WcReferencedFileClp extends BaseModelImpl<WcReferencedFile>
 		}
 	}
 
+	@Override
+	public java.lang.String getGroup() {
+		try {
+			String methodName = "getGroup";
+
+			Class<?>[] parameterTypes = new Class<?>[] {  };
+
+			Object[] parameterValues = new Object[] {  };
+
+			java.lang.String returnObj = (java.lang.String)invokeOnRemoteModel(methodName,
+					parameterTypes, parameterValues);
+
+			return returnObj;
+		}
+		catch (Exception e) {
+			throw new UnsupportedOperationException(e);
+		}
+	}
+
 	public BaseModel<?> getWcReferencedFileRemoteModel() {
 		return _wcReferencedFileRemoteModel;
 	}

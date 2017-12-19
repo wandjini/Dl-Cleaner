@@ -512,6 +512,13 @@ public class WcReferencedFileWrapper implements WcReferencedFile,
 	}
 
 	@Override
+	public java.lang.String getGroup()
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return _wcReferencedFile.getGroup();
+	}
+
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;

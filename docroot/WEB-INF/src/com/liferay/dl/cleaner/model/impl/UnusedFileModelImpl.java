@@ -77,11 +77,11 @@ public class UnusedFileModelImpl extends BaseModelImpl<UnusedFile>
 			{ "fileEntryId", Types.BIGINT },
 			{ "dlFileVersionId", Types.BIGINT },
 			{ "dlFileTitle", Types.VARCHAR },
-			{ "dlFileUuId", Types.VARCHAR },
+			{ "dlFileUuId", Types.CLOB },
 			{ "deleted", Types.BOOLEAN },
-			{ "comment_", Types.VARCHAR }
+			{ "comment_", Types.CLOB }
 		};
-	public static final String TABLE_SQL_CREATE = "create table DlCleaner_UnusedFile (unusedFileId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,fileEntryId LONG,dlFileVersionId LONG,dlFileTitle VARCHAR(75) null,dlFileUuId VARCHAR(75) null,deleted BOOLEAN,comment_ STRING null)";
+	public static final String TABLE_SQL_CREATE = "create table DlCleaner_UnusedFile (unusedFileId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,fileEntryId LONG,dlFileVersionId LONG,dlFileTitle VARCHAR(75) null,dlFileUuId TEXT null,deleted BOOLEAN,comment_ TEXT null)";
 	public static final String TABLE_SQL_DROP = "drop table DlCleaner_UnusedFile";
 	public static final String ORDER_BY_JPQL = " ORDER BY unusedFile.createDate DESC";
 	public static final String ORDER_BY_SQL = " ORDER BY DlCleaner_UnusedFile.createDate DESC";
