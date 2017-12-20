@@ -512,9 +512,7 @@ public class WcReferencedFileWrapper implements WcReferencedFile,
 	}
 
 	@Override
-	public java.lang.String getGroup()
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.liferay.portal.kernel.exception.SystemException {
+	public java.lang.String getGroup() {
 		return _wcReferencedFile.getGroup();
 	}
 
