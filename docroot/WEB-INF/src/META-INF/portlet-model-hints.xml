@@ -11,7 +11,9 @@
 		<field name="modifiedDate" type="Date" />
 		<field name="fileEntryId" type="long" />
 		<field name="dlFileVersionId" type="long" />
-		<field name="dlFileTitle" type="String" />
+		<field name="dlFileTitle" type="String">
+			<hint-collection name="CLOB" />
+		</field>
 		<field name="dlFileUuId" type="String">
 			<hint-collection name="CLOB" />
 		</field>
