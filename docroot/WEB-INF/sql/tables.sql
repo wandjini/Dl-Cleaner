@@ -8,7 +8,7 @@ create table DlCleaner_UnusedFile (
 	modifiedDate DATE null,
 	fileEntryId LONG,
 	dlFileVersionId LONG,
-	dlFileTitle VARCHAR(75) null,
+	dlFileTitle TEXT null,
 	dlFileUuId TEXT null,
 	deleted BOOLEAN,
 	comment_ TEXT null

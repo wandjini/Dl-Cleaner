@@ -16,6 +16,8 @@ package com.liferay.dl.cleaner.model.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.model.Group;
 import com.liferay.portal.service.GroupLocalServiceUtil;
 
 /**
@@ -35,8 +37,15 @@ public class WcReferencedFileImpl extends WcReferencedFileBaseImpl {
 	 */
 	public WcReferencedFileImpl() {
 	}
-	public String getGroup() throws PortalException, SystemException{
+	public String getGroup() {
+		String groupName = StringPool.BLANK;
 		
-		return GroupLocalServiceUtil.getGroup(this.getGroupId()).getDescriptiveName();
+		try {
+			Group group = GroupLocalServiceUtil.getGroup(this.getGroupId());
+			groupName = group.getName();
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return groupName;
 	}
 }
