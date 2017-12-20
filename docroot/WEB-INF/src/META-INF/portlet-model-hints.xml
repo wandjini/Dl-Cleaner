@@ -11,16 +11,10 @@
 		<field name="modifiedDate" type="Date" />
 		<field name="fileEntryId" type="long" />
 		<field name="dlFileVersionId" type="long" />
-		<field name="dlFileTitle" type="String">
-			<hint-collection name="CLOB" />
-		</field>
-		<field name="dlFileUuId" type="String">
-			<hint-collection name="CLOB" />
-		</field>
+		<field name="dlFileTitle" type="String" />
+		<field name="dlFileUuId" type="String" />
 		<field name="deleted" type="boolean" />
-		<field name="comment" type="String">
-			<hint-collection name="CLOB" />
-		</field>
+		<field name="comment" type="String" />
 	</model>
 	<model name="com.liferay.dl.cleaner.model.WcReferencedFile">
 		<field name="wcRefencedFileId" type="long" />
@@ -30,12 +24,8 @@
 		<field name="userName" type="String" />
 		<field name="createDate" type="Date" />
 		<field name="modifiedDate" type="Date" />
-		<field name="wcUrlTitle" type="String">
-			<hint-collection name="CLOB" />
-		</field>
-		<field name="dlFileUuId" type="String">
-			<hint-collection name="CLOB" />
-		</field>
+		<field name="wcUrlTitle" type="String" />
+		<field name="dlFileUuId" type="String" />
 		<field name="orphan" type="boolean" />
 		<field name="type" type="String" />
 	</model>
