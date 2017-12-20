@@ -10,7 +10,7 @@
 </portlet:actionURL>
 
 
-<aui:form action="<%=searchUnusededFileURL%>" name="fm">
+<aui:form action="<%=searchUnusededFileURL%>" name="unusedFileFm">
 	<liferay-ui:search-container
 		displayTerms="<%=new DisplayTerms(renderRequest)%>"
 		emptyResultsMessage="no-entries-were-found"
@@ -54,7 +54,7 @@
 		</liferay-ui:search-container-row>
 		<liferay-ui:search-iterator />
 	</liferay-ui:search-container>
-<aui:button name="delete" type="button" icon="icon-delete" value="delete" onClick='<%= renderResponse.getNamespace() +  "deleteUnusedFiles();"%>'/>
+	<aui:button name="delete" type="button" icon="icon-delete" value="delete" onClick='<%= renderResponse.getNamespace() +  "deleteUnusedFiles();"%>'/>
 	<aui:input name="deleteUnusedFileIds" type="hidden" />
 </aui:form>
 
@@ -63,12 +63,12 @@
 		window,
 		'<portlet:namespace />deleteUnusedFiles',
 		function() {
-			var deleteUnusedFileIds = Liferay.Util.listCheckedExcept(document.<portlet:namespace />fm, '<portlet:namespace />allRowIds');	
+			var deleteUnusedFileIds = Liferay.Util.listCheckedExcept(document.<portlet:namespace />unusedFileFm, '<portlet:namespace />allRowIds');	
 			
 			if (deleteUnusedFileIds && confirm('<%= UnicodeLanguageUtil.get(pageContext, "are-you-sure-you-want-to-delete-the-selected-rows") %>')) {
-				document.<portlet:namespace />fm.<portlet:namespace />deleteUnusedFileIds.value = deleteUnusedFileIds;
+				document.<portlet:namespace />unusedFileFm.<portlet:namespace />deleteUnusedFileIds.value = deleteUnusedFileIds;
 
-				submitForm(document.<portlet:namespace />fm, '<%=deleteUnusedFileURL %>');
+				submitForm(document.<portlet:namespace />unusedFileFm, '<%=deleteUnusedFileURL %>');
 			} else {
 				
 			}

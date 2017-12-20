@@ -12,7 +12,7 @@
 <liferay-ui:error exception="<%=PrincipalException.class%>"
 	message="delete-file-principal-exception"></liferay-ui:error>
 <liferay-ui:error key="generic-error" message="generic-error-msg"></liferay-ui:error>
-<aui:form action="<%=searchReferencedFileURL%>" name="fm">
+<aui:form action="<%=searchReferencedFileURL%>" name="wcRefencedFileFm">
 	<liferay-ui:search-container
 		displayTerms="<%=new DisplayTerms(renderRequest)%>"
 		emptyResultsMessage="no-entries-were-found"
@@ -61,12 +61,12 @@
 		window,
 		'<portlet:namespace />deleteWcReferencedFiles',
 		function() {
-			var deleteWcReferencedFileIds = Liferay.Util.listCheckedExcept(document.<portlet:namespace />fm, '<portlet:namespace />allRowIds');	
+			var deleteWcReferencedFileIds = Liferay.Util.listCheckedExcept(document.<portlet:namespace />wcRefencedFileFm, '<portlet:namespace />allRowIds');	
 			
 			if (deleteWcReferencedFileIds && confirm('<%= UnicodeLanguageUtil.get(pageContext, "are-you-sure-you-want-to-delete-the-selected-rows") %>')) {
-				document.<portlet:namespace />fm.<portlet:namespace />deleteWcReferencedFileIds.value = deleteWcReferencedFileIds;
+				document.<portlet:namespace />wcRefencedFileFm.<portlet:namespace />deleteWcReferencedFileIds.value = deleteWcReferencedFileIds;
 
-				submitForm(document.<portlet:namespace />fm, '<%=deleteWcRefencedFileURL %>');
+				submitForm(document.<portlet:namespace />wcRefencedFileFm, '<%=deleteWcRefencedFileURL %>');
 			} else {
 				
 			}
