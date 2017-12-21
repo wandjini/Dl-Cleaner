@@ -7,7 +7,7 @@
 <liferay-ui:error exception="<%=PrincipalException.class %>" message="delete-file-principal-exception"></liferay-ui:error>
 <liferay-ui:error key="generic-error" message="generic-error-msg"></liferay-ui:error>
 
-<aui:form method="POST" action="<%=runJobUrl %>">
+<aui:form method="POST" action="<%=runJobUrl %>" name="runJob">
 	<aui:button name="submit" type="submit" value="run-job"/>
 </aui:form>
 	<aui:nav cssClass="nav-tabs">

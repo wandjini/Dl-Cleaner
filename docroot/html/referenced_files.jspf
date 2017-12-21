@@ -36,7 +36,17 @@
 				property="wcUrlTitle" orderable="<%=true%>"
 				orderableProperty="wcUrlTitle">
 			</liferay-ui:search-container-column-text>
-			<liferay-ui:search-container-column-text name="site" property="group">
+			<liferay-ui:search-container-column-text name="site" >
+				<% String groupName = "";
+
+				try {
+					Group group = GroupLocalServiceUtil.getGroup(wcReferencedFile.getGroupId());
+					groupName = group.getName();
+				} catch (Exception e) {
+					// TODO: handle exception
+				}
+				%>
+				<%=groupName %>
 			</liferay-ui:search-container-column-text>
 			<liferay-ui:search-container-column-text name="type" property="type"
 				orderable="<%=true%>" orderableProperty="type">
